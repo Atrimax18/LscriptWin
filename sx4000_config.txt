@@ -1,0 +1,60 @@
+sx4000 setup
+
+
+admin@sonic:~$ sudo config acl rem table CP_IN
+admin@sonic:~$ sudo config acl rem table CP_OUT
+admin@sonic:~$ sudo config interface speed Ethernet10 10000
+admin@sonic:~$ sudo config interface speed Ethernet11 10000
+admin@sonic:~$ sudo config interface ip add Vlan100 10.10.10.15/24
+admin@sonic:~$ sudo config save -y
+
+Sx4000 #1
+/# ifconfig lan2 down
+/# ifconfig lan0 up
+/# ifconfig lan1 up
+/# ifconfig nss0 10.10.10.13 netmask 255.255.255.0
+/# ping -c1 10.10.10.15
+PING 10.10.10.15 (10.10.10.15): 56 data bytes
+64 bytes from 10.10.10.15: seq=0 ttl=64 time=5.697 ms
+64 bytes from 10.10.10.15: seq=1 ttl=64 time=1.017 ms
+64 bytes from 10.10.10.15: seq=2 ttl=64 time=1.378 ms
+
+PC:
+scp to Sx4000 #1 (root/root)
+S C:\Images> scp *.json root@10.10.10.13:/mnt/flash2
+The authenticity of host '10.10.10.13 (10.10.10.13)' can't be established.
+ED25519 key fingerprint is SHA256:KG34MBVXZ8rlluvVv9XEbv+nQuZrTza7SVMBbSpteh0.
+This host key is known by the following other names/addresses:
+    C:\Users\alexeyt/.ssh/known_hosts:7: 10.10.10.14
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+Warning: Permanently added '10.10.10.13' (ED25519) to the list of known hosts.
+root@10.10.10.13's password:
+204c_m0_ref182_lnrate12_065625.json                                                   100% 4057   233.1KB/s   00:00
+204c_m1_ref182_lnrate12_065625.json                                                   100% 4081     4.0KB/s   00:00
+srds_params_12_182.json                                                               100% 9274     9.1KB/s   00:00
+
+Sx4000 #2
+/# ifconfig lan2 down
+/# ifconfig lan0 up
+/# ifconfig lan1 up
+/# ifconfig nss0 10.10.10.14 netmask 255.255.255.0
+/# ping -c1 10.10.10.15
+PING 10.10.10.15 (10.10.10.15): 56 data bytes
+64 bytes from 10.10.10.15: seq=0 ttl=64 time=5.697 ms
+64 bytes from 10.10.10.15: seq=1 ttl=64 time=1.017 ms
+64 bytes from 10.10.10.15: seq=2 ttl=64 time=1.378 ms
+
+PC:
+scp to Sx4000 #2 (root/root)
+S C:\Images> scp *.json root@10.10.10.14:/mnt/flash2
+The authenticity of host '10.10.10.14 (10.10.10.14)' can't be established.
+ED25519 key fingerprint is SHA256:KG34MBVXZ8rlluvVv9XEbv+nQuZrTza7SVMBbSpteh0.
+This host key is known by the following other names/addresses:
+    C:\Users\alexeyt/.ssh/known_hosts:7: 10.10.10.14
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+Warning: Permanently added '10.10.10.14' (ED25519) to the list of known hosts.
+root@10.10.10.14's password:
+204c_m0_ref182_lnrate12_065625.json                                                   100% 4057   233.1KB/s   00:00
+204c_m1_ref182_lnrate12_065625.json                                                   100% 4081     4.0KB/s   00:00
+srds_params_12_182.json                                                               100% 9274     9.1KB/s   00:00
+---------------------------------------------------------------------------------------------------------------------------

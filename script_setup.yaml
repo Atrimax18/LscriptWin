@@ -1,0 +1,80 @@
+serial:
+  nxp:
+    port: COM20
+    baudrate: 115200
+  switch:
+    port: COM21
+    baudrate: 115200
+  sx1: 
+    port: COM22
+    baudrate: 115200
+  sx2: 
+    port: COM24
+    baudrate: 115200
+
+server:
+  ip: 10.10.10.3
+  login: alexeyt
+  password: Barsuk12!
+  image_path: C:\Images
+
+dut:
+  final_ip: 10.10.10.2
+  login: root
+  password: toor
+  utils_path: C:\LSBB_Utils
+  tmp_path: tmp
+  image_file: deploy-lsbb-1.1.1-20260324.sh
+  em_prompt: "sh-5.2# "
+
+switch:
+  ip: 192.168.2.2
+  prompt: "Telesat>>"
+  image_file: telesat_lsbb-r0.itb
+
+sonic:
+  login: admin
+  password: admin
+  login_prompt: "sonic login: "
+  prompt: "admin@sonic:~$"
+  image_file: sonic-marvell-arm64-SONiC.bin
+  ip: 10.10.10.15  
+
+prompts:
+  u_boot: "U-Boot"
+  switch: "Telesat>>"
+
+timeouts:
+  serial_open_seconds: 10
+  prompt_wait_seconds: 15
+  boot_interrupt_seconds: 5
+  uboot_boot_seconds: 300
+  emergency_boot_seconds: 600
+  first_boot_seconds: 460
+  sonic_boot_seconds: 460
+  
+sx4000:
+  file1: C:\Images\srds_params_12_182.json
+  file2: C:\Images\204c_m0_ref182_lnrate12_065625.json
+  file3: C:\Images\204c_m1_ref182_lnrate12_065625.json
+  sx1_params: C:\Images\SX1_param\ip_params.txt
+  sx2_params: C:\Images\SX2_param\ip_params.txt
+  startup_file: startup.sh
+  modem_flash1_path: mnt/flash1 
+  modem_flash2_path: mnt/flash2
+  prompt: "/# "
+    
+sx4000_ip:
+  sx1: 10.10.10.13
+  sx2: 10.10.10.14
+  login: root
+  password: root 
+    
+db:
+  type: sqlite
+  path: C:\Users\alexeyt\source\repos\DB_MAC\sn_mac_test.db
+  table: mac_table
+  serial_column: serial_number
+  mac_column_format: mac{index}
+  mac_count: 16
+  auto_create: true
