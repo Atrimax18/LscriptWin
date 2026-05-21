@@ -9,7 +9,7 @@ The script now supports four modes:
 - `provision`: run the documented flow from MAC programming through Linux install, switch image install, SONiC setup, and `LSBB_Utils` copy
 - `gen_mac`: read and update the MAC database from the YAML `db` section using a DIG board serial number
 
-Serial logs are saved under `logs/`, and both `COM20` and `COM21` are opened and logged from the start of the run.
+Serial logs are saved under `C:\Logs\Deployment\<DIG_SN>\<timestamp>\`, and both `COM20` and `COM21` are opened and logged from the start of the run. If no `--dig_sn` is provided, logs are saved under `C:\Logs\Deployment\NO_DIG_SN\<timestamp>\`.
 
 If `tqdm` is installed, long operator-visible waits such as the SONiC first-boot timer are shown with a progress bar. Without `tqdm`, the script falls back to the built-in text countdown.
 
@@ -198,7 +198,6 @@ python .\lscriptwin.py --mode provision `
   `sudo sonic-cfggen -w -j /usr/share/sonic/device/arm64-telesat_lsbb-r0/telesat-lsbb/default_config.json`
   `sudo config qos reload`
   `sudo config interface ip add eth0 192.168.2.2/24`
-  `sudo config save -y`
 - Waits 8 seconds after each SONiC config command
 - Pulls the Windows `LSBB_Utils` folder directly to `/root/` with `scp -r` unless `--skip-utils` is used
 - After the copy, waits for switch `System is ready`, then runs the switch management ping:

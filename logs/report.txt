@@ -1,0 +1,102 @@
+Comparison report
+=================
+[PASS] power_seq.aux: expected=1 actual='1'
+[FAIL] power_seq.clk: expected=1 actual='3'
+[PASS] power_seq.eth: expected='1F' actual='1F'
+[PASS] power_seq.fpga: expected='7F' actual='7F'
+[PASS] power_seq.nxp: expected='1F' actual='1F'
+[PASS] power_seq.rxfem: expected=1 actual='1'
+[PASS] power_seq.sx1: expected='3F' actual='3F'
+[PASS] power_seq.sx2: expected='3F' actual='3F'
+[PASS] power_seq.txfem: expected=1 actual='1'
+[FAIL] rxfem_init.adc.chip_id: expected=229 actual=None
+[FAIL] rxfem_init.adc.stat_rx_debug: expected=4008636142 actual=None
+[FAIL] rxfem_init.adc.stat_status: expected=28672 actual=None
+[FAIL] rxfem_init.adc.type: expected=3 actual=None
+[FAIL] rxfem_init.adc.ven_id: expected=1110 actual=None
+[FAIL] rxfem_init.pll.freq: expected=9750 actual=None
+[FAIL] rxfem_init.pll.lock: expected=1 actual=None
+[FAIL] rxfem_init.pll.prod_id: expected=7 actual=None
+[FAIL] rxfem_init.pll.type: expected=6 actual=None
+[FAIL] rxfem_init.pll.ven_id: expected=1110 actual=None
+[FAIL] sky_loln.sky1.id: expected=1 actual=None
+[FAIL] sky_loln.sky1.loln: expected=1 actual=None
+[FAIL] sky_loln.sky2.id: expected=2 actual=None
+[FAIL] sky_loln.sky2.loln: expected=1 actual=None
+[FAIL] txfem_init.dac.chipg: expected=7 actual=None
+[FAIL] txfem_init.dac.prod_id: expected=38677 actual=None
+[FAIL] txfem_init.dac.type: expected=4 actual=None
+[FAIL] txfem_init.jesd.dac0.bad_disparity: expected=7 actual=None
+[FAIL] txfem_init.jesd.dac0.code_grp_sync: expected=15 actual=None
+[FAIL] txfem_init.jesd.dac0.frame_sync: expected=15 actual=None
+[FAIL] txfem_init.jesd.dac0.good_checksum: expected=15 actual=None
+[FAIL] txfem_init.jesd.dac0.init_lane_sync: expected=15 actual=None
+[FAIL] txfem_init.jesd.dac0.lane_deskew: expected=15 actual=None
+[FAIL] txfem_init.jesd.dac0.not_in_table: expected=7 actual=None
+[FAIL] txfem_init.jesd.dac0.unexpected_kchar: expected=7 actual=None
+[FAIL] txfem_init.jesd.dac1.bad_disparity: expected=7 actual=None
+[FAIL] txfem_init.jesd.dac1.code_grp_sync: expected=15 actual=None
+[FAIL] txfem_init.jesd.dac1.frame_sync: expected=15 actual=None
+[FAIL] txfem_init.jesd.dac1.good_checksum: expected=15 actual=None
+[FAIL] txfem_init.jesd.dac1.init_lane_sync: expected=15 actual=None
+[FAIL] txfem_init.jesd.dac1.lane_deskew: expected=15 actual=None
+[FAIL] txfem_init.jesd.dac1.not_in_table: expected=7 actual=None
+[FAIL] txfem_init.jesd.dac1.unexpected_kchar: expected=7 actual=None
+[FAIL] txfem_init.pll.freq: expected=11700 actual=None
+[FAIL] txfem_init.pll.lock: expected=1 actual=None
+[FAIL] txfem_init.pll.prod_id: expected=7 actual=None
+[FAIL] txfem_init.pll.type: expected=6 actual=None
+[FAIL] txfem_init.pll.ven_id: expected=1110 actual=None
+[FAIL] version.cpld.build: expected=1 actual='0x0'
+[PASS] version.cpld.date: expected='24-04-26' actual='24-04-26'
+[PASS] version.cpld.ver: expected=1.4 actual='1.4'
+[FAIL] version.fpga.build: expected=1 actual=None
+[FAIL] version.fpga.dig_ver: expected=539362326 actual=None
+[FAIL] version.fpga.gp_ver: expected=539361817 actual=None
+[FAIL] version.fpga.ver: expected=11.0 actual=None
+
+Summary: 10 passed, 44 failed, 54 checked.
+
+Missing values:
+  - rxfem_init.adc.chip_id
+  - rxfem_init.adc.stat_rx_debug
+  - rxfem_init.adc.stat_status
+  - rxfem_init.adc.type
+  - rxfem_init.adc.ven_id
+  - rxfem_init.pll.freq
+  - rxfem_init.pll.lock
+  - rxfem_init.pll.prod_id
+  - rxfem_init.pll.type
+  - rxfem_init.pll.ven_id
+  - sky_loln.sky1.id
+  - sky_loln.sky1.loln
+  - sky_loln.sky2.id
+  - sky_loln.sky2.loln
+  - txfem_init.dac.chipg
+  - txfem_init.dac.prod_id
+  - txfem_init.dac.type
+  - txfem_init.jesd.dac0.bad_disparity
+  - txfem_init.jesd.dac0.code_grp_sync
+  - txfem_init.jesd.dac0.frame_sync
+  - txfem_init.jesd.dac0.good_checksum
+  - txfem_init.jesd.dac0.init_lane_sync
+  - txfem_init.jesd.dac0.lane_deskew
+  - txfem_init.jesd.dac0.not_in_table
+  - txfem_init.jesd.dac0.unexpected_kchar
+  - txfem_init.jesd.dac1.bad_disparity
+  - txfem_init.jesd.dac1.code_grp_sync
+  - txfem_init.jesd.dac1.frame_sync
+  - txfem_init.jesd.dac1.good_checksum
+  - txfem_init.jesd.dac1.init_lane_sync
+  - txfem_init.jesd.dac1.lane_deskew
+  - txfem_init.jesd.dac1.not_in_table
+  - txfem_init.jesd.dac1.unexpected_kchar
+  - txfem_init.pll.freq
+  - txfem_init.pll.lock
+  - txfem_init.pll.prod_id
+  - txfem_init.pll.type
+  - txfem_init.pll.ven_id
+  - version.fpga.build
+  - version.fpga.dig_ver
+  - version.fpga.gp_ver
+  - version.fpga.ver

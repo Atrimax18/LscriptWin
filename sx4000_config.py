@@ -3,18 +3,18 @@ from __future__ import annotations
 import argparse
 import pathlib
 import re
-import shutil
-import subprocess
 import sys
 from dataclasses import dataclass
 
 from lscriptwin import (
     ConfigError,
     LOGIN_PATTERN,
+    NXP_DISTRO_BANNER_PATTERN,
     PASSWORD_PATTERN,
     ROOT_SHELL_PATTERN,
     SerialPortConfig,
     SerialSession,
+    configure_log_context,
     ensure_logs_dir,
     load_simple_yaml,
     ok,
@@ -65,6 +65,7 @@ class Sx4000RuntimeConfig:
     sx2: SerialPortConfig
     dut_login: str
     dut_password: str
+    dut_prompt: str
     sonic: SonicConfig
     sx4000: Sx4000Config
     sx4000_ip: Sx4000IpConfig
@@ -121,6 +122,7 @@ def load_runtime_config(path: pathlib.Path) -> Sx4000RuntimeConfig:
         sx2=SerialPortConfig(str(serial_cfg["sx2"]["port"]), int(serial_cfg["sx2"]["baudrate"])),
         dut_login=str(dut_cfg["login"]),
         dut_password=str(dut_cfg["password"]),
+        dut_prompt=str(dut_cfg.get("prompt", "ls1046afrwy login:")),
         sonic=SonicConfig(
             login=str(sonic_cfg["login"]),
             password=str(sonic_cfg["password"]),
@@ -159,6 +161,13 @@ def shell_prompt_pattern(prompt_text: str) -> re.Pattern[str]:
     return re.compile(r"(?:^|\n).{0,120}" + re.escape(prompt_text.strip()) + r"\s*$", re.MULTILINE)
 
 
+def login_prompt_pattern(prompt_text: str) -> re.Pattern[str]:
+    prompt = prompt_text.strip()
+    if not prompt:
+        return LOGIN_PATTERN
+    return re.compile(r"(?:^|[\r\n])\s*" + re.escape(prompt) + r"\s*$", re.IGNORECASE | re.MULTILINE)
+
+
 def default_sx4000_commands(config: Sx4000RuntimeConfig) -> CommandPlan:
     switch_ip = "10.10.10.15"
     sonic = (
@@ -167,7 +176,6 @@ def default_sx4000_commands(config: Sx4000RuntimeConfig) -> CommandPlan:
         "sudo config interface speed Ethernet10 10000",
         "sudo config interface speed Ethernet11 10000",
         f"sudo config interface ip add Vlan100 {switch_ip}/24",
-        "sudo config save -y",
     )
     sx_common = (
         "ifconfig lan2 down",
@@ -280,20 +288,51 @@ def ensure_switch_sonic_shell(session: SerialSession, config: Sx4000RuntimeConfi
 
 
 def ensure_nxp_shell(session: SerialSession, config: Sx4000RuntimeConfig) -> None:
+    login_prompt = login_prompt_pattern(config.dut_prompt)
+    prompt_candidates = {
+        "login": login_prompt,
+        "login_generic": LOGIN_PATTERN,
+    }
     start_pos = len(session.buffer)
     session.send_line("")
     result = session.wait_for_any_pattern(
         {
             "shell": ROOT_SHELL_PATTERN,
-            "login": LOGIN_PATTERN,
+            **prompt_candidates,
+            "distro_banner": NXP_DISTRO_BANNER_PATTERN,
         },
         timeout=config.prompt_wait_seconds,
-        label="NXP shell or login",
+        label="NXP shell, login, or distro banner",
         start_pos=start_pos,
     )
     if result == "shell":
         return
 
+    login_ready = False
+    if result == "distro_banner":
+        session.log_event("INFO", "NXP distro banner detected; sending Enter twice before login prompt check.")
+        start_pos = len(session.buffer)
+        session.send_line("")
+        session.send_line("")
+        session.wait_for_any_pattern(
+            prompt_candidates,
+            timeout=30,
+            label="NXP login prompt after distro banner",
+            start_pos=start_pos,
+        )
+        login_ready = True
+
+    session.log_event("INFO", "NXP login prompt detected; sending Enter twice before credentials.")
+    if not login_ready:
+        start_pos = len(session.buffer)
+        session.send_line("")
+        session.send_line("")
+        session.wait_for_any_pattern(
+            prompt_candidates,
+            timeout=30,
+            label="NXP login prompt after Enter twice",
+            start_pos=start_pos,
+        )
     start_pos = len(session.buffer)
     session.send_line(config.dut_login)
     session.wait_for_pattern(PASSWORD_PATTERN, timeout=30, label="NXP password prompt", start_pos=start_pos)
@@ -316,59 +355,85 @@ def run_sonic_commands(session: SerialSession, config: Sx4000RuntimeConfig, comm
         )
 
 
-def require_pscp() -> str:
-    pscp = shutil.which("pscp")
-    if not pscp:
-        raise ConfigError("PuTTY pscp.exe was not found in PATH; install PuTTY or run with --skip-transfer.")
-    return pscp
+def require_paramiko():
+    try:
+        import paramiko
+    except ImportError as exc:
+        raise ConfigError("Paramiko is required for SX4000 uploads. Install it with: python -m pip install paramiko") from exc
+    return paramiko
 
 
-def pscp_upload(pscp: str, password: str, files: list[pathlib.Path], destination: str, timeout: int) -> None:
-    command = [
-        pscp,
-        "-scp",
-        "-pw",
-        password,
-        *[str(path) for path in files],
-        destination,
-    ]
-    completed = subprocess.run(command, timeout=timeout)
-    if completed.returncode != 0:
-        raise RuntimeError(f"pscp failed for destination {destination} with exit code {completed.returncode}")
+def open_ssh_client(host: str, username: str, password: str, timeout: int = 30):
+    paramiko = require_paramiko()
+    client = paramiko.SSHClient()
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.connect(
+        hostname=host,
+        username=username,
+        password=password,
+        timeout=timeout,
+        banner_timeout=timeout,
+        auth_timeout=timeout,
+        look_for_keys=False,
+        allow_agent=False,
+    )
+    return client
 
 
 def modem_remote_path(raw_path: str) -> str:
-    return "/" + raw_path.strip("/")
+    return "/" + raw_path.strip().strip("/")
+
+
+def ensure_remote_dir(sftp, remote_dir: str) -> None:
+    parts = [part for part in remote_dir.strip("/").split("/") if part]
+    current = ""
+    for part in parts:
+        current += "/" + part
+        try:
+            sftp.stat(current)
+        except OSError:
+            sftp.mkdir(current)
+
+
+def sftp_upload_files(client, sx_name: str, files: list[pathlib.Path], remote_dir: str) -> None:
+    info(f"{sx_name}: uploading {len(files)} file(s) to {remote_dir} with Paramiko SFTP")
+    with client.open_sftp() as sftp:
+        ensure_remote_dir(sftp, remote_dir)
+        for local_file in files:
+            remote_file = remote_dir.rstrip("/") + "/" + local_file.name
+            sftp.put(str(local_file), remote_file)
+            remote_size = sftp.stat(remote_file).st_size
+            local_size = local_file.stat().st_size
+            if remote_size != local_size:
+                raise RuntimeError(
+                    f"{sx_name}: copied file size mismatch for {local_file.name}: "
+                    f"local={local_size} bytes, remote={remote_size} bytes"
+                )
+            ok(f"{sx_name}: uploaded and verified {local_file.name} ({remote_size} bytes)")
 
 
 def upload_single_modem_files(config: Sx4000RuntimeConfig, sx_name: str, ip: str, params_file: pathlib.Path) -> None:
-    pscp = require_pscp()
     flash1_path = modem_remote_path(config.sx4000.modem_flash1_path)
     flash2_path = modem_remote_path(config.sx4000.modem_flash2_path)
     json_files = list(config.sx4000.json_files)
 
-    info(f"{sx_name}: uploading startup.sh to {flash1_path}")
-    pscp_upload(
-        pscp=pscp,
+    client = open_ssh_client(
+        host=ip,
+        username=config.sx4000_ip.login,
         password=config.sx4000_ip.password,
-        files=[config.sx4000.startup_file],
-        destination=f"{config.sx4000_ip.login}@{ip}:{flash1_path}",
-        timeout=120,
+        timeout=30,
     )
-    info(f"{sx_name}: uploading JSON files and ip_params.txt to {flash2_path}")
-    pscp_upload(
-        pscp=pscp,
-        password=config.sx4000_ip.password,
-        files=[*json_files, params_file],
-        destination=f"{config.sx4000_ip.login}@{ip}:{flash2_path}",
-        timeout=120,
-    )
+    try:
+        sftp_upload_files(client, sx_name, [config.sx4000.startup_file], flash1_path)
+        sftp_upload_files(client, sx_name, [*json_files, params_file], flash2_path)
+    finally:
+        client.close()
 
 
 def start_lsbb_utils_prompt(nxp: SerialSession, config: Sx4000RuntimeConfig) -> None:
     ensure_nxp_shell(nxp, config)
     command = "cd /root/LSBB_Utils && sh ./run.sh"
-    info(f"NXP: starting LSBB interactive session in default TARGET mode: {command}")
+    info(f"NXP UART: starting LSBB interactive session in default TARGET mode: {command}")
     start_pos = len(nxp.buffer)
     nxp.send_line(command)
     nxp.wait_for_pattern(
@@ -377,15 +442,15 @@ def start_lsbb_utils_prompt(nxp: SerialSession, config: Sx4000RuntimeConfig) -> 
         label="LSBB interactive prompt",
         start_pos=start_pos,
     )
-    info("NXP: sending Enter twice immediately after prompt detection.")
+    info("NXP UART: sending Enter twice immediately after prompt detection.")
     nxp.send_line("")
     nxp.send_line("")
-    ok("Double Enter sent after prompt detection.")
+    ok("NXP UART LSBB interactive session is ready.")
 
 
 def run_sx4000_reset_command(nxp: SerialSession, config: Sx4000RuntimeConfig, sx_id: str) -> None:
     command = f'sx4000_ctrl.sx4000_reset_and_bootstrap_ov("{sx_id}")'
-    info(f"NXP: {command}")
+    info(f"NXP UART: {command}")
     start_pos = len(nxp.buffer)
     nxp.send_line(command)
     success_pattern = re.compile(
@@ -395,13 +460,13 @@ def run_sx4000_reset_command(nxp: SerialSession, config: Sx4000RuntimeConfig, sx
     )
     nxp.wait_for_pattern(
         success_pattern,
-        timeout=config.sx_reset_wait_seconds,
+        config.sx_reset_wait_seconds,
         label=f"{sx_id} reset/bootstrap success message",
         start_pos=start_pos,
     )
     nxp.wait_for_pattern(
         SX4000_TARGET_READY_PATTERN,
-        timeout=config.sx_reset_wait_seconds,
+        config.sx_reset_wait_seconds,
         label=f"LSBB prompt after {sx_id} reset/bootstrap",
         start_pos=start_pos,
     )
@@ -415,7 +480,7 @@ def run_sx4000_reset_command(nxp: SerialSession, config: Sx4000RuntimeConfig, sx
 
 
 def quit_lsbb_utils_prompt(nxp: SerialSession, config: Sx4000RuntimeConfig) -> None:
-    info("NXP: quitting LSBB interactive session.")
+    info("NXP UART: quitting LSBB interactive session.")
     start_pos = len(nxp.buffer)
     nxp.send_line("quit()")
     nxp.wait_for_pattern(
@@ -424,7 +489,7 @@ def quit_lsbb_utils_prompt(nxp: SerialSession, config: Sx4000RuntimeConfig) -> N
         label="NXP shell after quit()",
         start_pos=start_pos,
     )
-    ok("Returned to NXP shell.")
+    ok("Returned to NXP UART shell.")
 
 
 def check_nxp_and_switch_login(config: Sx4000RuntimeConfig, repo_root: pathlib.Path) -> None:
@@ -462,10 +527,10 @@ def configure_single_sx_terminal(
 
 
 def configure_sx4000_sequence(config: Sx4000RuntimeConfig, commands: CommandPlan, repo_root: pathlib.Path, skip_transfer: bool) -> None:
-    info("SX4000 sequence: start run.sh once, reset SX1, configure SX1, reset SX2, configure SX2, then quit().")
-    nxp_log = timestamped_log_path(repo_root, "sx4000-reset")
+    info("SX4000 sequence: start run.sh over NXP UART, reset SX1, configure SX1, reset SX2, configure SX2, then quit().")
+    nxp_log = timestamped_log_path(repo_root, "sx4000-nxp")
     with SerialSession("NXP", config.nxp, nxp_log, config.serial_open_seconds) as nxp:
-        info(f"SX4000 reset log: {nxp_log}")
+        info(f"NXP SX4000 log: {nxp_log}")
         start_lsbb_utils_prompt(nxp, config)
 
         run_sx4000_reset_command(nxp, config, "SX1")
@@ -513,15 +578,17 @@ def build_parser() -> argparse.ArgumentParser:
         default="check",
         help="check validates files and terminal logins; configure also runs commands and uploads files.",
     )
-    parser.add_argument("--skip-terminal-check", action="store_true", help="Only validate YAML and C:\\Images files.")
-    parser.add_argument("--skip-switch-config", action="store_true", help="Do not enter SONiC commands.")
-    parser.add_argument("--skip-sx-config", action="store_true", help="Do not run the SX1-then-SX2 reset and serial command sequence.")
-    parser.add_argument("--skip-transfer", action="store_true", help="Do not upload files to the SX4000 modems.")
+    parser.add_argument("--skip_terminal_check", "--skip-terminal-check", action="store_true", help="Only validate YAML and C:\\Images files.")
+    parser.add_argument("--skip_switch_config", "--skip-switch-config", action="store_true", help="Do not enter SONiC commands.")
+    parser.add_argument("--skip_sx_config", "--skip-sx-config", action="store_true", help="Do not run the SX1-then-SX2 reset and serial command sequence.")
+    parser.add_argument("--skip_transfer", "--skip-transfer", action="store_true", help="Do not upload files to the SX4000 modems.")
+    parser.add_argument("--dig_sn", "--dig-sn", help="DIG board serial number used for the C:\\Logs\\Deployment folder name.")
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+    configure_log_context(args.dig_sn)
     repo_root = pathlib.Path(__file__).resolve().parent
     config_path = (repo_root / args.config).resolve()
     ensure_logs_dir(repo_root)
@@ -551,7 +618,7 @@ def main(argv: list[str] | None = None) -> int:
 
         ok("SX4000 configuration flow completed.")
         return 0
-    except (OSError, ConfigError, RuntimeError, subprocess.SubprocessError) as exc:
+    except (OSError, ConfigError, RuntimeError) as exc:
         print(f"[ERROR] {exc}", file=sys.stderr)
         return 1
 

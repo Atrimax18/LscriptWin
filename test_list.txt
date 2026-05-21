@@ -1,0 +1,146 @@
+---- TEST ---------
+
+1. Verify CPLD
+
+
+[TX] cd /root/LSBB_Utils && sh ./run.sh
+cd /root/LSBB_Utils && sh ./run.sh
+argument list ['TARGET']
+[33mLSBB_CTRL_MODE set to TARGET
+[39m[36m=== TARGET mode: libbsp/spidev transport ===
+[39m[36m===============================================================================
+[39m[36mCPLD Ver: 1.4, Build: 0x1, Compiled Date: 24-04-26
+[39m[36m===============================================================================
+[39m[32mPower Seq Domain: Aux     , Result = 1 , Expected = 1  - Pass
+[39m[32mPower Seq Domain: NXP     , Result = 1F, Expected = 1F - Pass
+[39m[32mPower Seq Domain: ETH     , Result = 1F, Expected = 1F - Pass
+[39m[32mPower Seq Domain: SX1     , Result = 3F, Expected = 3F - Pass
+[39m[32mPower Seq Domain: SX2     , Result = 3F, Expected = 3F - Pass
+[39m[32mPower Seq Domain: FPGA    , Result = 7F, Expected = 7F - Pass
+[39m[32mPower Seq Domain: RXFEM   , Result = 1 , Expected = 1  - Pass
+[39m[32mPower Seq Domain: TXFEM   , Result = 1 , Expected = 1  - Pass
+[39m[31mPower Seq Domain: CLK     , Result = 1 , Expected = 3  - Fail
+[39m[33mUsing HTML dig Cont: coin_digital_container_sw_13042026.html
+[39mPress any key to skip System Init (Skyworks PLLs + TXFEM + RXFEM + FPGA...)
+=== SKYWORKS PLL Init ==================================================
+[36mLOLn = 1
+[39m[36mLOLn = 1
+[39m[33mTARGET mode: Si5395 init skipped (driver-managed)
+[39m[36mCLU[1] design_id=DV1_V3.3 pll=LOCKED
+[39m[36mCLU[2] design_id=DV2_V3.3 pll=LOCKED
+[39m========================================================================
+
+=== ETH Switch Init ====================================================
+========================================================================
+
+=== FPGA Init ==========================================================
+[36mFPGA GP Container Info:
+[39m[36m GP Cont Ver: 0x20260219
+[39m[36m Time&Date  : 2026-04-22  22:29:49
+[39m[36m Version    : 11.0
+[39m[36m Build      : 1
+[39m[36mFPGA Dig Container Info:
+[39m[36m Dig Cont Ver: 0x20260416
+[39m[36mFPGA Debugger DB:
+[39m[36m uplink_modem   : Num Of CHs=4, Samples Per CH=8 , Mem Depth=2048, Total Mem:16[KB]
+[39m[36m uplink_DAC     : Num Of CHs=2, Samples Per CH=8 , Mem Depth=2048, Total Mem:16[KB]
+[39m[36m downlink_modem : Num Of CHs=4, Samples Per CH=8 , Mem Depth=2048, Total Mem:16[KB]
+[39m[36m downlink_ADC   : Num Of CHs=1, Samples Per CH=20, Mem Depth=2048, Total Mem:40[KB]
+[39m========================================================================
+
+=== TXFEM Init =========================================================
+[36mFPGA JESD Config - DAC:
+[39m[36m FPGA DAC        JESD @ 0x42000, IP Ver = 4.3
+[39m[36m FPGA DAC        JESD @ 0x43000, IP Ver = 4.3
+[39m[36m FPGA DAC        PHY  @ 0x44000, IP Ver = 4.1
+[39m[32mTXFEM ADF4368 (TARGET): freq=11700 MHz lock=1 -- driver-owned init OK
+[39m[36mAD9175: ChipType = 0x04, ChipGrade = 0x07, ProductID = 0x9175
+[39mDAC AD9175 - Configuration Starts...
+[32mDAC AD9175 - Configuration Done !
+[39m
+DAC JESD Status Check:
+-----------------------------------------------------
+DAC0, LANE_DESKEW          = 0xF [32m - OK
+[39mDAC0, BAD_DISPARITY        = 0x0 [32m - OK
+[39mDAC0, NOT_IN_TABLE         = 0x0 [32m - OK
+[39mDAC0, UNEXPECTED_KCHAR     = 0x0 [32m - OK
+[39mDAC0, CODE_GRP_SYNC        = 0xF [32m - OK
+[39mDAC0, FRAME_SYNC           = 0xF [32m - OK
+[39mDAC0, GOOD_CHECKSUM        = 0xF [32m - OK
+[39mDAC0, INIT_LANE_SYNC       = 0xF [32m - OK
+[39mDAC1, LANE_DESKEW          = 0xF [32m - OK
+[39mDAC1, BAD_DISPARITY        = 0x0 [32m - OK
+[39mDAC1, NOT_IN_TABLE         = 0x0 [32m - OK
+[39mDAC1, UNEXPECTED_KCHAR     = 0x0 [32m - OK
+[39mDAC1, CODE_GRP_SYNC        = 0xF [32m - OK
+[39mDAC1, FRAME_SYNC           = 0xF [32m - OK
+[39mDAC1, GOOD_CHECKSUM        = 0xF [32m - OK
+[39mDAC1, INIT_LANE_SYNC       = 0xF [32m - OK
+[39m========================================================================
+
+=== RXFEM Init =========================================================
+[32mRXFEM ADF4368 (TARGET): freq=9750 MHz lock=1 -- driver-owned init OK
+[39m[36mAD9213: ChipType = 0x03, Chip ID = 0x00E5, Vendor ID = 0x0456
+[39mADC AD9213 - Configuration Starts...
+[32mADC AD9213 - Configuration Done !
+[39m[36mFPGA JESD Config - ADC:
+[39m[36m FPGA ADC        JESD @ 0x40000, IP Ver = 4.3
+[39m[36m FPGA ADC        JESD @ 0x41000, IP Ver = 4.3
+[39m[36m FPGA ADC        PHY  @ 0x44000, IP Ver = 4.1
+[39m[36m FPGA ADC        PHY  @ 0x45000, IP Ver = 4.1
+[39m[32mFPGA JESD ADC - STAT_RX_DEBUG = 0xEEEEEEEE - OK
+[39m[32mFPGA JESD ADC - STAT_STATUS   = 0x00007000 - OK
+[39m========================================================================
+
+=== SX4000 Init =========================================================
+Press 1 - to Load SX4000 #1
+Press 2 - to Load SX4000 #2
+Press 3 - to Load both SX4000 #1 & #2
+.....
+========================================================================
+
+=== I2C Temp Meter ====================================================
+Domain         : Temperature [Deg]
+-------------------------------------------------------------------------------
+CPU_CORE       : 33.0 
+TMP_SX1        : 28.8 
+SX1_DCDC       : 33.8 
+TMP_SX2        : 28.2 
+SX2_DCDC       : 33.2 
+TMP_TXFEM      : 29.9 
+TMP_RXFEM      : 26.1 
+
+=== I2C Power Meter ====================================================
+Domain         : Volt [V]     Current [mA]   Power [W]
+-------------------------------------------------------------------------------
+INA_NXP        : 12.004       440            5.20
+INA_AUX        : 11.996       710            7.60
+INA_ETH        : 11.992       500            6.20
+INA_FPGA       : 12.008       1110           13.40
+INA_CLK        : 12.008       370            5.20
+INA_SX1        : 12.000       220            2.60
+INA_SX2        : 12.004       220            2.60
+INA_TXFEM      : 12.000       930            11.40
+INA_RXFEM      : 12.000       1040           11.80
+INA_MAIN       : 12.016       5080           60.80
+========================================================================
+
+[36mData Path - Disabled
+[39m[33mdsp_cfg_ul_i0_nco_delta_phase: 0x6F96F970 (-250.0 MHz)
+[39m[33mdsp_cfg_ul_i0_gain: 0x100 (0.500)
+[39m[33mdsp_cfg_dl_i0_nco_delta_phase: 0x13B13B13 (750.0 MHz)
+[39m[33mdsp_cfg_dl_i0_gain: 0x100 (0.500)
+[39m[33mdsp_cfg_ul_i1_nco_delta_phase: 0x10690690 (250.0 MHz)
+[39m[33mdsp_cfg_ul_i1_gain: 0x100 (0.500)
+[39m[33mdsp_cfg_dl_i1_nco_delta_phase: 0x6906906 (250.0 MHz)
+[39m[33mdsp_cfg_dl_i1_gain: 0x100 (0.500)
+[39m[33mdsp_cfg_ul_i2_nco_delta_phase: 0x6F96F970 (-250.0 MHz)
+[39m[33mdsp_cfg_ul_i2_gain: 0x100 (0.500)
+[39m[33mdsp_cfg_dl_i2_nco_delta_phase: 0x796F96FA (-250.0 MHz)
+[39m[33mdsp_cfg_dl_i2_gain: 0x100 (0.500)
+[39m[33mdsp_cfg_ul_i3_nco_delta_phase: 0x10690690 (250.0 MHz)
+[39m[33mdsp_cfg_ul_i3_gain: 0x100 (0.500)
+[39m[33mdsp_cfg_dl_i3_nco_delta_phase: 0x6C4EC4ED (-750.0 MHz)
+[39m[33mdsp_cfg_dl_i3_gain: 0x100 (0.500)
+[39m[36mModem Link - All Disabled
+[39m[36mData Path - Enabled

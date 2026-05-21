@@ -54,6 +54,24 @@ The script opens `serial.nxp` and `serial.switch`. If a login prompt is shown, i
 python .\sx4000_config.py --mode configure
 ```
 
+To save logs under a DIG SN folder:
+
+```powershell
+python .\sx4000_config.py --mode configure --dig_sn MLSDM-08-0726-B1-00010
+```
+
+Logs are saved under:
+
+```text
+C:\Logs\Deployment\<DIG_SN>\<timestamp>\
+```
+
+If `--dig_sn` is not provided, logs are saved under:
+
+```text
+C:\Logs\Deployment\NO_DIG_SN\<timestamp>\
+```
+
 This flow:
 
 - validates the JSON, TXT, and SH files listed in YAML
@@ -63,8 +81,8 @@ This flow:
 - logs into SX1 and SX2 serial terminals if needed
 - enters the SX1 and SX2 commands
 - uploads `startup.sh` to `sx4000.modem_flash1_path` on both modems
-- uploads the JSON files and each modem's `ip_params.txt` to `sx4000.modem_flash2_path` with PuTTY `pscp`
-- runs `sh ./run.sh` from `LSBB_Utils` on the NXP terminal, waits for the interactive prompt, and calls the SX4000 reset/bootstrap commands directly
+- uploads the JSON files and each modem's `ip_params.txt` to `sx4000.modem_flash2_path` with Paramiko SFTP
+- runs `sh ./run.sh` from `LSBB_Utils` over NXP UART, waits for the interactive prompt, and calls the SX4000 reset/bootstrap commands directly over the same UART session
 
 ## File Upload
 
@@ -72,6 +90,16 @@ The normal `configure` flow uploads all required modem files:
 
 - `startup.sh` is saved under `sx4000.modem_flash1_path`
 - `sx4000.file1`, `sx4000.file2`, `sx4000.file3`, and each modem's `ip_params.txt` are saved under `sx4000.modem_flash2_path`
+
+After each upload group, the script verifies the remote files on the modem with Paramiko SFTP. It checks that each remote file exists and that the remote byte size matches the local file size. This verification is done for both SX1 and SX2.
+
+Verified files:
+
+- `startup.sh`
+- all configured SX4000 JSON files
+- each modem's `ip_params.txt`
+
+If any remote file is missing or has a different size, the script stops and prints the affected modem and file name.
 
 Current YAML paths:
 
@@ -143,7 +171,7 @@ python .\sx4000_config.py --mode configure
 The order is:
 
 - Switch SONiC commands
-- NXP runs `cd /root/LSBB_Utils && sh ./run.sh` using the default `TARGET` mode
+- NXP UART runs `cd /root/LSBB_Utils && sh ./run.sh` using the default `TARGET` mode
 - automation waits for the Python prompt
 - automation sends `sx4000_ctrl.sx4000_reset_and_bootstrap_ov("SX1")`
 - SX1 serial commands
@@ -151,17 +179,21 @@ The order is:
 - automation sends `sx4000_ctrl.sx4000_reset_and_bootstrap_ov("SX2")` in the same NXP session
 - SX2 serial commands
 - SX2 file upload
-- automation sends `quit()` on the NXP terminal
+- automation sends `quit()` over the NXP UART session
 
 ## File Transfer Note
 
-The script uses PuTTY `pscp.exe` because Windows OpenSSH `scp` cannot take the saved YAML password non-interactively. `pscp.exe` is available on this machine at:
+The script uses Paramiko SFTP for file upload and verification. Unknown host keys are accepted automatically, so the flow does not stop on the interactive OpenSSH prompt:
 
 ```text
-C:\Program Files\PuTTY\pscp.exe
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
 ```
 
-If PuTTY has not accepted a modem host key before, `pscp` may prompt once on the first connection.
+Paramiko is required:
+
+```powershell
+python -m pip install paramiko
+```
 
 ## Reset Implementation Note
 

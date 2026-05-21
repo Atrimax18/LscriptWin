@@ -1,0 +1,197 @@
+version:
+  cpld:
+    ver: 1.4
+    build: 1
+    date: 24-04-26
+  fpga:
+    gp_ver: 0x20260219
+    ver: 11.0
+    build: 1
+    dig_ver: 0x20260416
+
+power_seq:
+  aux: 0x1
+  nxp: 0x1F  
+  eth: 0x1F
+  sx1: 0x3F
+  sx2: 0x3F
+  fpga: 0x7F
+  rxfem: 0x1
+  txfem: 0x1
+  clk: 0x3
+
+sky_loln:
+  sky1:
+    id: 1
+    loln: 1
+  sky2:
+    id: 2
+    loln: 1
+
+txfem_init:
+  pll:
+    type: 0x06
+    prod_id: 0x0007  
+    ven_id: 0x0456
+    freq: 11700
+    lock: 1
+  dac:
+    type: 0x04
+    chipg: 0x07
+    prod_id: 0x9175
+  jesd:
+    dac0:
+      lane_deskew: 0xF
+      bad_disparity: 0x0
+      not_in_table: 0x0
+      unexpected_kchar: 0x0
+      code_grp_sync: 0xF
+      frame_sync: 0xF
+      good_checksum: 0xF
+      init_lane_sync: 0xF
+    dac1:
+      lane_deskew: 0xF
+      bad_disparity: 0x0
+      not_in_table: 0x0
+      unexpected_kchar: 0x0
+      code_grp_sync: 0xF
+      frame_sync: 0xF
+      good_checksum: 0xF
+      init_lane_sync: 0xF
+   
+rxfem_init:
+  pll:
+    type: 0x06
+    prod_id: 0x0007  
+    ven_id: 0x0456
+    freq: 9750
+    lock: 1   
+  adc:
+    type: 0x03
+    chip_id: 0x00E5
+    ven_id: 0x0456
+    stat_rx_debug: 0xEEEEEEEE
+    stat_status: 0x00007000 
+
+tests:
+  sx4000:
+    sx1:
+      reset: done
+      state: rst_ce
+    sx2:
+      reset: done
+      state: rst_ce      
+  domain:
+    sx1_antd0:
+      fpga_mb_lock_status: 0xF
+      fpga_mb_sh_lock_status: 0xF
+      sx_emb_lock_status: 0xF
+      sx_sh_lock_status: 0xF
+    sx1_antd1:
+      fpga_mb_lock_status: 0xF
+      fpga_mb_sh_lock_status: 0xF
+      sx_emb_lock_status: 0xF
+      sx_sh_lock_status: 0xF
+    sx2_antd0:
+      fpga_mb_lock_status: 0xF
+      fpga_mb_sh_lock_status: 0xF
+      sx_emb_lock_status: 0xF
+      sx_sh_lock_status: 0xF
+    sx2_antd1:
+      fpga_mb_lock_status: 0xF
+      fpga_mb_sh_lock_status: 0xF
+      sx_emb_lock_status: 0xF
+      sx_sh_lock_status: 0xF 
+  fpga:
+    dac_jesd_link: Pass
+    mdm0_dig_loopback:
+      min: 20
+      max: 60
+    mdm1_dig_loopback:
+      min: 20
+      max: 60
+    mdm2_dig_loopback:
+      min: 20
+      max: 60
+    mdm3_dig_loopback:
+      min: 20
+      max: 60      
+    mdm0_full_loopback:  
+      min: 20
+      max: 60
+    mdm1_full_loopback:
+      min: 20
+      max: 60
+    mdm2_full_loopback:
+      min: 20
+      max: 60
+    mdm3_full_loopback:
+      min: 20
+      max: 60
+  eth:
+    login: pass
+    ping:
+      sfp1_en: 1
+      sfp2_en: 1
+      sfp3_en: 1
+      sfp4_en: 1
+    prbs:
+      sfp1_en: 1
+      sfp2_en: 1
+      sfp3_en: 1
+      sfp4_en: 1
+  temp:
+    limits:
+      min: 20.0
+      max: 100.0
+    devices:
+      enabled:
+        cpu_core: 1
+        eth_sfp1: 1
+        eth_sfp2: 1
+        eth_sfp3: 1
+        eth_sfp4: 1
+        eth_sw: 1
+        sx1_core: 1
+        sx1_dcdc: 1
+        sx2_core: 1
+        sx2_dcdc: 1
+        tmp_rxfem: 1
+        tmp_sx1: 1
+        tmp_sx2: 1
+        tmp_txfem: 1
+  power:
+    ina_nxp: 
+      min: 20.0
+      max: 50.0
+    ina_aux:
+      min: 0.5
+      max: 6.0
+    ina_eth:
+      min: 0.5
+      max: 4.0
+    ina_fpga:
+      min: 10.0
+      max: 50.0
+    ina_clk:
+      min: 0.5
+      max: 7.0
+    ina_sx1:
+      min: 20.0
+      max: 50.0
+    ina_sx2:
+      min: 20.0
+      max: 50.0
+    ina_txfem:
+      min: 5.0
+      max: 15.0      
+    ina_rxfem:
+      min: 5.0
+      max: 15.0
+    ina_main:
+      min: 120.0
+      max: 170.0         
+  
+logs:
+  path: C:\Logs\Tests 
+

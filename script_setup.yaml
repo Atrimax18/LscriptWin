@@ -14,9 +14,10 @@ serial:
 
 server:
   ip: 10.10.10.3
-  login: alexeyt
-  password: Barsuk12!
+  login: al098597
+  password: Bukintrop1978@!
   image_path: C:\Images
+  key_pub_path: C:\Images\id_ed25519_lsbb.pub
 
 dut:
   final_ip: 10.10.10.2
@@ -26,6 +27,8 @@ dut:
   tmp_path: tmp
   image_file: deploy-lsbb-1.1.1-20260324.sh
   em_prompt: "sh-5.2# "
+  login_prompt: "ls1046afrwy login: "
+  prompt: "root@ls1046afrwy:"
 
 switch:
   ip: 192.168.2.2
@@ -37,8 +40,9 @@ sonic:
   password: admin
   login_prompt: "sonic login: "
   prompt: "admin@sonic:~$"
-  image_file: sonic-marvell-arm64-SONiC.bin
-  ip: 10.10.10.15  
+  image_file: sonic-marvell-arm64.bin
+  mng_ip1: 10.10.10.15
+  mng_ip2: 10.10.10.16  
 
 prompts:
   u_boot: "U-Boot"

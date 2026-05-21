@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import getpass
 import pathlib
 import re
 import sqlite3
@@ -21,8 +22,17 @@ except ImportError:
 
 AUTOBOOT_PATTERN = re.compile(r"Hit any key to stop autoboot:", re.IGNORECASE)
 LOGIN_PATTERN = re.compile(r"(?:^|\n).{0,40}login:\s*$", re.IGNORECASE | re.MULTILINE)
+NXP_LOGIN_WITH_TRAILING_OUTPUT_PATTERN = re.compile(r"(?:^|[\r\n]).{0,80}login:\s*(?:$|[\r\n]|\[)", re.IGNORECASE | re.MULTILINE)
 SONIC_LOGIN_PATTERN = re.compile(r"(?:^|\n).{0,40}sonic login:\s*$", re.IGNORECASE | re.MULTILINE)
 PASSWORD_PATTERN = re.compile(r"(?:^|\n).{0,80}password(?: for [^:]+)?:\s*$", re.IGNORECASE | re.MULTILINE)
+NXP_DISTRO_BANNER_PATTERN = re.compile(
+    r"(?:Welcome\s+to\s+)?Satixfy\s+Landing\s+Station\s+Distro\s+\S+(?:\s+\(.*?\)!)?(?:\s+ls1046afrwy\s+ttyS0)?",
+    re.IGNORECASE,
+)
+NXP_BOOT_START_PATTERN = re.compile(r"Welcome\s+to\s+Satixfy\s+Landing\s+Station\s+Distro\s+\S+", re.IGNORECASE)
+NXP_FINAL_LOGIN_BANNER_PATTERN = re.compile(r"Satixfy\s+Landing\s+Station\s+Distro\s+\S+\s+ls1046afrwy\s+ttyS0", re.IGNORECASE)
+NXP_LOGIN_PROMPTS_READY_PATTERN = re.compile(r"Reached target Login Prompts\.", re.IGNORECASE)
+NXP_OPENSSH_KEYGEN_DONE_PATTERN = re.compile(r"Finished OpenSSH Key Generation", re.IGNORECASE)
 HOST_KEY_CONFIRM_YES_PATTERN = re.compile(r"are you sure you want to continue connecting", re.IGNORECASE)
 HOST_KEY_CONFIRM_Y_PATTERN = re.compile(r"do you want to continue connecting\?\s*\(y/n\)", re.IGNORECASE)
 ROOT_SHELL_PATTERN = re.compile(r"(?:^|\n).{0,120}#\s*$", re.MULTILINE)
@@ -34,7 +44,7 @@ SONIC_SYSTEM_READY_PATTERN = re.compile(
     r"(?:^|\n)(?:[A-Z][a-z]{2}\s+\d{1,2}\s+\d{2}:\d{2}:\d{2}(?:\.\d+)?\s+)?System is ready\s*$",
     re.IGNORECASE | re.MULTILINE,
 )
-NXP_REBOOT_TRANSITION_PATTERN = re.compile(r"(?:reboot: Restarting system|NOTICE:|ls1046afrwy login:)", re.IGNORECASE)
+NXP_REBOOT_TRANSITION_PATTERN = re.compile(r"(?:reboot: Restarting system|NOTICE:|(?:^|\n).{0,40}login:\s*$)", re.IGNORECASE | re.MULTILINE)
 SWITCH_GOING_DOWN_PATTERN = re.compile(r"The system is going down NOW!", re.IGNORECASE)
 SWITCH_SIGTERM_PATTERN = re.compile(r"Sent SIGTERM to all processes", re.IGNORECASE)
 SWITCH_SIGKILL_PATTERN = re.compile(r"Sent SIGKILL to all processes", re.IGNORECASE)
@@ -49,10 +59,13 @@ PING_SUCCESS_PATTERN = re.compile(
     re.IGNORECASE | re.DOTALL,
 )
 PING_SUCCESS_TEXT = "1 packets transmitted, 1 packets received, 0% packet loss"
-EMERGENCY_SHELL_PATTERN = re.compile(r"(?:^|\n)\s*sh-5\.2#\s*$", re.MULTILINE)
 EMERGENCY_MAINTENANCE_PATTERN = re.compile(
     r"You are in emergency mode\..*?Press Enter for maintenance\s*\(or press Control-D to continue\):",
     re.IGNORECASE | re.DOTALL,
+)
+EMERGENCY_MODE_READY_PATTERN = re.compile(
+    r"(?:Started Emergency Shell\.|Reached target Emergency Mode\.)",
+    re.IGNORECASE,
 )
 NXP_CLU1_LOCKED_PATTERN = re.compile(r"CLU: DEV1: design: \[DV1_V3\.3\] \| PLL Status - Locked", re.IGNORECASE)
 NXP_CLU2_LOCKED_PATTERN = re.compile(r"CLU: DEV2: design: \[DV2_V3\.3\] \| PLL Status - Locked", re.IGNORECASE)
@@ -60,6 +73,9 @@ NXP_SWITCH_READY_PATTERN = re.compile(r"(?:^|\n)Switch ready\s*$", re.IGNORECASE
 NXP_FPGA_READY_PATTERN = re.compile(r"(?:^|\n)FPGA ready\s*$", re.IGNORECASE | re.MULTILINE)
 DIG_SN_PATTERN = re.compile(r"^[A-Z]{5}-\d{2}-\d{4}-(?:\d{6}|[A-Z]\d)-\d{3,5}$")
 SQL_IDENTIFIER_PATTERN = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+LOG_ROOT = pathlib.Path(r"C:\Logs\Deployment")
+LOG_DIG_SN_FOLDER = "NO_DIG_SN"
+LOG_RUN_TIMESTAMP = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
 
 
 class ConfigError(RuntimeError):
@@ -233,6 +249,7 @@ class DutConfig:
     tmp_path: str
     image_file: str
     em_prompt: str
+    prompt: str
 
 
 @dataclass(frozen=True)
@@ -324,6 +341,7 @@ class AppConfig:
                 tmp_path=str(dut_cfg["tmp_path"]),
                 image_file=str(dut_cfg.get("image_file", "deploy-lsbb-1.1.1-20260324.sh")),
                 em_prompt=str(dut_cfg.get("em_prompt", "sh-5.2#")),
+                prompt=str(dut_cfg.get("prompt", "ls1046afrwy login:")),
             ),
             switch=SwitchConfig(
                 ip=str(switch_cfg["ip"]),
@@ -374,9 +392,23 @@ def load_config(path: pathlib.Path) -> AppConfig:
         raise ConfigError(f"Missing configuration key: {exc}") from exc
 
 
+def sanitize_log_folder_name(value: str | None) -> str:
+    if not value:
+        return "NO_DIG_SN"
+    cleaned = re.sub(r'[<>:"/\\|?*\x00-\x1f]+', "_", value.strip().upper())
+    cleaned = cleaned.strip(" ._")
+    return cleaned or "NO_DIG_SN"
+
+
+def configure_log_context(dig_sn: str | None) -> None:
+    global LOG_DIG_SN_FOLDER, LOG_RUN_TIMESTAMP
+    LOG_DIG_SN_FOLDER = sanitize_log_folder_name(dig_sn)
+    LOG_RUN_TIMESTAMP = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
+
+
 def ensure_logs_dir(base_dir: pathlib.Path) -> pathlib.Path:
-    logs_dir = base_dir / "logs"
-    logs_dir.mkdir(exist_ok=True)
+    logs_dir = LOG_ROOT / LOG_DIG_SN_FOLDER / LOG_RUN_TIMESTAMP
+    logs_dir.mkdir(parents=True, exist_ok=True)
     return logs_dir
 
 
@@ -402,6 +434,20 @@ def compile_switch_prompt_pattern(prompt_text: str) -> re.Pattern[str]:
         stem = re.escape(prompt.rstrip(">"))
         return re.compile(r"(?:^|\n)\s*" + stem + r">+\s*$", re.IGNORECASE | re.MULTILINE)
     return re.compile(r"(?:^|\n)\s*" + re.escape(prompt) + r"\s*$", re.IGNORECASE | re.MULTILINE)
+
+
+def compile_shell_prompt_pattern(prompt_text: str) -> re.Pattern[str]:
+    # Serial output can use '\r' without '\n', and the prompt may be followed
+    # immediately by more console output, so detect the prompt token without
+    # requiring a clean line ending.
+    return re.compile(r"(?:^|[\r\n])\s*" + re.escape(prompt_text.strip()) + r"(?=\s|$)", re.MULTILINE)
+
+
+def compile_login_prompt_pattern(prompt_text: str) -> re.Pattern[str]:
+    prompt = prompt_text.strip()
+    if not prompt:
+        return LOGIN_PATTERN
+    return re.compile(r"(?:^|[\r\n])\s*" + re.escape(prompt) + r"\s*$", re.IGNORECASE | re.MULTILINE)
 
 
 class SerialSession:
@@ -456,6 +502,9 @@ class SerialSession:
 
     def send_line(self, text: str) -> None:
         self.write(text.encode("utf-8") + b"\r")
+
+    def clear_buffer(self) -> None:
+        self.buffer = ""
 
     def poll(self) -> str:
         assert self.serial is not None
@@ -690,24 +739,155 @@ def ensure_linux_shell(
     shell_prompt: re.Pattern[str],
     boot_timeout: int,
     fresh: bool = False,
+    enter_twice_first: bool = False,
+    login_prompt: re.Pattern[str] = LOGIN_PATTERN,
+    scan_start_pos: int | None = None,
 ) -> None:
-    start_pos = len(session.buffer) if fresh else None
+    start_pos = scan_start_pos if scan_start_pos is not None else (len(session.buffer) if fresh else None)
+    prompt_candidates = {
+        "login": login_prompt,
+        "login_generic": LOGIN_PATTERN,
+    }
+    if enter_twice_first:
+        start_pos = len(session.buffer)
+        session.log_event("INFO", "Sending Enter twice before checking Linux login/shell prompt.")
+        session.send_line("")
+        session.send_line("")
     result = session.wait_for_any_pattern(
         {
             "shell": shell_prompt,
-            "login": LOGIN_PATTERN,
+            **prompt_candidates,
+            "distro_banner": NXP_DISTRO_BANNER_PATTERN,
         },
         timeout=boot_timeout,
-        label="linux shell or login",
+        label="linux shell, login, or NXP distro banner",
         start_pos=start_pos,
     )
-    if result == "login":
+    login_ready = False
+    if result == "distro_banner":
+        session.log_event("INFO", "NXP distro banner detected; sending Enter twice before login prompt check.")
+        start_pos = len(session.buffer)
+        session.send_line("")
+        session.send_line("")
+        session.wait_for_any_pattern(
+            prompt_candidates,
+            timeout=30,
+            label="login prompt after distro banner",
+            start_pos=start_pos,
+        )
+        login_ready = True
+
+    if result in {"login", "login_generic"} or login_ready:
+        session.log_event("INFO", "Linux login prompt detected; sending Enter twice before credentials.")
+        if not login_ready:
+            start_pos = len(session.buffer)
+            session.send_line("")
+            session.send_line("")
+            session.wait_for_any_pattern(
+                prompt_candidates,
+                timeout=30,
+                label="login prompt after Enter twice",
+                start_pos=start_pos,
+            )
         start_pos = len(session.buffer)
         session.send_line(username)
         session.wait_for_pattern(PASSWORD_PATTERN, timeout=30, label="password prompt", start_pos=start_pos)
         start_pos = len(session.buffer)
         session.send_line(password)
         session.wait_for_pattern(shell_prompt, timeout=boot_timeout, label="linux shell", start_pos=start_pos)
+
+
+def ensure_linux_login_after_distro_banner(
+    session: SerialSession,
+    username: str,
+    password: str,
+    shell_prompt: re.Pattern[str],
+    boot_timeout: int,
+    login_prompt: re.Pattern[str],
+    scan_start_pos: int | None = None,
+    banner_login_timeout: int = 90,
+) -> None:
+    login_patterns = {
+        "login": login_prompt,
+        "login_generic": LOGIN_PATTERN,
+        "login_nxp_trailing_output": NXP_LOGIN_WITH_TRAILING_OUTPUT_PATTERN,
+    }
+    def wait_for_boot_start() -> str:
+        deadline = time.monotonic() + banner_login_timeout
+        window = ""
+        if scan_start_pos is not None:
+            window = session.buffer[scan_start_pos:]
+            session.clear_buffer()
+        while time.monotonic() < deadline:
+            data = session.poll()
+            if data:
+                window = (window + data)[-12000:]
+                session.clear_buffer()
+            if NXP_BOOT_START_PATTERN.search(window):
+                session.log_event("INFO", "NXP boot start banner detected; watching for final login banner for up to 100 seconds.")
+                return window
+            time.sleep(0.05)
+        return ""
+
+    def wait_for_final_login(initial_window: str, timeout: int = 100) -> bool:
+        deadline = time.monotonic() + timeout
+        window = initial_window[-12000:]
+        final_banner_seen = bool(NXP_FINAL_LOGIN_BANNER_PATTERN.search(window))
+        while time.monotonic() < deadline:
+            data = session.poll()
+            if data:
+                window = (window + data)[-12000:]
+                session.clear_buffer()
+            if not final_banner_seen and NXP_FINAL_LOGIN_BANNER_PATTERN.search(window):
+                final_banner_seen = True
+                session.log_event("INFO", "NXP final login banner detected; waiting for login prompt.")
+            if final_banner_seen:
+                for pattern in login_patterns.values():
+                    if pattern.search(window):
+                        session.log_event("INFO", "NXP login prompt detected after final login banner.")
+                        return True
+            time.sleep(0.05)
+        return False
+
+    try:
+        boot_window = wait_for_boot_start()
+        if boot_window:
+            session.clear_buffer()
+            if not wait_for_final_login(boot_window, timeout=100):
+                session.log_event("WARN", "NXP final login banner/login prompt was not detected within 100 seconds; sending Enter twice.")
+                session.clear_buffer()
+                start_pos = len(session.buffer)
+                session.send_line("")
+                session.send_line("")
+                try:
+                    session.wait_for_any_pattern(
+                        login_patterns,
+                        timeout=30,
+                        label="NXP login prompt after Enter twice fallback",
+                        start_pos=start_pos,
+                    )
+                except TimeoutError:
+                    session.log_event("WARN", "NXP login prompt was not detected after Enter twice fallback; sending credentials anyway.")
+        else:
+            raise TimeoutError
+    except TimeoutError:
+        session.log_event(
+            "WARN",
+            f"NXP boot banner was not detected within {banner_login_timeout} seconds; sending Enter twice and credentials.",
+        )
+        session.clear_buffer()
+        session.send_line("")
+        session.send_line("")
+
+    start_pos = len(session.buffer)
+    session.send_line(username)
+    try:
+        session.wait_for_pattern(PASSWORD_PATTERN, timeout=30, label="password prompt", start_pos=start_pos)
+    except TimeoutError:
+        session.log_event("WARN", "NXP password prompt was not detected; sending password anyway.")
+    start_pos = len(session.buffer)
+    session.send_line(password)
+    session.wait_for_pattern(shell_prompt, timeout=boot_timeout, label="linux shell", start_pos=start_pos)
 
 
 def ensure_sonic_shell(session: SerialSession, config: AppConfig, shell_prompt: re.Pattern[str]) -> None:
@@ -801,10 +981,10 @@ def wait_with_operator_timer(total_seconds: int, label: str) -> None:
     info(f"{label}: timer completed")
 
 
-def ensure_emergency_shell(session: SerialSession, boot_timeout: int, fresh: bool = False) -> None:
+def ensure_emergency_shell(session: SerialSession, prompt_pattern: re.Pattern[str], boot_timeout: int, fresh: bool = False) -> None:
     start_pos = len(session.buffer) if fresh else None
     session.wait_for_pattern(
-        EMERGENCY_SHELL_PATTERN,
+        prompt_pattern,
         timeout=boot_timeout,
         label="emergency shell prompt",
         start_pos=start_pos,
@@ -819,6 +999,38 @@ def ensure_emergency_maintenance_prompt(session: SerialSession, boot_timeout: in
         label="emergency maintenance prompt",
         start_pos=start_pos,
     )
+
+
+def ensure_emergency_access(
+    session: SerialSession,
+    prompt_pattern: re.Pattern[str],
+    boot_timeout: int,
+    fresh: bool = False,
+) -> None:
+    start_pos = len(session.buffer) if fresh else None
+    result = session.wait_for_any_pattern(
+        {
+            "maintenance": EMERGENCY_MAINTENANCE_PATTERN,
+            "shell": prompt_pattern,
+            "emergency_mode": EMERGENCY_MODE_READY_PATTERN,
+        },
+        timeout=boot_timeout,
+        label="emergency maintenance prompt or emergency shell prompt",
+        start_pos=start_pos,
+    )
+    if result == "maintenance":
+        info("NXP: emergency maintenance prompt detected, sending Enter")
+        session.send_line("")
+        ensure_emergency_shell(session, prompt_pattern, boot_timeout, fresh=False)
+        return
+
+    if result == "emergency_mode":
+        info("NXP: emergency mode reached, sending Enter and waiting for emergency shell prompt.")
+        session.send_line("")
+        ensure_emergency_shell(session, prompt_pattern, boot_timeout, fresh=False)
+        return
+
+    info("NXP: emergency shell prompt detected directly.")
 
 
 def validate_nxp_boot_markers(session: SerialSession) -> None:
@@ -942,11 +1154,64 @@ def remote_server_path(server: ServerConfig, filename: str) -> str:
         image_dir = pathlib.PureWindowsPath(server.image_path)
         if not image_dir.drive:
             raise ConfigError(f"Windows image_path must include a drive letter: {server.image_path}")
-        return pathlib.PureWindowsPath(image_dir, filename).as_posix()
+        return str(pathlib.PureWindowsPath(image_dir, filename))
     image_path = server.image_path.strip().strip("/")
     if "/" in image_path:
         return f"/{image_path}/{filename}"
     return f"/home/{server.login}/{image_path}/{filename}"
+
+
+def local_server_file_path(server: ServerConfig, filename: str) -> pathlib.Path:
+    if is_windows_style_path(server.image_path):
+        image_dir = pathlib.PureWindowsPath(server.image_path)
+        if not image_dir.drive:
+            raise ConfigError(f"Windows image_path must include a drive letter: {server.image_path}")
+        return pathlib.Path(str(pathlib.PureWindowsPath(image_dir, filename)))
+    return pathlib.Path(server.image_path) / filename
+
+
+def upload_local_file_to_dut_tmp(session: SerialSession, config: AppConfig, local_path: pathlib.Path) -> None:
+    if not local_path.is_file():
+        raise RuntimeError(f"Local switch file not found: {local_path}")
+
+    scp_command = f"scp {local_path} {config.dut.login}@{config.dut.final_ip}:~/tmp"
+    info(f"Copy switch file to DUT: {scp_command}")
+    session.log_event("INFO", f"Windows SCP upload command: {scp_command}")
+
+    try:
+        import paramiko
+    except ImportError as exc:
+        raise RuntimeError("Paramiko is required for automated Windows-to-DUT file upload.") from exc
+
+    remote_dir = "/root/tmp" if config.dut.login == "root" else "tmp"
+    remote_path = f"{remote_dir}/{local_path.name}"
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    try:
+        ssh.connect(
+            hostname=config.dut.final_ip,
+            username=config.dut.login,
+            password=config.dut.password,
+            timeout=30,
+            banner_timeout=30,
+            auth_timeout=30,
+            look_for_keys=False,
+            allow_agent=False,
+        )
+        ssh.exec_command("mkdir -p ~/tmp")[1].channel.recv_exit_status()
+        with ssh.open_sftp() as sftp:
+            sftp.put(str(local_path), remote_path)
+            remote_size = sftp.stat(remote_path).st_size
+    finally:
+        ssh.close()
+
+    local_size = local_path.stat().st_size
+    if remote_size != local_size:
+        raise RuntimeError(
+            f"Uploaded size mismatch for {local_path.name}: local={local_size}, remote={remote_size}"
+        )
+    ok(f"Copied {local_path.name} to {config.dut.login}@{config.dut.final_ip}:~/tmp ({remote_size} bytes)")
+    session.log_event("INFO", f"Verified Windows SCP upload to {config.dut.final_ip}:~/tmp/{local_path.name} ({remote_size} bytes).")
 
 
 def remote_utils_path(server: ServerConfig, dut: DutConfig) -> str:
@@ -1088,17 +1353,37 @@ def infer_base_mac_from_existing(row_macs: list[str | None]) -> str | None:
     return None
 
 
+def db_mac_storage_value(mac: str) -> str:
+    return compact_mac(mac)
+
+
+def db_type_storage_value() -> str:
+    return "LSBB_DIG_BOARD"
+
+
+def db_user_storage_value() -> str:
+    return getpass.getuser()
+
+
+def db_time_storage_value() -> str:
+    return time.ctime()
+
+
 def upsert_serial_row(connection: sqlite3.Connection, db_config: DbConfig, dig_sn: str, macs: list[str]) -> None:
     table = validate_sql_identifier(db_config.table, "db.table")
     serial_column = validate_sql_identifier(db_config.serial_column, "db.serial_column")
     mac_columns = mac_column_names(db_config)
-    placeholders = ", ".join("?" for _ in range(len(mac_columns) + 1))
-    columns = ", ".join([serial_column, *mac_columns])
-    updates = ", ".join(f"{column} = excluded.{column}" for column in mac_columns)
+    stored_macs = [db_mac_storage_value(mac) for mac in macs]
+    metadata_columns = ["type", "user", "time"]
+    metadata_values = [db_type_storage_value(), db_user_storage_value(), db_time_storage_value()]
+    all_columns = [serial_column, *mac_columns, *metadata_columns]
+    placeholders = ", ".join("?" for _ in range(len(all_columns)))
+    columns = ", ".join(all_columns)
+    updates = ", ".join(f"{column} = excluded.{column}" for column in [*mac_columns, *metadata_columns])
     connection.execute(
         f"INSERT INTO {table} ({columns}) VALUES ({placeholders}) "
         f"ON CONFLICT({serial_column}) DO UPDATE SET {updates}",
-        [dig_sn, *macs],
+        [dig_sn, *stored_macs, *metadata_values],
     )
     connection.commit()
 
@@ -1330,11 +1615,12 @@ def configure_emergency_linux(
     provision: ProvisionArgs,
 ) -> None:
     emergency_prompt_text = config.dut.em_prompt.rstrip() + " "
+    emergency_shell_pattern = compile_shell_prompt_pattern(config.dut.em_prompt)
     emergency_wait_timeout = config.timeouts.emergency_boot_seconds
-    ensure_emergency_maintenance_prompt(session, emergency_wait_timeout, fresh=True)
-    info("NXP: emergency maintenance prompt detected, sending Enter")
+    info("NXP: sending Enter twice after boot delay before checking emergency shell prompt")
     session.send_line("")
-    ensure_emergency_shell(session, emergency_wait_timeout, fresh=False)
+    session.send_line("")
+    ensure_emergency_shell(session, emergency_shell_pattern, emergency_wait_timeout, fresh=False)
     network_check_command = (
         f"ifconfig eth0 {config.dut.final_ip} netmask 255.255.255.0 up ; "
         f"ping {config.server.ip} -c1"
@@ -1405,29 +1691,79 @@ def configure_emergency_linux(
 def boot_nxp_from_uboot(session: SerialSession) -> None:
     info("DUT resetting: sending U-Boot boot command on NXP")
     session.log_event("INFO", "DUT resetting from NXP U-Boot via boot command.")
-    time.sleep(1)
     session.send_line("boot")
+    wait_with_operator_timer(60, "NXP boot delay")
 
 
-def reboot_nxp_from_linux(session: SerialSession, config: AppConfig, reason: str, delay_seconds: int = 0) -> None:
-    ensure_linux_shell(session, config.dut.login, config.dut.password, ROOT_SHELL_PATTERN, config.timeouts.emergency_boot_seconds)
+def reboot_nxp_from_linux(
+    session: SerialSession,
+    config: AppConfig,
+    reason: str,
+    delay_seconds: int = 0,
+    post_reboot_wait_seconds: int = 0,
+    post_reboot_wait_label: str = "NXP reboot delay",
+    wait_for_transition: bool = True,
+    reboot_command: str = "reboot",
+) -> int:
+    ensure_linux_shell(
+        session,
+        config.dut.login,
+        config.dut.password,
+        ROOT_SHELL_PATTERN,
+        config.timeouts.emergency_boot_seconds,
+        login_prompt=compile_login_prompt_pattern(config.dut.prompt),
+    )
     if delay_seconds > 0:
         time.sleep(delay_seconds)
     info(f"DUT resetting: {reason}")
     session.log_event("INFO", f"DUT resetting: {reason}")
     start_pos = len(session.buffer)
-    session.send_line("reboot")
-    session.wait_for_pattern(
-        NXP_REBOOT_TRANSITION_PATTERN,
-        timeout=max(config.timeouts.prompt_wait_seconds, 60),
-        label="NXP reboot transition",
-        start_pos=start_pos,
-    )
+    session.send_line(reboot_command)
+    if wait_for_transition:
+        session.wait_for_pattern(
+            NXP_REBOOT_TRANSITION_PATTERN,
+            timeout=max(config.timeouts.prompt_wait_seconds, 60),
+            label="NXP reboot transition",
+            start_pos=start_pos,
+        )
+    if post_reboot_wait_seconds > 0:
+        session.log_event("INFO", f"{post_reboot_wait_label}: waiting {post_reboot_wait_seconds} seconds before login.")
+        wait_with_operator_timer(post_reboot_wait_seconds, post_reboot_wait_label)
+        session.log_event("INFO", f"{post_reboot_wait_label}: wait completed.")
+    return start_pos
 
 
-def configure_installed_linux(session: SerialSession, config: AppConfig) -> None:
+def configure_installed_linux(
+    session: SerialSession,
+    config: AppConfig,
+    login_scan_start_pos: int | None = None,
+    enter_twice_first: bool = False,
+    wait_for_distro_banner_first: bool = False,
+) -> None:
     shell = ROOT_SHELL_PATTERN
-    ensure_linux_shell(session, config.dut.login, config.dut.password, shell, config.timeouts.emergency_boot_seconds, fresh=True)
+    login_prompt = compile_login_prompt_pattern(config.dut.prompt)
+    if wait_for_distro_banner_first:
+        ensure_linux_login_after_distro_banner(
+            session,
+            config.dut.login,
+            config.dut.password,
+            shell,
+            config.timeouts.emergency_boot_seconds,
+            login_prompt,
+            scan_start_pos=login_scan_start_pos,
+        )
+    else:
+        ensure_linux_shell(
+            session,
+            config.dut.login,
+            config.dut.password,
+            shell,
+            config.timeouts.emergency_boot_seconds,
+            fresh=login_scan_start_pos is None,
+            enter_twice_first=enter_twice_first,
+            login_prompt=login_prompt,
+            scan_start_pos=login_scan_start_pos,
+        )
     run_command(
         session,
         "nmcli con add type ethernet ifname fm1-mac5 con-name fm1-mac5-static ipv4.addresses "
@@ -1456,28 +1792,19 @@ def stage_switch_images(
     provision: ProvisionArgs,
 ) -> re.Pattern[str]:
     shell = ROOT_SHELL_PATTERN
-    ensure_linux_shell(session, config.dut.login, config.dut.password, shell, config.timeouts.emergency_boot_seconds, fresh=True)
-    run_scp_download(
-        session=session,
-        server_login=config.server.login,
-        server_ip=config.server.ip,
-        server_password=config.server.password,
-        remote_path=remote_server_path(config.server, provision.switch_image),
-        destination=f"/{config.dut.tmp_path}",
-        shell_prompt=shell,
-        timeout=max(config.timeouts.emergency_boot_seconds, 120),
+    ensure_linux_shell(
+        session,
+        config.dut.login,
+        config.dut.password,
+        shell,
+        config.timeouts.emergency_boot_seconds,
+        fresh=True,
+        login_prompt=compile_login_prompt_pattern(config.dut.prompt),
     )
-    run_scp_download(
-        session=session,
-        server_login=config.server.login,
-        server_ip=config.server.ip,
-        server_password=config.server.password,
-        remote_path=remote_server_path(config.server, provision.switch_itb),
-        destination=f"/{config.dut.tmp_path}",
-        shell_prompt=shell,
-        timeout=max(config.timeouts.emergency_boot_seconds, 120),
-    )
-    run_command(session, f"cd /{config.dut.tmp_path}", shell, config.timeouts.prompt_wait_seconds, "Change to the temporary directory")
+    run_command(session, "mkdir -p ~/tmp", shell, config.timeouts.prompt_wait_seconds, "Create the DUT switch image upload directory")
+    upload_local_file_to_dut_tmp(session, config, local_server_file_path(config.server, provision.switch_image))
+    upload_local_file_to_dut_tmp(session, config, local_server_file_path(config.server, provision.switch_itb))
+    run_command(session, "cd ~/tmp", shell, config.timeouts.prompt_wait_seconds, "Change to the switch image upload directory")
     ls_output = run_command_capture(
         session,
         "ls -all",
@@ -1490,14 +1817,14 @@ def stage_switch_images(
         missing_text = ", ".join(missing_files)
         session.log_event(
             "ERROR",
-            f"Expected switch transfer files in /{config.dut.tmp_path}, but missing: {missing_text}",
+            f"Expected switch transfer files in ~/tmp, but missing: {missing_text}",
         )
         raise RuntimeError(
-            f"Expected switch transfer files in /{config.dut.tmp_path}, but missing: {missing_text}"
+            f"Expected switch transfer files in ~/tmp, but missing: {missing_text}"
         )
     session.log_event(
         "INFO",
-        f"Verified switch transfer files in /{config.dut.tmp_path}: {provision.switch_image}, {provision.switch_itb}",
+        f"Verified switch transfer files in ~/tmp: {provision.switch_image}, {provision.switch_itb}",
     )
     run_command(
         session,
@@ -1555,7 +1882,6 @@ def configure_sonic(session: SerialSession, config: AppConfig) -> None:
         "sudo sonic-cfggen -w -j /usr/share/sonic/device/arm64-telesat_lsbb-r0/telesat-lsbb/default_config.json",
         "sudo config qos reload",
         f"sudo config interface ip add eth0 {config.switch.ip}/24",
-        "sudo config save -y",
     ]
     for command in commands:
         run_command_with_optional_password(
@@ -1592,7 +1918,14 @@ def verify_switch_management_ping(session: SerialSession, config: AppConfig) -> 
 
 
 def verify_nxp_ping_switch(session: SerialSession, config: AppConfig) -> None:
-    ensure_linux_shell(session, config.dut.login, config.dut.password, ROOT_SHELL_PATTERN, config.timeouts.emergency_boot_seconds)
+    ensure_linux_shell(
+        session,
+        config.dut.login,
+        config.dut.password,
+        ROOT_SHELL_PATTERN,
+        config.timeouts.emergency_boot_seconds,
+        login_prompt=compile_login_prompt_pattern(config.dut.prompt),
+    )
     run_command(
         session,
         f"ping {config.switch.ip} -c1",
@@ -1607,7 +1940,14 @@ def copy_utils_and_run(session: SerialSession, config: AppConfig) -> None:
         return
 
     shell = ROOT_SHELL_PATTERN
-    ensure_linux_shell(session, config.dut.login, config.dut.password, shell, config.timeouts.emergency_boot_seconds)
+    ensure_linux_shell(
+        session,
+        config.dut.login,
+        config.dut.password,
+        shell,
+        config.timeouts.emergency_boot_seconds,
+        login_prompt=compile_login_prompt_pattern(config.dut.prompt),
+    )
     run_scp_download(
         session=session,
         server_login=config.server.login,
@@ -1748,10 +2088,15 @@ def run_provision_mode(config: AppConfig, args: argparse.Namespace, repo_root: p
             boot_nxp_from_uboot(nxp)
             configure_emergency_linux(nxp, config, provision)
 
-            reboot_nxp_from_linux(nxp, config, "rebooting after deploy script completed")
-            configure_installed_linux(nxp, config)
+            login_scan_pos = reboot_nxp_from_linux(
+                nxp,
+                config,
+                "rebooting after deploy script completed",
+                post_reboot_wait_label="NXP deploy reboot delay",
+                wait_for_transition=False,
+            )
+            configure_installed_linux(nxp, config, login_scan_start_pos=login_scan_pos, wait_for_distro_banner_first=True)
 
-            reboot_nxp_from_linux(nxp, config, "rebooting after persistent DUT IP configuration", delay_seconds=1)
             switch_prompt = stage_switch_images(nxp, switch, config, provision)
 
             info("Switch U-Boot serverip probe completed; starting ONIE image install")
@@ -1793,51 +2138,60 @@ def build_parser() -> argparse.ArgumentParser:
         help="Run the quick prompt detector, MAC-only flow, full provisioning flow, or DB-backed MAC generation.",
     )
     parser.add_argument(
+        "--boot_stop_key",
         "--boot-stop-key",
         choices=["enter", "space", "ctrl-c"],
         default="enter",
         help="Key sent to stop autoboot on the NXP console.",
     )
     parser.add_argument(
+        "--skip_switch",
         "--skip-switch",
         action="store_true",
         help="Only detect and stop autoboot on the NXP console.",
     )
-    parser.add_argument("--base-mac", help="Runtime MAC written to 'mac 0' in NXP U-Boot.")
+    parser.add_argument("--base_mac", "--base-mac", help="Runtime MAC written to 'mac 0' in NXP U-Boot.")
     parser.add_argument(
+        "--switch_uboot_mac",
         "--switch-uboot-mac",
         help="Switch U-Boot ethaddr. Defaults to base-mac plus 1.",
     )
     parser.add_argument(
+        "--switch_onie_mac",
         "--switch-onie-mac",
         help="Switch ONIE ethaddr. Defaults to base-mac plus 1.",
     )
     parser.add_argument(
+        "--deploy_script",
         "--deploy-script",
         default=None,
         help="Deploy script filename under the configured image folder.",
     )
     parser.add_argument(
+        "--switch_image",
         "--switch-image",
         default=None,
         help="Switch image filename under the configured image folder.",
     )
     parser.add_argument(
+        "--switch_itb",
         "--switch-itb",
         default=None,
         help="Extra switch ITB filename copied to the DUT.",
     )
     parser.add_argument(
+        "--skip_utils",
         "--skip-utils",
         action="store_true",
         help="Do not copy LSBB_Utils or run its test suite.",
     )
-    parser.add_argument("--dig_sn", help="DIG board serial number used by gen_mac or DB-backed provision mode.")
+    parser.add_argument("--dig_sn", "--dig-sn", help="DIG board serial number used by gen_mac or DB-backed provision mode.")
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+    configure_log_context(args.dig_sn)
     repo_root = pathlib.Path(__file__).resolve().parent
     config_path = (repo_root / args.config).resolve()
 

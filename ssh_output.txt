@@ -1,0 +1,141 @@
+root@ls1046afrwy:~/LSBB_Utils# sh ./run.sh
+argument list ['TARGET']
+LSBB_CTRL_MODE set to TARGET
+=== TARGET mode: libbsp/spidev transport ===
+===============================================================================
+CPLD Ver: 1.4, Build: 0x0, Compiled Date: 24-04-26
+===============================================================================
+Power Seq Domain: Aux     , Result = 1 , Expected = 1  - Pass
+Power Seq Domain: NXP     , Result = 1F, Expected = 1F - Pass
+Power Seq Domain: ETH     , Result = 1F, Expected = 1F - Pass
+Power Seq Domain: SX1     , Result = 3F, Expected = 3F - Pass
+Power Seq Domain: SX2     , Result = 3F, Expected = 3F - Pass
+Power Seq Domain: FPGA    , Result = 7F, Expected = 7F - Pass
+Power Seq Domain: RXFEM   , Result = 1 , Expected = 1  - Pass
+Power Seq Domain: TXFEM   , Result = 1 , Expected = 1  - Pass
+Power Seq Domain: CLK     , Result = 3 , Expected = 3  - Pass
+Using HTML dig Cont: coin_digital_container_sw_13042026.html
+Press any key to skip System Init (Skyworks PLLs + TXFEM + RXFEM + FPGA...)
+=== SKYWORKS PLL Init ==================================================
+LOLn = 1
+LOLn = 1
+TARGET mode: Si5395 init skipped (driver-managed)
+CLU[1] design_id=DV1_V3.3 pll=LOCKED
+CLU[2] design_id=DV2_V3.3 pll=LOCKED
+========================================================================
+
+=== ETH Switch Init ====================================================
+========================================================================
+
+=== FPGA Init ==========================================================
+FPGA GP Container Info:
+ GP Cont Ver: 0x20260219
+ Time&Date  : 2026-04-22  22:29:49
+ Version    : 11.0
+ Build      : 1
+FPGA Dig Container Info:
+ Dig Cont Ver: 0x20260416
+FPGA Debugger DB:
+ uplink_modem   : Num Of CHs=4, Samples Per CH=8 , Mem Depth=2048, Total Mem:16[KB]
+ uplink_DAC     : Num Of CHs=2, Samples Per CH=8 , Mem Depth=2048, Total Mem:16[KB]
+ downlink_modem : Num Of CHs=4, Samples Per CH=8 , Mem Depth=2048, Total Mem:16[KB]
+ downlink_ADC   : Num Of CHs=1, Samples Per CH=20, Mem Depth=2048, Total Mem:40[KB]
+========================================================================
+
+=== TXFEM Init =========================================================
+FPGA JESD Config - DAC:
+ FPGA DAC        JESD @ 0x42000, IP Ver = 4.3
+ FPGA DAC        JESD @ 0x43000, IP Ver = 4.3
+ FPGA DAC        PHY  @ 0x44000, IP Ver = 4.1
+TXFEM ADF4368 (TARGET): freq=11700 MHz lock=1 -- driver-owned init OK
+AD9175: ChipType = 0x04, ChipGrade = 0x07, ProductID = 0x9175
+DAC AD9175 - Configuration Starts...
+DAC AD9175 - Configuration Done !
+
+DAC JESD Status Check:
+-----------------------------------------------------
+DAC0, LANE_DESKEW          = 0xF  - OK
+DAC0, BAD_DISPARITY        = 0x0  - OK
+DAC0, NOT_IN_TABLE         = 0x0  - OK
+DAC0, UNEXPECTED_KCHAR     = 0x0  - OK
+DAC0, CODE_GRP_SYNC        = 0xF  - OK
+DAC0, FRAME_SYNC           = 0xF  - OK
+DAC0, GOOD_CHECKSUM        = 0xF  - OK
+DAC0, INIT_LANE_SYNC       = 0xF  - OK
+DAC1, LANE_DESKEW          = 0xF  - OK
+DAC1, BAD_DISPARITY        = 0x0  - OK
+DAC1, NOT_IN_TABLE         = 0x0  - OK
+DAC1, UNEXPECTED_KCHAR     = 0x0  - OK
+DAC1, CODE_GRP_SYNC        = 0xF  - OK
+DAC1, FRAME_SYNC           = 0xF  - OK
+DAC1, GOOD_CHECKSUM        = 0xF  - OK
+DAC1, INIT_LANE_SYNC       = 0xF  - OK
+========================================================================
+
+=== RXFEM Init =========================================================
+RXFEM ADF4368 (TARGET): freq=9750 MHz lock=1 -- driver-owned init OK
+AD9213: ChipType = 0x03, Chip ID = 0x00E5, Vendor ID = 0x0456
+ADC AD9213 - Configuration Starts...
+ADC AD9213 - Configuration Done !
+FPGA JESD Config - ADC:
+ FPGA ADC        JESD @ 0x40000, IP Ver = 4.3
+ FPGA ADC        JESD @ 0x41000, IP Ver = 4.3
+ FPGA ADC        PHY  @ 0x44000, IP Ver = 4.1
+ FPGA ADC        PHY  @ 0x45000, IP Ver = 4.1
+FPGA JESD ADC - STAT_RX_DEBUG = 0xEEEEEEEE - OK
+FPGA JESD ADC - STAT_STATUS   = 0x00007000 - OK
+========================================================================
+
+=== SX4000 Init =========================================================
+Press 1 - to Load SX4000 #1
+Press 2 - to Load SX4000 #2
+Press 3 - to Load both SX4000 #1 & #2
+.....
+========================================================================
+
+=== I2C Temp Meter ====================================================
+Domain         : Temperature [Deg]
+-------------------------------------------------------------------------------
+CPU_CORE       : 40.0
+TMP_SX1        : 33.9
+SX1_DCDC       : 37.5
+TMP_SX2        : 33.1
+SX2_DCDC       : 36.0
+TMP_TXFEM      : 35.8
+TMP_RXFEM      : 31.9
+
+=== I2C Power Meter ====================================================
+Domain         : Volt [V]     Current [mA]   Power [W]
+-------------------------------------------------------------------------------
+INA_NXP        : 11.964       480            5.80
+INA_AUX        : 11.960       630            7.20
+INA_ETH        : 11.960       540            6.20
+INA_FPGA       : 11.952       1040           12.20
+INA_CLK        : 11.964       640            6.20
+INA_SX1        : 11.972       260            3.00
+INA_SX2        : 11.964       250            3.00
+INA_TXFEM      : 11.976       980            11.80
+INA_RXFEM      : 11.964       1020           12.40
+INA_MAIN       : 11.976       5240           62.80
+========================================================================
+
+Data Path - Disabled
+dsp_cfg_ul_i0_nco_delta_phase: 0x6F96F970 (-250.0 MHz)
+dsp_cfg_ul_i0_gain: 0x100 (0.500)
+dsp_cfg_dl_i0_nco_delta_phase: 0x13B13B13 (750.0 MHz)
+dsp_cfg_dl_i0_gain: 0x100 (0.500)
+dsp_cfg_ul_i1_nco_delta_phase: 0x10690690 (250.0 MHz)
+dsp_cfg_ul_i1_gain: 0x100 (0.500)
+dsp_cfg_dl_i1_nco_delta_phase: 0x6906906 (250.0 MHz)
+dsp_cfg_dl_i1_gain: 0x100 (0.500)
+dsp_cfg_ul_i2_nco_delta_phase: 0x6F96F970 (-250.0 MHz)
+dsp_cfg_ul_i2_gain: 0x100 (0.500)
+dsp_cfg_dl_i2_nco_delta_phase: 0x796F96FA (-250.0 MHz)
+dsp_cfg_dl_i2_gain: 0x100 (0.500)
+dsp_cfg_ul_i3_nco_delta_phase: 0x10690690 (250.0 MHz)
+dsp_cfg_ul_i3_gain: 0x100 (0.500)
+dsp_cfg_dl_i3_nco_delta_phase: 0x6C4EC4ED (-750.0 MHz)
+dsp_cfg_dl_i3_gain: 0x100 (0.500)
+Modem Link - All Disabled
+Data Path - Enabled
+>>>

@@ -6,7 +6,6 @@ admin@sonic:~$ sudo config acl rem table CP_OUT
 admin@sonic:~$ sudo config interface speed Ethernet10 10000
 admin@sonic:~$ sudo config interface speed Ethernet11 10000
 admin@sonic:~$ sudo config interface ip add Vlan100 10.10.10.15/24
-admin@sonic:~$ sudo config save -y
 
 Sx4000 #1
 /# ifconfig lan2 down
