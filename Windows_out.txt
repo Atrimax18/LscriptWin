@@ -1,1566 +1,3 @@
-[UART NXP] [    5.169694] si5395 spi10.0: Si5395 ready (cs=0 variant=1)
-[UART NXP] [    5.190014] si5395 spi10.1: DT: Default firmware-variant = 2
-[UART NXP] [    5.196304] lsbb-fpga-spi spi2.1: FPGA: fw=11.0 build=6 GP_CONT_VER=0x20260219 date=2026-05-05
-[UART NXP] [    5.200696] si5395 spi10.1: Chip: 0x5395 Grade: 0 Rev: 0
-[UART NXP] [    5.210997] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@24: registered 2 read/write GPIO outputs at 0x00000024
-[UART NXP] [    5.220605] si5395 spi10.1: design_id: [DV2_V3.3] PLL: Locked
-[UART NXP] [    5.222266] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@28: registered 2 read/write GPIO outputs at 0x00000028
-[UART NXP] [    5.227260] si5395 spi10.1: Si5395 ready (cs=1 variant=2)
-[UART NXP] [    5.237742] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@2c: registered 2 read/write GPIO outputs at 0x0000002c
-[UART NXP] [    5.253555] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@30: registered 1 read/write GPIO outputs at 0x00000030
-[UART NXP] [    5.264643] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@34: registered 6 read/write GPIO outputs at 0x00000034
-[UART NXP] [    5.266842] tps546d24a 8-0015: power monitor tps546d24a
-[UART NXP] [    5.275215] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@38: registered 1 write-only GPIO outputs at 0x00000038
-[UART NXP] [    5.290901] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@3c: registered 2 read/write GPIO outputs at 0x0000003c
-[UART NXP] [  OK      5.301708] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@40: registered 6 read/write GPIO outputs at 0x00000040
-[UART NXP] 0m] Finished     5.313454] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@44: registered 2 read/write GPIO outputs at 0x00000044
-[UART NXP] ;1;39mVirtual Co[    5.325882] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@48: registered 1 read/write GPIO outputs at 0x00000048
-[UART NXP] nsole Setup.[    5.337277] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@4c: registered 6 read/write GPIO outputs at 0x0000004c
-[UART NXP]
-[UART NXP]
-[UART NXP] [    5.348874] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@50: registered 8 read/write GPIO outputs at 0x00000050
-[UART NXP] [    5.359372] gpio gpiochip29: Detected name collision for GPIO name ''
-[UART NXP] [    5.365843] gpio gpiochip29: Detected name collision for GPIO name ''
-[UART NXP] [    5.372301] gpio gpiochip29: Detected name collision for GPIO name ''
-[UART NXP] [    5.375218] lsbb-fpga-spi spi2.1: BRAM comm-check PASSED: 1024/1024 dwords OK
-[UART NXP] [    5.378952] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@54: registered 8 read/write GPIO outputs at 0x00000054
-[UART NXP] [    5.386343] lsbb-fpga-spi spi2.1: LSBB FPGA: ready, SPI@5000000 Hz
-[UART NXP] [    5.396537] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@60: registered 7 read-only GPIOs at 0x00000060
-[UART NXP] [  OK  ] Found device /dev/mmcblk0p3.
-[UART NXP]
-[UART NXP] [    5.439544] spi-xilinx-regmap 4000.spi: Xilinx AXI SPI regmap bridge at 0x4000 ready
-[UART NXP]          Mounting /media/data...
-[UART NXP]
-[UART NXP] [    5.452962] spi-xilinx-regmap 4100.spi: Xilinx AXI SPI regmap bridge at 0x4100 ready
-[UART NXP] [    5.464010] spi-xilinx-regmap 4200.spi: Xilinx AXI SPI regmap bridge at 0x4200 ready
-[UART NXP] [    5.475213] spi-xilinx-regmap 4300.spi: Xilinx AXI SPI regmap bridge at 0x4300 ready
-[UART NXP] [    5.485247] spi-xilinx-regmap 4400.spi: Xilinx AXI SPI regmap bridge at 0x4400 ready
-[UART NXP] [    5.496764] ad8366 spi23.0: supply vcc not found, using dummy regulator
-[UART NXP] [    5.505338] ad8366 spi23.1: supply vcc not found, using dummy regulator
-[UART NXP] [    5.513400] ad8366 spi23.2: supply vcc not found, using dummy regulator
-[UART NXP] [    5.521548] ad8366 spi24.0: supply vcc not found, using dummy regulator
-[UART NXP] [    5.529606] ad8366 spi24.1: supply vcc not found, using dummy regulator
-[UART NXP] [    5.537589] ad8366 spi24.2: supply vcc not found, using dummy regulator
-[UART NXP] [    5.564886] adf4368 spi20.0: ADF4368 locked at 11700000000 Hz
-[UART NXP] [    5.611583] adf4368 spi21.0: ADF4368 locked at 9750000000 Hz
-[UART NXP] [    5.618818] EXT4-fs (mmcblk0p3): mounted filesystem 4f4a7020-4ae4-47d1-bc0a-0beb0ada5236 r/w with ordereddata mode. Quota mode: disabled.
-[UART NXP] [  OK  ] Mounted /media/data.
-[UART NXP]
-[UART NXP]          Mounting /home...
-[UART NXP]
-[UART NXP]          Mounting /root...
-[UART NXP]
-[UART NXP]          Mounting /srv...
-[UART NXP]
-[UART NXP] [  OK  ] Mounted /home.
-[UART NXP]
-[UART NXP] [  OK  ] Mounted /root.
-[UART NXP]
-[UART NXP] [  OK  ] Mounted /srv.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target Local File Systems.
-[UART NXP]
-[UART NXP]          Starting Rebuild Dynamic Linker Cache...
-[UART NXP]
-[UART NXP]          Starting Create Volatile Files and Directories...
-[UART NXP]
-[UART NXP] [  OK  ] Created slice Slice /system/systemd-fsck.
-[UART NXP]
-[UART NXP]          Expecting device /dev/mmcblk0p2...
-[UART NXP]
-[UART NXP] [  OK  ] Found device /dev/mmcblk0p2.
-[UART NXP]
-[UART NXP]          Starting File System Check on /dev/mmcblk0p2...
-[UART NXP]
-[UART NXP] [  OK  ] Finished Create Volatile Files and [    6.043411] audit: type=1334 audit(1709054768.212:7): prog-id=11 op=LOAD
-[UART NXP] Directories.
-[UART NXP]
-[UART NXP]          Star[    6.052766] audit: type=1334 audit(1709054768.220:8): prog-id=12 op=LOAD
-[UART NXP] ting Rebuild Journal Catalog...
-[UART NXP]
-[UART NXP]          Starting Network Name Resolution...
-[UART NXP]
-[UART NXP]          Starting Network Time Synchronization...
-[UART NXP]
-[UART NXP]          Starting Record System Boot/Shutdown in UTMP...
-[UART NXP]
-[UART NXP] [  OK  ] Finished Record System Boot/Shutdown in UTMP.
-[UART NXP]
-[UART NXP] [  OK  ] Started Network Time Synchronization.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target System Time Set.
-[UART NXP]
-[UART NXP] [  OK  ] Started Network Name Resolution.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target Host and Network Name Lookups.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Rebuild Journal Catalog.
-[UART NXP]
-[UART NXP] [  OK  ] Finished File System Check on /dev/mmcblk0p2.
-[UART NXP]
-[UART NXP]          Mounting /run/media/p2-mmcblk0p2...
-[UART NXP]
-[UART NXP] [    6.649813] EXT4-fs (mmcblk0p2): mounted filesystem d174e98d-95d0-4022-bf3c-cf238fcd64de r/w with ordereddata mode. Quota mode: disabled.
-[UART NXP] [  OK  ] Mounted /run/media/p2-mmcblk0p2.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Rebuild Dynamic Linker Cache.
-[UART NXP]
-[UART NXP]          Starting Update is Completed...
-[UART NXP]
-[UART NXP] [  OK  ] Finished Update is Completed.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target System Initialization.
-[UART NXP]
-[UART NXP] [  OK  ] Started Daily Cleanup of Temporary Directories.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target Timer Units.
-[UART NXP]
-[UART NXP] [  OK  ] Listening on D-Bus System Message Bus Socket.
-[UART NXP]
-[UART NXP]          Starting sshd.socket...
-[UART NXP]
-[UART NXP] [  OK  ] Listening on SWUpdate socket listener.
-[UART NXP]
-[UART NXP] [  OK  ] Listening on sshd.socket.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target Socket Units.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target Basic System.
-[UART NXP]
-[UART NXP]          Starting Bless boot...
-[UART NXP]
-[UART NXP]          Starting D-Bus System Message Bus...
-[UART NXP]
-[UART NXP]          Starting IPv6 Packet Filtering Framework...
-[UART NXP]
-[UART NXP]          Starting IPv4 Packet Filtering Framework...
-[UART NXP]
-[UART NXP] [  OK  ] Started ntp service.
-[UART NXP]
-[UART NXP]          Starting SWUpdate daemon...
-[UART NXP]
-[UART NXP] [  OK  ] Started System Logging Service.
-[UART NXP]
-[UART NXP]          Starting Resets System Activity Logs...
-[UART NXP]
-[UART NXP] [    7.876917] audit: type=1334 audit(1709054770.044:9): prog-id=13 op=LOAD
-[UART NXP] [    7.883665] audit: type=1334 audit(1709054770.052:10): prog-id=14 op=LOAD
-[UART NXP] [    7.890482] audit: type=1334 audit(1709054770.060:11): prog-id=15 op=LOAD
-[UART NXP]          Starting User Login Management...
-[UART NXP]
-[UART NXP]          Starting OpenSSH Key Generation...
-[UART NXP]
-[UART NXP] [  OK  ] Finished Bless boot.
-[UART NXP]
-[UART NXP] [  OK  ] Finished IPv6 Packet Filtering Framework.
-[UART NXP]
-[UART NXP] [  OK  ] Started D-Bus System Message Bus.
-[UART NXP]
-[UART NXP] [  OK  ] Finished IPv4 Packet Filtering Framework.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Resets System Activity Logs.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target Preparation for Network.
-[UART NXP]
-[UART NXP]          Starting Network Manager...
-[UART NXP]
-[UART NXP] [  OK  ] Started SWUpdate daemon.
-[UART NXP]
-[UART NXP] [  OK  ] Started swupdate progress service.
-[UART NXP]
-[UART NXP] [  OK  ] Started User Login Management.
-[UART NXP]
-[UART NXP]          Starting Hostname Service...
-[UART NXP]
-[UART NXP] [  OK  ] Started Hostname Service.
-[UART NXP]
-[UART NXP]          Starting Network Manager Script Dispatcher Service...
-[UART NXP]
-[UART NXP] [  OK  ] Started Network Manager.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target Network.
-[UART NXP]
-[UART NXP]          Starting Network Manager Wait Online...
-[UART NXP]
-[UART NXP]          Starting DNS forwarder and DHCP server...
-[UART NXP]
-[UART NXP] [  OK  ] Started Log Server Service.
-[UART NXP]
-[UART NXP]          Starting Enable switch OOB interface...
-[UART NXP]
-[UART NXP]          Starting Redis In-Memory Data Store...
-[UART NXP]
-[UART NXP]          Starting Permit User Sessions...
-[UART NXP]
-[UART NXP] [  OK  ] Started Xinetd A Powerful Replacement For Inetd.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Enable switch OOB interface.
-[UART NXP]
-[UART NXP] [  OK  ] Started Network Manager Script Dispatcher Service.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Permit User Sessions.
-[UART NXP]
-[UART NXP] [  OK  ] Started DNS forwarder and DHCP server.
-[UART NXP]
-[UART NXP] [  OK  ] Started Getty on tty1.
-[UART NXP]
-[UART NXP] [  OK  ] Started Serial Getty on ttyS0.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target Login Prompts.
-[UART NXP]
-[UART NXP] [  OK  ] Started Redis In-Memory Data Store.
-[UART NXP]
-[UART NXP TX] \r
-[UART NXP TX] \r
-[ERROR] Timed out waiting for NXP final login banner or login prompt after OpenSSH key generation on NXP (COM20)
-PS C:\Users\alexeyt\source\repos\LscriptWin> python lscriptnxp.py --dig_sn CLSDM-09-0926-260528-002
-[INFO] NXP log: C:\Logs\Deployment\CLSDM-09-0926-260528-002\20260523-113548\20260523-113548-nxp.log
-[INFO] Switch log: C:\Logs\Deployment\CLSDM-09-0926-260528-002\20260523-113548\20260523-113548-switch.log
-
-[STAGE 1] Stop autoboot and configure NXP + switch at U-Boot
-[INFO] NXP: NXP U-Boot: gpio clear 27
-[INFO] NXP: NXP U-Boot: mac read
-[INFO] NXP: NXP U-Boot: mac id
-[INFO] NXP: NXP U-Boot: mac ports 4
-[INFO] NXP: NXP U-Boot: mac 0 70:B3:D5:97:07:D8
-[INFO] NXP: NXP U-Boot: mac 1 00:04:9F:08:44:A2
-[INFO] NXP: NXP U-Boot: mac 2 00:04:9F:08:44:A3
-[INFO] NXP: NXP U-Boot: mac 3 00:04:9F:08:44:A4
-[INFO] NXP: NXP U-Boot: mac save
-[INFO] Switch: Switch U-Boot: setenv ethaddr
-[INFO] Switch: Switch U-Boot: saveenv
-
-[STAGE 2] Reset NXP after MAC save and enter emergency mode using YAML prompt
-[INFO] NXP: sending reset from U-Boot, waiting 65 seconds without UART reads, then checking YAML emergency prompt
-[INFO] NXP boot delay: waiting about 1:05
-NXP boot delay: 100%|███████████████████████████████████████████████████████████████████| 65/65 [01:05<00:00,  1.00s/s]
-[INFO] NXP boot delay: timer completed
-
-[STAGE 3] Send IP and ping commands from NXP to the PC
-[INFO] NXP: Configure DUT IP in emergency mode
-[INFO] NXP: Ping the PC from emergency mode
-
-[STAGE 4] Start dropbear and push the deployment script from Windows to the DUT
-[INFO] NXP: Create dropbear runtime directory
-[INFO] NXP: Start dropbear service in emergency mode
-[INFO] Windows->DUT SCP: scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\deploy-lsbb-1.1.1-20260324.sh root@10.10.10.2:/tmp
-[INFO] NXP: Verify deployment script exists in DUT temporary directory
-
-[STAGE 5] Start the deployment script, then reboot out of emergency mode
-[INFO] NXP: Change to temporary deployment directory
-[INFO] NXP: starting deployment script
-NXP deploy script: 100%|████████████████████████████████████████████████████████████| 2400/2400 [02:14<00:00, 17.83s/s]
-[INFO] NXP: deploy script completed, sending reboot to leave emergency mode
-[INFO] NXP: showing live UART after deployment reboot and waiting for login prompt
-[UART NXP] [    1.967188] systemd[1]: Hostname set to <ls1046afrwy>.
-[UART NXP] [    1.979674] systemd[1]: Initializing machine ID from random generator.
-[UART NXP] [    2.360588] systemd[1]: Queued start job for default target Multi-User System.
-[UART NXP] [    2.387714] systemd[1]: Created slice Slice /system/getty.
-[UART NXP] [  OK  ] Created slice Slice /system/getty.
-[UART NXP]
-[UART NXP] [    2.410430] systemd[1]: Created slice Slice /system/modprobe.
-[UART NXP] [  OK  ] Created slice Slice /system/modprobe.
-[UART NXP]
-[UART NXP] [    2.434394] systemd[1]: Created slice Slice /system/serial-getty.
-[UART NXP] [  OK  ] Created slice Slice /system/serial-getty.
-[UART NXP]
-[UART NXP] [    2.458769] systemd[1]: Created slice User and Session Slice.
-[UART NXP] [  OK  ] Created slice User and Session Slice.
-[UART NXP]
-[UART NXP] [    2.481979] systemd[1]: Started Dispatch Password Requests to Console Directory Watch.
-[UART NXP] [  OK  ] Started Dispatch Password Requests to Console Directory Watch.
-[UART NXP]
-[UART NXP] [    2.509943] systemd[1]: Started Forward Password Requests to Wall Directory Watch.
-[UART NXP] [  OK  ] Started Forward Password Requests to Wall Directory Watch.
-[UART NXP]
-[UART NXP] [    2.533771] systemd[1]: Expecting device /dev/mmcblk0p3...
-[UART NXP]          Expecting device /dev/mmcblk0p3...
-[UART NXP]
-[UART NXP] [    2.553844] systemd[1]: Reached target Path Units.
-[UART NXP] [  OK  ] Reached target Path Units.
-[UART NXP]
-[UART NXP] [    2.573748] systemd[1]: Reached target Remote File Systems.
-[UART NXP] [  OK  ] Reached target Remote File Systems.
-[UART NXP]
-[UART NXP] [    2.593746] systemd[1]: Reached target Slice Units.
-[UART NXP] [  OK  ] Reached target Slice Units.
-[UART NXP]
-[UART NXP] [    2.613771] systemd[1]: Reached target Swaps.
-[UART NXP] [  OK  ] Reached target Swaps.
-[UART NXP]
-[UART NXP] [    2.634362] systemd[1]: Listening on Syslog Socket.
-[UART NXP] [  OK  ] Listening on Syslog Socket.
-[UART NXP]
-[UART NXP] [    2.654012] systemd[1]: Listening on initctl Compatibility Named Pipe.
-[UART NXP] [  OK  ] Listening on initctl Compatibility Named Pipe.
-[UART NXP]
-[UART NXP] [    2.678385] systemd[1]: Listening on Journal Audit Socket.
-[UART NXP] [  OK  ] Listening on Journal Audit Socket.
-[UART NXP]
-[UART NXP] [    2.698157] systemd[1]: Listening on Journal Socket (/dev/log).
-[UART NXP] [  OK  ] Listening on Journal Socket (/dev/log).
-[UART NXP]
-[UART NXP] [    2.722265] systemd[1]: Listening on Journal Socket.
-[UART NXP] [  OK  ] Listening on Journal Socket.
-[UART NXP]
-[UART NXP] [    2.742490] systemd[1]: Listening on udev Control Socket.
-[UART NXP] [  OK  ] Listening on udev Control Socket.
-[UART NXP]
-[UART NXP] [    2.762120] systemd[1]: Listening on udev Kernel Socket.
-[UART NXP] [  OK  ] Listening on udev Kernel Socket.
-[UART NXP]
-[UART NXP] [    2.782191] systemd[1]: Listening on User Database Manager Socket.
-[UART NXP] [  OK  ] Listening on User Database Manager Socket.
-[UART NXP]
-[UART NXP] [    2.829784] systemd[1]: Mounting Huge Pages File System...
-[UART NXP]          Mounting Huge Pages File System...
-[UART NXP]
-[UART NXP] [    2.852544] systemd[1]: Mounting POSIX Message Queue File System...
-[UART NXP]          Mounting POSIX Message Queue File System...
-[UART NXP]
-[UART NXP] [    2.875485] systemd[1]: Mounting Kernel Debug File System...
-[UART NXP]          Mounting Kernel Debug File System...
-[UART NXP]
-[UART NXP] [    2.893911] systemd[1]: Kernel Trace File System was skipped because of an unmet condition check (ConditionPathExists=/sys/kernel/tracing).
-[UART NXP] [    2.910314] systemd[1]: Mounting Temporary Directory /tmp...
-[UART NXP]          Mounting Temporary Directory /tmp...
-[UART NXP]
-[UART NXP] [    2.930126] systemd[1]: Create List of Static Device Nodes was skipped because of an unmet condition check (ConditionFileNotEmpty=/lib/modules/6.6.52-ge0f9e2afd4cf-dirty/modules.devname).
-[UART NXP] [    2.949935] systemd[1]: Starting Load Kernel Module configfs...
-[UART NXP]          Starting Load Kernel Module configfs...
-[UART NXP]
-[UART NXP] [    2.972301] systemd[1]: Starting Load Kernel Module drm...
-[UART NXP]          Starting Load Kernel Module drm...
-[UART NXP]
-[UART NXP] [    2.996193] systemd[1]: Starting Load Kernel Module fuse...
-[UART NXP]          Starting Load Kernel Module fuse...
-[UART NXP]
-[UART NXP] [    3.017930] systemd[1]: File System Check on Root Device was skipped because of an unmet condition check (ConditionPathIsReadWrite=!/).
-[UART NXP] [    3.033711] systemd[1]: Starting Journal Service...
-[UART NXP]          Starting Journal Service...
-[UART NXP]
-[UART NXP] [    3.060327] systemd[1]: Load Kernel Modules was skipped because no trigger condition checks were met.
-[UART NXP] [    3.071481] systemd[1]: Starting Generate network units from Kernel command line...
-[UART NXP]          Starting Generate network units from Kernel command line...
-[UART NXP]
-[UART NXP] [    3.099439] systemd[1]: Starting Remount Root and Kernel File Systems...
-[UART NXP]          Starting Remount Root and Kernel File Systems...
-[UART NXP]
-[UART NXP] [    3.113779] systemd-journald[107]: Collecting audit messages is enabled.
-[UART NXP] [    3.123409] systemd[1]: Starting Apply Kernel Variables...
-[UART NXP]          Starting Apply Kernel Variables...
-[UART NXP]
-[UART NXP] [    3.143597] systemd[1]: Starting Create Static Device Nodes in /dev gracefully...
-[UART NXP]          Starting Create Static Device Nodes in /dev gracefully...
-[UART NXP]
-[UART NXP] [    3.161908] EXT4-fs (mmcblk0p1): re-mounted d174e98d-95d0-4022-bf3c-cf238fcd64de r/w. Quota mode: disabled.
-[UART NXP] [    3.173845] systemd[1]: Starting Coldplug All udev Devices...
-[UART NXP]          Starting Coldplug All udev Devices...
-[UART NXP]
-[UART NXP] [    3.200850] systemd[1]: Started Journal Service.
-[UART NXP] [  OK  ] Started Journal Service.
-[UART NXP]
-[UART NXP] [  OK  ] Mounted Huge Pages File System.
-[UART NXP]
-[UART NXP] [  OK  ] Mounted POSIX Message Queue File System.
-[UART NXP]
-[UART NXP] [  OK  ] Mounted Kernel Debug File System.
-[UART NXP]
-[UART NXP] [  OK  ] Mounted Temporary Directory /tmp.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Load Kernel Module configfs.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Load Kernel Module drm.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Load Kernel Module fuse.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Generate network units from Kernel command line.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Remount Root and Kernel File Systems.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Apply Kernel Variables.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Create Static Device Nodes in /dev gracefully.
-[UART NXP]
-[UART NXP]          Mounting Kernel Configuration File System...
-[UART NXP]
-[UART NXP]          Starting Flush Journal to Persistent Storage...
-[UART NXP]
-[UART NXP]          Starting Create System Users...
-[UART NXP]
-[UART NXP] [    3.520468] systemd-journald[107]: Received client request to flush runtime journal.
-[UART NXP] [  OK  ] Finished Coldplug All udev Devices.
-[UART NXP]
-[UART NXP] [  OK  ] Mounted Kernel Configuration File System.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Flush Journal to Persistent Storage.
-[UART NXP]
-[UART NXP] [    3.591315] audit: type=1334 audit(1709054765.760:2): prog-id=6 op=LOAD
-[UART NXP] [    3.598040] audit: type=1334 audit(1709054765.768:3): prog-id=7 op=LOAD
-[UART NXP] [    3.604699] audit: type=1334 audit(1709054765.772:4): prog-id=8 op=LOAD
-[UART NXP]          Starting User Database Manager...
-[UART NXP]
-[UART NXP] [  OK  ] Started User Database Manager.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Create System Users.
-[UART NXP]
-[UART NXP]          Starting Create Static Device Nodes in /dev...
-[UART NXP]
-[UART NXP] [  OK  ] Finished Create Static Device Nodes in /dev.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target Preparation for Local File Systems.
-[UART NXP]
-[UART NXP]          Mounting /var/volatile...
-[UART NXP]
-[UART NXP] [    3.863567] audit: type=1334 audit(1709054766.032:5): prog-id=9 op=LOAD
-[UART NXP] [    3.870277] audit: type=1334 audit(1709054766.040:6): prog-id=10 op=LOAD
-[UART NXP]          Starting Rule-based Manager for Device Events and Files...
-[UART NXP]
-[UART NXP] [  OK  ] Mounted /var/volatile.
-[UART NXP]
-[UART NXP]          Starting Load/Save OS Random Seed...
-[UART NXP]
-[UART NXP] [  OK  ] Started Rule-based Manager for Device Events and Files.
-[UART NXP]
-[UART NXP] [    4.332535] fsl_dpa soc:fsl,dpaa:ethernet@5 fm1-mac6: renamed from eth1
-[UART NXP] [    4.363322] fsl_dpa soc:fsl,dpaa:ethernet@4 fm1-mac5: renamed from eth0
-[UART NXP] [    4.402044] fsl_dpa soc:fsl,dpaa:ethernet@9 fm1-mac10: renamed from eth3
-[UART NXP] [    4.441944] fsl_dpa soc:fsl,dpaa:ethernet@8 fm1-mac9: renamed from eth2
-[UART NXP] [    4.582819] gpio-mux mux-controller: 2-way mux-controller registered
-[UART NXP] [    4.627567] EDAC MC0: Giving out device to module fsl_ddr_edac controller fsl_mc_err: DEV fsl_mc_err (INTERRUPT)
-[UART NXP] [    4.630129] caam 1700000.crypto: Linux CAAM Queue I/F driver initialised
-[UART NXP] [    4.640069] fsl_ddr_edac acquired irq 57 for MC
-[UART NXP] [    4.649107] fsl_ddr_edac MC err registered
-[UART NXP] [    4.656610] caam 1700000.crypto: device ID = 0x0a11030100000000 (Era 8)
-[UART NXP] [    4.663254] caam 1700000.crypto: job rings = 3, qi = 1
-[UART NXP] [    4.717846] at24 1-0050: supply vcc not found, using dummy regulator
-[UART NXP] [    4.724719] ina2xx 3-0043: power monitor ina219 (Rshunt = 1000 uOhm)
-[UART NXP] [    4.728323] lm75 7-004c: supply vs not found, using dummy regulator
-[UART NXP] [    4.732001] at24 1-0050: 256 byte 24c02 EEPROM, writable, 1 bytes/write
-[UART NXP] [    4.742040] ina2xx 4-0049: power monitor ina219 (Rshunt = 1000 uOhm)
-[UART NXP] [    4.744886] at24 9-0056: supply vcc not found, using dummy regulator
-[UART NXP] [    4.752505] ftm-alarm 29d0000.timer: registered as rtc1
-[UART NXP] [    4.763221] hwmon hwmon7: temp1_input not attached to any thermal zone
-[UART NXP] [    4.769766] at24 9-0056: 256 byte 24c02 EEPROM, writable, 8 bytes/write
-[UART NXP] [    4.769795] lm75 7-004c: hwmon7: sensor 'tmp100'
-[UART NXP] [    4.780097] at24 10-0057: supply vcc not found, using dummy regulator
-[UART NXP] [    4.782009] lm75 8-004d: supply vs not found, using dummy regulator
-[UART NXP] [    4.800572] ina2xx 4-0048: power monitor ina219 (Rshunt = 1000 uOhm)
-[UART NXP] [    4.802255] at24 10-0057: 256 byte 24c02 EEPROM, writable, 8 bytes/write
-[UART NXP] [    4.818021] hwmon hwmon9: temp1_input not attached to any thermal zone
-[UART NXP] [    4.823859] ina2xx 5-0040: power monitor ina219 (Rshunt = 500 uOhm)
-[UART NXP] [    4.825800] lm75 8-004d: hwmon9: sensor 'tmp100'
-[UART NXP] [    4.835672] lm75 9-004e: supply vs not found, using dummy regulator
-[UART NXP] [    4.843486] ina2xx 5-0044: power monitor ina219 (Rshunt = 1000 uOhm)
-[UART NXP] [    4.870239] hwmon hwmon12: temp1_input not attached to any thermal zone
-[UART NXP] [    4.877067] lm75 9-004e: hwmon12: sensor 'tmp100'
-[UART NXP] [    4.877310] ina2xx 6-0045: power monitor ina219 (Rshunt = 1000 uOhm)
-[UART NXP] [    4.881949] lm75 10-004f: supply vs not found, using dummy regulator
-[UART NXP] [    4.894172] ina2xx 7-0041: power monitor ina219 (Rshunt = 1000 uOhm)
-[UART NXP] [    4.902182] gpio-lsbb cpld-sky1-ctrl-gpio: LSBB GPIO registered: reg-base=0x55, gpio-base=640, direction=0xFD
-[UART NXP] [    4.906709] hwmon hwmon15: temp1_input not attached to any thermal zone
-[UART NXP] [    4.912477] xo3-rd1125 spi2.0: CPLD Ver: 1.4, Build: 0, Compiled Date: 24-04-26
-[UART NXP] [    4.912726] gpio-lsbb cpld-sky2-ctrl-gpio: LSBB GPIO registered: reg-base=0x56, gpio-base=648, direction=0xFD
-[UART NXP] [    4.912968] gpio-lsbb cpld-fpga-ctrl-gpio: LSBB GPIO registered: reg-base=0x70, gpio-base=656, direction=0xE7
-[UART NXP] [    4.913189] gpio-lsbb cpld-txfem-ctrl-gpio: LSBB GPIO registered: reg-base=0x80, gpio-base=664, direction=0x7F
-[UART NXP] [    4.919087] spi-lattice-xo3 xo3-spi-master-0: SPI controller registered: base=0x50, bus_num=10
-[UART NXP] [    4.919458] lm75 10-004f: hwmon15: sensor 'tmp100'
-[UART NXP] [    4.924818] ina2xx 8-0042: power monitor ina219 (Rshunt = 1000 uOhm)
-[UART NXP] [    4.930532] ina2xx 9-0046: power monitor ina219 (Rshunt = 1000 uOhm)
-[UART NXP] [    4.934413] xo3-rd1125 spi2.0: CPLD IRQ domain: RD=4, HSI1=8, HSI2=8 child IRQs (parents: cpld-nxp-irq0..3)
-[UART NXP] [    4.934429] xo3-rd1125 spi2.0: DT mode: relying on device tree for child SPI master instantiation
-[UART NXP] [    4.947486] spi-lattice-xo3 xo3-spi-master-1: SPI controller registered: base=0x20, bus_num=11
-[UART NXP] [    4.965029] ina2xx 10-0047: power monitor ina219 (Rshunt = 1000 uOhm)
-[UART NXP] [    4.970149] spi-lattice-xo3 xo3-spi-master-2: SPI controller registered: base=0x30, bus_num=12
-[UART NXP]          Startin[    5.025777] spi-lattice-xo3 xo3-spi-master-3: SPI controller registered: base=0x40, bus_num=13
-[UART NXP] g Virtu[    5.026093] si5395 spi10.0: DT: Default firmware-variant = 1
-[UART NXP] al Console Setup[    5.042162] gpio-lsbb cpld-rxfem-ctrl-gpio: LSBB GPIO registered: reg-base=0x81, gpio-base=672, direction=0x7F
-[UART NXP] ...
-[UART NXP]
-[UART NXP] [    5.053947] gpio-lsbb cpld-rcm-ctrl-gpio: LSBB GPIO registered: reg-base=0x90, gpio-base=680, direction=0xFD
-[UART NXP] [    5.066367] gpio-lsbb cpld-uart-ctrl-gpio: LSBB GPIO registered: reg-base=0xA0, gpio-base=688, direction=0xFF
-[UART NXP] [    5.071172] si5395 spi10.0: Chip: 0x5395 Grade: 0 Rev: 0
-[UART NXP] [    5.082306] gpio-lsbb cpld-led0-ctrl-gpio: LSBB GPIO registered: reg-base=0xC0, gpio-base=696, direction=0xFF
-[UART NXP] [    5.082472] tps546d24a 7-0025: power monitor tps546d24a
-[UART NXP] [    5.099664] gpio-lsbb cpld-led1-ctrl-gpio: LSBB GPIO registered: reg-base=0xC1, gpio-base=704, direction=0xFF
-[UART NXP] [    5.105326] si5395 spi10.0: design_id: [DV1_V3.3] PLL: Locked
-[UART NXP] [    5.112478] gpio-lsbb cpld-sx1-ctrl-gpio: LSBB GPIO registered: reg-base=0x25, gpio-base=712, direction=0xE3
-[UART NXP] [    5.115472] si5395 spi10.0: Si5395 ready (cs=0 variant=1)
-[UART NXP] [    5.129879] gpio-lsbb cpld-sx2-ctrl-gpio: LSBB GPIO registered: reg-base=0x35, gpio-base=720, direction=0xE3
-[UART NXP] [    5.131346] si5395 spi10.1: DT: Default firmware-variant = 2
-[UART NXP] [    5.142786] gpio-lsbb cpld-eth-ctrl-gpio: LSBB GPIO registered: reg-base=0x45, gpio-base=728, direction=0xFF
-[UART NXP] [    5.158400] gpio-lsbb cpld-eth-stat-gpio: LSBB GPIO registered: reg-base=0x46, gpio-base=736, direction=0x00
-[UART NXP] [    5.165332] si5395 spi10.1: Chip: 0x5395 Grade: 0 Rev: 0
-[UART NXP] [    5.173857] lsbb-fpga-spi spi2.1: FPGA: fw=11.0 build=6 GP_CONT_VER=0x20260219 date=2026-05-05
-[UART NXP] [    5.174168] caam algorithms registered in /proc/crypto
-[UART NXP] [    5.195212] caam 1700000.crypto: rng crypto API alg registered prng-caam
-[UART NXP] [    5.199725] si5395 spi10.1: design_id: [DV2_V3.3] PLL: Locked
-[UART NXP] [    5.202357] caam 1700000.crypto: registering rng-caam
-[UART NXP] [    5.207856] si5395 spi10.1: Si5395 ready (cs=1 variant=2)
-[UART NXP] [    5.213244] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@24: registered 2 read/write GPIO outputs at 0x00000024
-[UART NXP] [    5.231309] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@28: registered 2 read/write GPIO outputs at 0x00000028
-[UART NXP] [    5.233848] tps546d24a 8-0015: power monitor tps546d24a
-[UART NXP] [    5.241956] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@2c: registered 2 read/write GPIO outputs at 0x0000002c
-[UART NXP] [    5.257341] random: crng init done
-[UART NXP] [  OK      5.262250] Device caam-keygen registered
-[UART NXP] 0m] Found device[    5.265006] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@30: registered 1 read/write GPIO outputs at 0x00000030
-[UART NXP]  /dev/m[    5.279814] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@34: registered 6 read/write GPIO outputs at 0x00000034
-[UART NXP] mcblk0p3.
-[UART NXP]
-[UART NXP] [    5.291579] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@38: registered 1 write-only GPIO outputs at 0x00000038
-[UART NXP] [    5.303271] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@3c: registered 2 read/write GPIO outputs at 0x0000003c
-[UART NXP] [    5.314115] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@40: registered 6 read/write GPIO outputs at 0x00000040
-[UART NXP] [    5.324794] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@44: registered 2 read/write GPIO outputs at 0x00000044
-[UART NXP] [    5.335491] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@48: registered 1 read/write GPIO outputs at 0x00000048
-[UART NXP] [    5.335670] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@4c: registered 6 read/write GPIO outputs at 0x0000004c
-[UART NXP] [    5.335859] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@50: registered 8 read/write GPIO outputs at 0x00000050
-[UART NXP]          Mountin[    5.335948] gpio gpiochip29: Detected name collision for GPIO name ''
-[UART NXP] g /medi[    5.374887] gpio gpiochip29: Detected name collision for GPIO name ''
-[UART NXP] a/data...
-[UART NXP]
-[UART NXP] [    5.382709] gpio gpiochip29: Detected name collision for GPIO name ''
-[UART NXP] [    5.390717] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@54: registered 8 read/write GPIO outputs at 0x00000054
-[UART NXP] [    5.401518] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@60: registered 7 read-only GPIOs at 0x00000060
-[UART NXP] [  OK  ] Finished Load/Save OS Random Seed.
-[UART NXP]
-[UART NXP] [    5.464930] lsbb-fpga-spi spi2.1: BRAM comm-check PASSED: 1024/1024 dwords OK
-[UART NXP] [    5.472087] lsbb-fpga-spi spi2.1: LSBB FPGA: ready, SPI@5000000 Hz
-[UART NXP] [    5.506381] spi-xilinx-regmap 4000.spi: Xilinx AXI SPI regmap bridge at 0x4000 ready
-[UART NXP] [    5.516772] spi-xilinx-regmap 4100.spi: Xilinx AXI SPI regmap bridge at 0x4100 ready
-[UART NXP] [    5.528274] spi-xilinx-regmap 4200.spi: Xilinx AXI SPI regmap bridge at 0x4200 ready
-[UART NXP] [  OK      5.539809] spi-xilinx-regmap 4300.spi: Xilinx AXI SPI regmap bridge at 0x4300 ready
-[UART NXP] 0m] Finished Virtual Console Setup.
-[UART NXP]
-[UART NXP] [    5.552324] spi-xilinx-regmap 4400.spi: Xilinx AXI SPI regmap bridge at 0x4400 ready
-[UART NXP] [    5.594472] adf4368 spi20.0: ADF4368 locked at 11700000000 Hz
-[UART NXP] [    5.604504] ad8366 spi23.0: supply vcc not found, using dummy regulator
-[UART NXP] [    5.612589] ad8366 spi23.1: supply vcc not found, using dummy regulator
-[UART NXP] [    5.620572] ad8366 spi23.2: supply vcc not found, using dummy regulator
-[UART NXP] [    5.628190] ad8366 spi24.0: supply vcc not found, using dummy regulator
-[UART NXP] [    5.635869] ad8366 spi24.1: supply vcc not found, using dummy regulator
-[UART NXP] [    5.643447] ad8366 spi24.2: supply vcc not found, using dummy regulator
-[UART NXP] [    5.669422] adf4368 spi21.0: ADF4368 locked at 9750000000 Hz
-[UART NXP] [    5.679038] EXT4-fs (mmcblk0p3): mounted filesystem 4f4a7020-4ae4-47d1-bc0a-0beb0ada5236 r/w with ordereddata mode. Quota mode: disabled.
-[UART NXP] [  OK  ] Mounted /media/data.
-[UART NXP]
-[UART NXP]          Mounting /home...
-[UART NXP]
-[UART NXP]          Mounting /root...
-[UART NXP]
-[UART NXP]          Mounting /srv...
-[UART NXP]
-[UART NXP] [  OK  ] Mounted /home.
-[UART NXP]
-[UART NXP] [  OK  ] Mounted /root.
-[UART NXP]
-[UART NXP] [  OK  ] Mounted /srv.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target Local File Systems.
-[UART NXP]
-[UART NXP]          Starting Rebuild Dynamic Linker Cache...
-[UART NXP]
-[UART NXP]          Starting Create Volatile Files and Directories...
-[UART NXP]
-[UART NXP] [  OK  ] Created slice Slice /system/systemd-fsck.
-[UART NXP]
-[UART NXP]          Expecting device /dev/mmcblk0p2...
-[UART NXP]
-[UART NXP] [  OK  ] Found device /dev/mmcblk0p2.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Create Volatile Files and Directories.
-[UART NXP]
-[UART NXP]          Starting File System Check on /dev/mmcblk0p2...
-[UART NXP]
-[UART NXP]          Starting Rebui[    6.157739] audit: type=1334 audit(1709054768.328:7): prog-id=11 op=LOAD
-[UART NXP] ld Journal Catalog...
-[UART NXP]
-[UART NXP]          Starting Netwo[    6.169432] audit: type=1334 audit(1709054768.336:8): prog-id=12 op=LOAD
-[UART NXP] rk Name Resolution...
-[UART NXP]
-[UART NXP]          Starting Network Time Synchronization...
-[UART NXP]
-[UART NXP]          Starting Record System Boot/Shutdown in UTMP...
-[UART NXP]
-[UART NXP] [  OK  ] Finished Record System Boot/Shutdown in UTMP.
-[UART NXP]
-[UART NXP] [  OK  ] Started Network Time Synchronization.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target System Time Set.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Rebuild Journal Catalog.
-[UART NXP]
-[UART NXP] [  OK  ] Started Network Name Resolution.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target Host and Network Name Lookups.
-[UART NXP]
-[UART NXP] [  OK  ] Finished File System Check on /dev/mmcblk0p2.
-[UART NXP]
-[UART NXP]          Mounting /run/media/p2-mmcblk0p2...
-[UART NXP]
-[UART NXP] [    6.812187] EXT4-fs (mmcblk0p2): mounted filesystem d174e98d-95d0-4022-bf3c-cf238fcd64de r/w with ordereddata mode. Quota mode: disabled.
-[UART NXP] [  OK  ] Mounted /run/media/p2-mmcblk0p2.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Rebuild Dynamic Linker Cache.
-[UART NXP]
-[UART NXP]          Starting Update is Completed...
-[UART NXP]
-[UART NXP] [  OK  ] Finished Update is Completed.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target System Initialization.
-[UART NXP]
-[UART NXP] [  OK  ] Started Daily Cleanup of Temporary Directories.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target Timer Units.
-[UART NXP]
-[UART NXP] [  OK  ] Listening on D-Bus System Message Bus Socket.
-[UART NXP]
-[UART NXP]          Starting sshd.socket...
-[UART NXP]
-[UART NXP] [  OK  ] Listening on SWUpdate socket listener.
-[UART NXP]
-[UART NXP] [  OK  ] Listening on sshd.socket.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target Socket Units.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target Basic System.
-[UART NXP]
-[UART NXP]          Starting Bless boot...
-[UART NXP]
-[UART NXP]          Starting D-Bus System Message Bus...
-[UART NXP]
-[UART NXP]          Starting IPv6 Packet Filtering Framework...
-[UART NXP]
-[UART NXP]          Starting IPv4 Packet Filtering Framework...
-[UART NXP]
-[UART NXP] [  OK  ] Started ntp service.
-[UART NXP]
-[UART NXP]          Starting SWUpdate daemon...
-[UART NXP]
-[UART NXP] [  OK  ] Started System Logging Service.
-[UART NXP]
-[UART NXP]          Starting Resets System Activity Logs...
-[UART NXP]
-[UART NXP]          Starting User Login Management...
-[UART NXP]
-[UART NXP]          Starting OpenSSH Key Generation...
-[UART NXP]
-[UART NXP] [  OK  ] Finished Bless boot.
-[UART NXP]
-[UART NXP] [  OK  ] Finished IPv6 Packet Filtering Framework.
-[UART NXP]
-[UART NXP] [  OK  ] Started D-Bus System Message Bus.
-[UART NXP]
-[UART NXP] [  OK  ] Finished IPv4 Packet Filtering Framework.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target Preparation for Network.
-[UART NXP]
-[UART NXP]          Starting Network Manager...
-[UART NXP]
-[UART NXP] [  OK  ] Started SWUpdate daemon.
-[UART NXP]
-[UART NXP] [  OK  ] Started User Login Management.
-[UART NXP]
-[UART NXP] [  OK  ] Started swupdate progress service.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Resets System Activity Logs.
-[UART NXP]
-[UART NXP]          Starting Hostname Service...
-[UART NXP]
-[UART NXP] [  OK  ] Started Hostname Service.
-[UART NXP]
-[UART NXP]          Starting Network Manager Script Dispatcher Service...
-[UART NXP]
-[UART NXP] [  OK  ] Started Network Manager Script Dispatcher Service.
-[UART NXP]
-[UART NXP] [  OK  ] Started Network Manager.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target Network.
-[UART NXP]
-[UART NXP]          Starting Network Manager Wait Online...
-[UART NXP]
-[UART NXP]          Starting DNS forwarder and DHCP server...
-[UART NXP]
-[UART NXP] [  OK  ] Started Log Server Service.
-[UART NXP]
-[UART NXP]          Starting Enable switch OOB interface...
-[UART NXP]
-[UART NXP]          Starting Redis In-Memory Data Store...
-[UART NXP]
-[UART NXP]          Starting Permit User Sessions...
-[UART NXP]
-[UART NXP] [  OK  ] Started Xinetd A Powerful Replacement For Inetd.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Enable switch OOB interface.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Permit User Sessions.
-[UART NXP]
-[UART NXP] [  OK  ] Started Getty on tty1.
-[UART NXP]
-[UART NXP] [  OK  ] Started Serial Getty on ttyS0.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target Login Prompts.
-[UART NXP]
-[UART NXP] [  OK  ] Started DNS forwarder and DHCP server.
-[UART NXP]
-[UART NXP] [  OK  ] Started Redis In-Memory Data Store.
-[UART NXP]
-Traceback (most recent call last):
-  File "C:\Users\alexeyt\source\repos\LscriptWin\lscriptnxp.py", line 1501, in <module>
-    raise SystemExit(main())
-                     ~~~~^^
-  File "C:\Users\alexeyt\source\repos\LscriptWin\lscriptnxp.py", line 1494, in main
-    return run_nxp_flow(config, provision, args, run_dir)
-  File "C:\Users\alexeyt\source\repos\LscriptWin\lscriptnxp.py", line 1442, in run_nxp_flow
-    run_deploy_script(nxp, config, provision)
-    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\alexeyt\source\repos\LscriptWin\lscriptnxp.py", line 1278, in run_deploy_script
-    wait_for_post_deploy_uart_login(session, config)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
-  File "C:\Users\alexeyt\source\repos\LscriptWin\lscriptnxp.py", line 1257, in wait_for_post_deploy_uart_login
-    wait_for_linux_shell(
-    ~~~~~~~~~~~~~~~~~~~~^
-        session,
-        ^^^^^^^^
-    ...<4 lines>...
-        login_prompt,
-        ^^^^^^^^^^^^^
-    )
-    ^
-  File "C:\Users\alexeyt\source\repos\LscriptWin\lscriptnxp.py", line 751, in wait_for_linux_shell
-    time.sleep(0.05)
-    ~~~~~~~~~~^^^^^^
-KeyboardInterrupt
-PS C:\Users\alexeyt\source\repos\LscriptWin> python lscriptnxp.py --dig_sn CLSDM-09-0926-260528-002
-[INFO] NXP log: C:\Logs\Deployment\CLSDM-09-0926-260528-002\20260523-115515\20260523-115515-nxp.log
-[INFO] Switch log: C:\Logs\Deployment\CLSDM-09-0926-260528-002\20260523-115515\20260523-115515-switch.log
-
-[STAGE 1] Stop autoboot and configure NXP + switch at U-Boot
-[INFO] NXP: NXP U-Boot: gpio clear 27
-[INFO] NXP: NXP U-Boot: mac read
-[INFO] NXP: NXP U-Boot: mac id
-[INFO] NXP: NXP U-Boot: mac ports 4
-[INFO] NXP: NXP U-Boot: mac 0 70:B3:D5:97:07:D8
-[INFO] NXP: NXP U-Boot: mac 1 00:04:9F:08:44:A2
-[INFO] NXP: NXP U-Boot: mac 2 00:04:9F:08:44:A3
-[INFO] NXP: NXP U-Boot: mac 3 00:04:9F:08:44:A4
-[INFO] NXP: NXP U-Boot: mac save
-[INFO] Switch: Switch U-Boot: setenv ethaddr
-[INFO] Switch: Switch U-Boot: saveenv
-
-[STAGE 2] Reset NXP after MAC save and enter emergency mode using YAML prompt
-[INFO] NXP: sending reset from U-Boot, waiting 65 seconds without UART reads, then checking YAML emergency prompt
-[INFO] NXP boot delay: waiting about 1:05
-NXP boot delay: 100%|███████████████████████████████████████████████████████████████████| 65/65 [01:05<00:00,  1.00s/s]
-[INFO] NXP boot delay: timer completed
-
-[STAGE 3] Send IP and ping commands from NXP to the PC
-[INFO] NXP: Configure DUT IP in emergency mode
-[INFO] NXP: Ping the PC from emergency mode
-
-[STAGE 4] Start dropbear and push the deployment script from Windows to the DUT
-[INFO] NXP: Create dropbear runtime directory
-[INFO] NXP: Start dropbear service in emergency mode
-[INFO] Windows->DUT SCP: scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\deploy-lsbb-1.1.1-20260324.sh root@10.10.10.2:/tmp
-[INFO] NXP: Verify deployment script exists in DUT temporary directory
-
-[STAGE 5] Start the deployment script, then reboot out of emergency mode
-[INFO] NXP: Change to temporary deployment directory
-[INFO] NXP: starting deployment script
-NXP deploy script: 100%|████████████████████████████████████████████████████████████| 2400/2400 [02:13<00:00, 17.93s/s]
-[INFO] NXP: deploy script completed, sending reboot to leave emergency mode
-[INFO] NXP: showing live UART after deployment reboot, then sending credentials directly
-[UART NXP] [    1.967188] systemd[1]: Hostname set to <ls1046afrwy>.
-[UART NXP] [    1.979669] systemd[1]: Initializing machine ID from random generator.
-[UART NXP] [    2.367382] systemd[1]: Queued start job for default target Multi-User System.
-[UART NXP] [    2.391718] systemd[1]: Created slice Slice /system/getty.
-[UART NXP] [  OK  ] Created slice Slice /system/getty.
-[UART NXP]
-[UART NXP] [    2.414426] systemd[1]: Created slice Slice /system/modprobe.
-[UART NXP] [  OK  ] Created slice Slice /system/modprobe.
-[UART NXP]
-[UART NXP] [    2.438388] systemd[1]: Created slice Slice /system/serial-getty.
-[UART NXP] [  OK  ] Created slice Slice /system/serial-getty.
-[UART NXP]
-[UART NXP] [    2.462729] systemd[1]: Created slice User and Session Slice.
-[UART NXP] [  OK  ] Created slice User and Session Slice.
-[UART NXP]
-[UART NXP] [    2.485970] systemd[1]: Started Dispatch Password Requests to Console Directory Watch.
-[UART NXP] [  OK  ] Started Dispatch Password Requests to Console Directory Watch.
-[UART NXP]
-[UART NXP] [    2.513956] systemd[1]: Started Forward Password Requests to Wall Directory Watch.
-[UART NXP] [  OK  ] Started Forward Password Requests to Wall Directory Watch.
-[UART NXP]
-[UART NXP] [    2.537771] systemd[1]: Expecting device /dev/mmcblk0p3...
-[UART NXP]          Expecting device /dev/mmcblk0p3...
-[UART NXP]
-[UART NXP] [    2.557824] systemd[1]: Reached target Path Units.
-[UART NXP] [  OK  ] Reached target Path Units.
-[UART NXP]
-[UART NXP] [    2.577749] systemd[1]: Reached target Remote File Systems.
-[UART NXP] [  OK  ] Reached target Remote File Systems.
-[UART NXP]
-[UART NXP] [    2.597728] systemd[1]: Reached target Slice Units.
-[UART NXP] [  OK  ] Reached target Slice Units.
-[UART NXP]
-[UART NXP] [    2.617748] systemd[1]: Reached target Swaps.
-[UART NXP] [  OK  ] Reached target Swaps.
-[UART NXP]
-[UART NXP] [    2.638359] systemd[1]: Listening on Syslog Socket.
-[UART NXP] [  OK  ] Listening on Syslog Socket.
-[UART NXP]
-[UART NXP] [    2.658012] systemd[1]: Listening on initctl Compatibility Named Pipe.
-[UART NXP] [  OK  ] Listening on initctl Compatibility Named Pipe.
-[UART NXP]
-[UART NXP] [    2.682382] systemd[1]: Listening on Journal Audit Socket.
-[UART NXP] [  OK  ] Listening on Journal Audit Socket.
-[UART NXP]
-[UART NXP] [    2.702134] systemd[1]: Listening on Journal Socket (/dev/log).
-[UART NXP] [  OK  ] Listening on Journal Socket (/dev/log).
-[UART NXP]
-[UART NXP] [    2.726242] systemd[1]: Listening on Journal Socket.
-[UART NXP] [  OK  ] Listening on Journal Socket.
-[UART NXP]
-[UART NXP] [    2.746477] systemd[1]: Listening on udev Control Socket.
-[UART NXP] [  OK  ] Listening on udev Control Socket.
-[UART NXP]
-[UART NXP] [    2.766095] systemd[1]: Listening on udev Kernel Socket.
-[UART NXP] [  OK  ] Listening on udev Kernel Socket.
-[UART NXP]
-[UART NXP] [    2.786194] systemd[1]: Listening on User Database Manager Socket.
-[UART NXP] [  OK  ] Listening on User Database Manager Socket.
-[UART NXP]
-[UART NXP] [    2.833788] systemd[1]: Mounting Huge Pages File System...
-[UART NXP]          Mounting Huge [    2.841121] systemd[1]: Mounting POSIX Message Queue File System...
-[UART NXP] Pages File System...
-[UART NXP]
-[UART NXP]          Mounting POSIX[    2.867578] systemd[1]: Mounting Kernel Debug File System...
-[UART NXP]  Message Queue File System...
-[UART NXP]
-[UART NXP]          Mountin[    2.890008] systemd[1]: Kernel Trace File System was skipped because of an unmet condition check (ConditionPathExists=/sys/kernel/tracing).
-[UART NXP] g Kernel Debug File System...
-[UART NXP]
-[UART NXP] [    2.906903] systemd[1]: Mounting Temporary Directory /tmp...
-[UART NXP]          Mountin[    2.922034] systemd[1]: Create List of Static Device Nodes was skipped because of an unmet condition check (ConditionFileNotEmpty=/lib/modules/6.6.52-ge0f9e2afd4cf-dirty/modules.devname).
-[UART NXP] g Temporary Directory /[    2.941987] systemd[1]: Starting Load Kernel Module configfs...
-[UART NXP] tmp...
-[UART NXP]
-[UART NXP]          Starting Load [    2.959761] systemd[1]: Starting Load Kernel Module drm...
-[UART NXP] Kernel Module configfs...
-[UART NXP]
-[UART NXP]          Starting Load [    2.983837] systemd[1]: Starting Load Kernel Module fuse...
-[UART NXP] Kernel Module drm...
-[UART NXP]
-[UART NXP]          Startin[    3.006035] systemd[1]: File System Check on Root Device was skipped because of an unmet condition check (ConditionPathIsReadWrite=!/).
-[UART NXP] g Load Kernel Module fuse...
-[UART NXP]
-[UART NXP] [    3.022858] systemd[1]: Starting Journal Service...
-[UART NXP]          Starting Journal Service...
-[UART NXP]
-[UART NXP] [    3.044627] systemd[1]: Load Kernel Modules was skipped because no trigger condition checks were met.
-[UART NXP] [    3.055752] systemd[1]: Starting Generate network units from Kernel command line...
-[UART NXP]          Starting Generate network units from Kernel command line...
-[UART NXP]
-[UART NXP] [    3.083600] systemd[1]: Starting Remount Root and Kernel File Systems...
-[UART NXP]          Starting Remount Root and Kernel File Systems...
-[UART NXP]
-[UART NXP] [    3.107666] systemd[1]: Starting Apply Kernel Variables...
-[UART NXP] [    3.111467] systemd-journald[108]: Collecting audit messages is enabled.
-[UART NXP]          Starting Apply[    3.123373] systemd[1]: Starting Create Static Device Nodes in /dev gracefully...
-[UART NXP]  Kernel Variables...
-[UART NXP]
-[UART NXP]          Starting Creat[    3.144153] systemd[1]: Starting Coldplug All udev Devices...
-[UART NXP] e Static Device Nodes in /dev gracefully...
-[UART NXP]
-[UART NXP] [    3.157858] EXT4-fs (mmcblk0p1): re-mounted d174e98d-95d0-4022-bf3c-cf238fcd64de r/w. Quota mode: disabled.
-[UART NXP]          Starting Coldplug All udev Devices...
-[UART NXP]
-[UART NXP] [    3.184938] systemd[1]: Started Journal Service.
-[UART NXP] [  OK  ] Started Journal Service.
-[UART NXP]
-[UART NXP] [  OK  ] Mounted Huge Pages File System.
-[UART NXP]
-[UART NXP] [  OK  ] Mounted POSIX Message Queue File System.
-[UART NXP]
-[UART NXP] [  OK  ] Mounted Kernel Debug File System.
-[UART NXP]
-[UART NXP] [  OK  ] Mounted Temporary Directory /tmp.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Load Kernel Module configfs.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Load Kernel Module drm.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Load Kernel Module fuse.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Generate network units from Kernel command line.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Remount Root and Kernel File Systems.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Apply Kernel Variables.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Create Static Device Nodes in /dev gracefully.
-[UART NXP]
-[UART NXP]          Mounting Kernel Configuration File System...
-[UART NXP]
-[UART NXP]          Starting Flush Journal to Persistent Storage...
-[UART NXP]
-[UART NXP]          Starting Create System Users...
-[UART NXP]
-[UART NXP] [    3.488007] systemd-journald[108]: Received client request to flush runtime journal.
-[UART NXP] [  OK  ] Finished Coldplug All udev Devices.
-[UART NXP]
-[UART NXP] [  OK  ] Mounted Kernel Configuration File System.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Flush Journal to Persistent Storage.
-[UART NXP]
-[UART NXP] [    3.576719] audit: type=1334 audit(1709054765.740:2): prog-id=6 op=LOAD
-[UART NXP] [    3.583453] audit: type=1334 audit(1709054765.748:3): prog-id=7 op=LOAD
-[UART NXP] [    3.590117] audit: type=1334 audit(1709054765.756:4): prog-id=8 op=LOAD
-[UART NXP]          Starting User Database Manager...
-[UART NXP]
-[UART NXP] [  OK  ] Started User Database Manager.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Create System Users.
-[UART NXP]
-[UART NXP]          Starting Create Static Device Nodes in /dev...
-[UART NXP]
-[UART NXP] [  OK  ] Finished Create Static Device Nodes in /dev.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target Preparation for Local File Systems.
-[UART NXP]
-[UART NXP]          Mounting /var/volatile...
-[UART NXP]
-[UART NXP] [    3.831596] audit: type=1334 audit(1709054765.996:5): prog-id=9 op=LOAD
-[UART NXP] [    3.838292] audit: type=1334 audit(1709054766.004:6): prog-id=10 op=LOAD
-[UART NXP]          Starting Rule-based Manager for Device Events and Files...
-[UART NXP]
-[UART NXP] [  OK  ] Mounted /var/volatile.
-[UART NXP]
-[UART NXP]          Starting Load/Save OS Random Seed...
-[UART NXP]
-[UART NXP] [  OK  ] Started Rule-based Manager for Device Events and Files.
-[UART NXP]
-[UART NXP] [    4.285965] fsl_dpa soc:fsl,dpaa:ethernet@8 fm1-mac9: renamed from eth2
-[UART NXP] [    4.317469] fsl_dpa soc:fsl,dpaa:ethernet@9 fm1-mac10: renamed from eth3
-[UART NXP] [    4.350500] fsl_dpa soc:fsl,dpaa:ethernet@5 fm1-mac6: renamed from eth1
-[UART NXP] [    4.382162] fsl_dpa soc:fsl,dpaa:ethernet@4 fm1-mac5: renamed from eth0
-[UART NXP] [    4.562781] EDAC MC0: Giving out device to module fsl_ddr_edac controller fsl_mc_err: DEV fsl_mc_err (INTERRUPT)
-[UART NXP] [    4.577621] fsl_ddr_edac acquired irq 57 for MC
-[UART NXP] [    4.583979] fsl_ddr_edac MC err registered
-[UART NXP] [    4.620288] caam 1700000.crypto: Linux CAAM Queue I/F driver initialised
-[UART NXP] [    4.628464] caam 1700000.crypto: device ID = 0x0a11030100000000 (Era 8)
-[UART NXP] [    4.636193] caam 1700000.crypto: job rings = 3, qi = 1
-[UART NXP] [    4.642815] at24 1-0050: supply vcc not found, using dummy regulator
-[UART NXP] [    4.642994] gpio-mux mux-controller: 2-way mux-controller registered
-[UART NXP] [    4.660623] lm75 7-004c: supply vs not found, using dummy regulator
-[UART NXP] [    4.662448] at24 1-0050: 256 byte 24c02 EEPROM, writable, 1 bytes/write
-[UART NXP] [    4.677390] at24 9-0056: supply vcc not found, using dummy regulator
-[UART NXP] [    4.685360] hwmon hwmon6: temp1_input not attached to any thermal zone
-[UART NXP] [    4.689498] ina2xx 3-0043: power monitor ina219 (Rshunt = 1000 uOhm)
-[UART NXP] [    4.690690] at24 9-0056: 256 byte 24c02 EEPROM, writable, 8 bytes/write
-[UART NXP] [    4.690798] at24 10-0057: supply vcc not found, using dummy regulator
-[UART NXP] [    4.691952] lm75 7-004c: hwmon6: sensor 'tmp100'
-[UART NXP] [    4.701072] at24 10-0057: 256 byte 24c02 EEPROM, writable, 8 bytes/write
-[UART NXP] [    4.704982] lm75 8-004d: supply vs not found, using dummy regulator
-[UART NXP] [    4.718461] ftm-alarm 29d0000.timer: registered as rtc1
-[UART NXP] [    4.720494] ina2xx 4-0049: power monitor ina219 (Rshunt = 1000 uOhm)
-[UART NXP] [    4.731362] ina2xx 4-0048: power monitor ina219 (Rshunt = 1000 uOhm)
-[UART NXP] [    4.740526] hwmon hwmon9: temp1_input not attached to any thermal zone
-[UART NXP] [    4.753617] lm75 8-004d: hwmon9: sensor 'tmp100'
-[UART NXP] [    4.760641] lm75 9-004e: supply vs not found, using dummy regulator
-[UART NXP] [    4.768633] ina2xx 5-0040: power monitor ina219 (Rshunt = 500 uOhm)
-[UART NXP] [    4.776865] hwmon hwmon11: temp1_input not attached to any thermal zone
-[UART NXP] [    4.783530] lm75 9-004e: hwmon11: sensor 'tmp100'
-[UART NXP] [    4.788676] lm75 10-004f: supply vs not found, using dummy regulator
-[UART NXP] [    4.804608] ina2xx 5-0044: power monitor ina219 (Rshunt = 1000 uOhm)
-[UART NXP] [    4.806184] hwmon hwmon13: temp1_input not attached to any thermal zone
-[UART NXP] [    4.819354] lm75 10-004f: hwmon13: sensor 'tmp100'
-[UART NXP] [    4.837591] ina2xx 6-0045: power monitor ina219 (Rshunt = 1000 uOhm)
-[UART NXP] [    4.845623] random: crng init done
-[UART NXP] [    4.853717] ina2xx 7-0041: power monitor ina219 (Rshunt = 1000 uOhm)
-[UART NXP] [    4.866180] ina2xx 8-0042: power monitor ina219 (Rshunt = 1000 uOhm)
-[UART NXP] [    4.880349] ina2xx 9-0046: power monitor ina219 (Rshunt = 1000 uOhm)
-[UART NXP] [    4.892997] ina2xx 10-0047: power monitor ina219 (Rshunt = 1000 uOhm)
-[UART NXP]          Starting Virtual Console Setup[    4.914106] xo3-rd1125 spi2.0: CPLD Ver: 1.4, Build: 0, Compiled Date: 24-04-26
-[UART NXP] ...
-[UART NXP]
-[UART NXP] [    4.922579] xo3-rd1125 spi2.0: CPLD IRQ domain: RD=4, HSI1=8, HSI2=8 child IRQs (parents: cpld-nxp-irq0..3)
-[UART NXP] [    4.932873] xo3-rd1125 spi2.0: DT mode: relying on device tree for child SPI master instantiation
-[UART NXP] [    4.942476] gpio-lsbb cpld-fpga-ctrl-gpio: LSBB GPIO registered: reg-base=0x70, gpio-base=640, direction=0xE7
-[UART NXP] [  OK  ] Finished     4.954781] spi-lattice-xo3 xo3-spi-master-1: SPI controller registered: base=0x20, bus_num=11
-[UART NXP] ;1;39mLoad/Save [    4.964429] spi-lattice-xo3 xo3-spi-master-2: SPI controller registered: base=0x30, bus_num=12
-[UART NXP] OS Random Seed    4.974786] spi-lattice-xo3 xo3-spi-master-3: SPI controller registered: base=0x40, bus_num=13
-[UART NXP] 0m.
-[UART NXP]
-[UART NXP] [    4.984377] gpio-lsbb cpld-txfem-ctrl-gpio: LSBB GPIO registered: reg-base=0x80, gpio-base=648, direction=0x7F
-[UART NXP] [    4.990503] tps546d24a 7-0025: power monitor tps546d24a
-[UART NXP] [    4.999917] gpio-lsbb cpld-rxfem-ctrl-gpio: LSBB GPIO registered: reg-base=0x81, gpio-base=656, direction=0x7F
-[UART NXP] [    5.010291] gpio-lsbb cpld-rcm-ctrl-gpio: LSBB GPIO registered: reg-base=0x90, gpio-base=664, direction=0xFD
-[UART NXP] [    5.020658] gpio-lsbb cpld-uart-ctrl-gpio: LSBB GPIO registered: reg-base=0xA0, gpio-base=672, direction=0xFF
-[UART NXP] [    5.030981] gpio-lsbb cpld-led0-ctrl-gpio: LSBB GPIO registered: reg-base=0xC0, gpio-base=680, direction=0xFF
-[UART NXP] [    5.041380] gpio-lsbb cpld-led1-ctrl-gpio: LSBB GPIO registered: reg-base=0xC1, gpio-base=688, direction=0xFF
-[UART NXP] [    5.054169] caam algorithms registered in /proc/crypto
-[UART NXP] [    5.055312] gpio-lsbb cpld-sx1-ctrl-gpio: LSBB GPIO registered: reg-base=0x25, gpio-base=696, direction=0xE3
-[UART NXP] [    5.059403] caam 1700000.crypto: rng crypto API alg registered prng-caam
-[UART NXP] [    5.070127] gpio-lsbb cpld-sx2-ctrl-gpio: LSBB GPIO registered: reg-base=0x35, gpio-base=704, direction=0xE3
-[UART NXP] [    5.075871] caam 1700000.crypto: registering rng-caam
-[UART NXP] [    5.076046] Device caam-keygen registered
-[UART NXP] [    5.086167] gpio-lsbb cpld-eth-ctrl-gpio: LSBB GPIO registered: reg-base=0x45, gpio-base=712, direction=0xFF
-[UART NXP] [    5.105340] gpio-lsbb cpld-eth-stat-gpio: LSBB GPIO registered: reg-base=0x46, gpio-base=720, direction=0x00
-[UART NXP] [    5.115625] gpio-lsbb cpld-sky1-ctrl-gpio: LSBB GPIO registered: reg-base=0x55, gpio-base=728, direction=0xFD
-[UART NXP] [    5.126159] gpio-lsbb cpld-sky2-ctrl-gpio: LSBB GPIO registered: reg-base=0x56, gpio-base=736, direction=0xFD
-[UART NXP] [    5.137023] spi-lattice-xo3 xo3-spi-master-0: SPI controller registered: base=0x50, bus_num=10
-[UART NXP] [    5.156476] tps546d24a 8-0015: power monitor tps546d24a
-[UART NXP] [    5.162101] lsbb-fpga-spi spi2.1: FPGA: fw=11.0 build=6 GP_CONT_VER=0x20260219 date=2026-05-05
-[UART NXP] [    5.163630] si5395 spi10.0: DT: Default firmware-variant = 1
-[UART NXP] [    5.177172] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@24: registered 2 read/write GPIO outputs at 0x00000024
-[UART NXP] [    5.185349] si5395 spi10.0: Chip: 0x5395 Grade: 0 Rev: 0
-[UART NXP] [    5.188127] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@28: registered 2 read/write GPIO outputs at 0x00000028
-[UART NXP] [    5.201839] si5395 spi10.0: design_id: [DV1_V3.3] PLL: Locked
-[UART NXP] [    5.203442] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@2c: registered 2 read/write GPIO outputs at 0x0000002c
-[UART NXP] [    5.208992] si5395 spi10.0: Si5395 ready (cs=0 variant=1)
-[UART NXP] [    5.219501] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@30: registered 1 read/write GPIO outputs at 0x00000030
-[UART NXP] [    5.224834] si5395 spi10.1: DT: Default firmware-variant = 2
-[UART NXP] [    5.235301] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@34: registered 6 read/write GPIO outputs at 0x00000034
-[UART NXP] [    5.248484] si5395 spi10.1: Chip: 0x5395 Grade: 0 Rev: 0
-[UART NXP] [    5.251414] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@38: registered 1 write-only GPIO outputs at 0x00000038
-[UART NXP] [    5.267277] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@3c: registered 2 read/write GPIO outputs at 0x0000003c
-[UART NXP] [    5.278061] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@40: registered 6 read/write GPIO outputs at 0x00000040
-[UART NXP] [    5.284247] si5395 spi10.1: design_id: [DV2_V3.3] PLL: Locked
-[UART NXP] [    5.288893] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@44: registered 2 read/write GPIO outputs at 0x00000044
-[UART NXP] [    5.294254] si5395 spi10.1: Si5395 ready (cs=1 variant=2)
-[UART NXP] [    5.309643] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@48: registered 1 read/write GPIO outputs at 0x00000048
-[UART NXP] [    5.320627] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@4c: registered 6 read/write GPIO outputs at 0x0000004c
-[UART NXP] [    5.331507] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@50: registered 8 read/write GPIO outputs at 0x00000050
-[UART NXP] [  OK      5.342061] gpio gpiochip29: Detected name collision for GPIO name ''
-[UART NXP] 0m] Finished     5.349871] gpio gpiochip29: Detected name collision for GPIO name ''
-[UART NXP] ;1;39mVirtual Co[    5.357688] gpio gpiochip29: Detected name collision for GPIO name ''
-[UART NXP] nsole Setup.[    5.365491] lsbb-fpga-spi spi2.1: BRAM comm-check PASSED: 1024/1024 dwords OK
-[UART NXP]
-[UART NXP]
-[UART NXP] [    5.369188] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@54: registered 8 read/write GPIO outputs at 0x00000054
-[UART NXP] [    5.374131] lsbb-fpga-spi spi2.1: LSBB FPGA: ready, SPI@5000000 Hz
-[UART NXP] [    5.385172] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@60: registered 7 read-only GPIOs at 0x00000060
-[UART NXP] [  OK  ] Found device /dev/mmcblk0p3.
-[UART NXP]
-[UART NXP] [    5.422145] spi-xilinx-regmap 4000.spi: Xilinx AXI SPI regmap bridge at 0x4000 ready
-[UART NXP]          Mounting /media/data...
-[UART NXP]
-[UART NXP] [    5.521444] adf4368 spi20.0: ADF4368 locked at 11700000000 Hz
-[UART NXP] [    5.529750] adf4368 spi21.0: ADF4368 locked at 9750000000 Hz
-[UART NXP] [    5.535744] spi-xilinx-regmap 4100.spi: Xilinx AXI SPI regmap bridge at 0x4100 ready
-[UART NXP] [    5.548692] spi-xilinx-regmap 4200.spi: Xilinx AXI SPI regmap bridge at 0x4200 ready
-[UART NXP] [    5.558896] spi-xilinx-regmap 4300.spi: Xilinx AXI SPI regmap bridge at 0x4300 ready
-[UART NXP] [    5.569224] spi-xilinx-regmap 4400.spi: Xilinx AXI SPI regmap bridge at 0x4400 ready
-[UART NXP] [    5.579212] ad8366 spi23.0: supply vcc not found, using dummy regulator
-[UART NXP] [    5.586484] ad8366 spi23.1: supply vcc not found, using dummy regulator
-[UART NXP] [    5.593725] ad8366 spi23.2: supply vcc not found, using dummy regulator
-[UART NXP] [    5.601282] ad8366 spi24.0: supply vcc not found, using dummy regulator
-[UART NXP] [    5.608615] ad8366 spi24.1: supply vcc not found, using dummy regulator
-[UART NXP] [    5.608912] EXT4-fs (mmcblk0p3): mounted filesystem 4f4a7020-4ae4-47d1-bc0a-0beb0ada5236 r/w with ordereddata mode. Quota mode: disabled.
-[UART NXP] [    5.628194] ad8366 spi24.2: supply vcc not found, using dummy regulator
-[UART NXP] [  OK  ] Mounted /media/data.
-[UART NXP]
-[UART NXP]          Mounting /home...
-[UART NXP]
-[UART NXP]          Mounting /root...
-[UART NXP]
-[UART NXP]          Mounting /srv...
-[UART NXP]
-[UART NXP] [  OK  ] Mounted /home.
-[UART NXP]
-[UART NXP] [  OK  ] Mounted /root.
-[UART NXP]
-[UART NXP] [  OK  ] Mounted /srv.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target Local File Systems.
-[UART NXP]
-[UART NXP]          Starting Rebuild Dynamic Linker Cache...
-[UART NXP]
-[UART NXP]          Starting Create Volatile Files and Directories...
-[UART NXP]
-[UART NXP] [  OK  ] Created slice Slice /system/systemd-fsck.
-[UART NXP]
-[UART NXP]          Expecting device /dev/mmcblk0p2...
-[UART NXP]
-[UART NXP] [  OK  ] Found device /dev/mmcblk0p2.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Create Volatile Files and Directories.
-[UART NXP]
-[UART NXP]          Starting File System Check on /dev/mmcblk0p2...
-[UART NXP]
-[UART NXP]          Starting Rebui[    6.057664] audit: type=1334 audit(1709054768.224:7): prog-id=11 op=LOAD
-[UART NXP] ld Journal Catalog...
-[UART NXP]
-[UART NXP]          Starting     6.068489] audit: type=1334 audit(1709054768.232:8): prog-id=12 op=LOAD
-[UART NXP] 0;1;39mNetwork Name Resolution...
-[UART NXP]
-[UART NXP]          Starting Network Time Synchronization...
-[UART NXP]
-[UART NXP]          Starting Record System Boot/Shutdown in UTMP...
-[UART NXP]
-[UART NXP] [  OK  ] Finished Record System Boot/Shutdown in UTMP.
-[UART NXP]
-[UART NXP] [  OK  ] Started Network Time Synchronization.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target System Time Set.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Rebuild Journal Catalog.
-[UART NXP]
-[UART NXP] [  OK  ] Started Network Name Resolution.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target Host and Network Name Lookups.
-[UART NXP]
-[UART NXP] [  OK  ] Finished File System Check on /dev/mmcblk0p2.
-[UART NXP]
-[UART NXP]          Mounting /run/media/p2-mmcblk0p2...
-[UART NXP]
-[UART NXP] [    6.699018] EXT4-fs (mmcblk0p2): mounted filesystem d174e98d-95d0-4022-bf3c-cf238fcd64de r/w with ordereddata mode. Quota mode: disabled.
-[UART NXP] [  OK  ] Mounted /run/media/p2-mmcblk0p2.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Rebuild Dynamic Linker Cache.
-[UART NXP]
-[UART NXP]          Starting Update is Completed...
-[UART NXP]
-[UART NXP] [  OK  ] Finished Update is Completed.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target System Initialization.
-[UART NXP]
-[UART NXP] [  OK  ] Started Daily Cleanup of Temporary Directories.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target Timer Units.
-[UART NXP]
-[UART NXP] [  OK  ] Listening on D-Bus System Message Bus Socket.
-[UART NXP]
-[UART NXP]          Starting sshd.socket...
-[UART NXP]
-[UART NXP] [  OK  ] Listening on SWUpdate socket listener.
-[UART NXP]
-[UART NXP] [  OK  ] Listening on sshd.socket.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target Socket Units.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target Basic System.
-[UART NXP]
-[UART NXP]          Starting Bless boot...
-[UART NXP]
-[UART NXP]          Starting D-Bus System Message Bus...
-[UART NXP]
-[UART NXP]          Starting IPv6 Packet Filtering Framework...
-[UART NXP]
-[UART NXP]          Starting IPv4 Packet Filtering Framework...
-[UART NXP]
-[UART NXP] [  OK  ] Started ntp service.
-[UART NXP]
-[UART NXP]          Starting SWUpdate daemon...
-[UART NXP]
-[UART NXP] [  OK  ] Started System Logging Service.
-[UART NXP]
-[UART NXP]          Starting Resets System Activity Logs...
-[UART NXP]
-[UART NXP] [    7.808790] audit: type=1334 audit(1709054769.972:9): prog-id=13 op=LOAD
-[UART NXP] [    7.815566] audit: type=1334 audit(1709054769.980:10): prog-id=14 op=LOAD
-[UART NXP] [    7.822377] audit: type=1334 audit(1709054769.988:11): prog-id=15 op=LOAD
-[UART NXP]          Starting User Login Management...
-[UART NXP]
-[UART NXP]          Starting OpenSSH Key Generation...
-[UART NXP]
-[UART NXP] [  OK  ] Finished Bless boot.
-[UART NXP]
-[UART NXP] [  OK  ] Started D-Bus System Message Bus.
-[UART NXP]
-[UART NXP] [  OK  ] Finished IPv6 Packet Filtering Framework.
-[UART NXP]
-[UART NXP] [  OK  ] Finished IPv4 Packet Filtering Framework.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Resets System Activity Logs.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target Preparation for Network.
-[UART NXP]
-[UART NXP]          Starting Network Manager...
-[UART NXP]
-[UART NXP] [  OK  ] Started User Login Management.
-[UART NXP]
-[UART NXP] [  OK  ] Started SWUpdate daemon.
-[UART NXP]
-[UART NXP] [  OK  ] Started swupdate progress service.
-[UART NXP]
-[UART NXP]          Starting Hostname Service...
-[UART NXP]
-[UART NXP] [  OK  ] Started Hostname Service.
-[UART NXP]
-[UART NXP]          Starting Network Manager Script Dispatcher Service...
-[UART NXP]
-[UART NXP] [  OK  ] Started Network Manager Script Dispatcher Service.
-[UART NXP]
-[UART NXP] [  OK  ] Started Network Manager.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target Network.
-[UART NXP]
-[UART NXP]          Starting Network Manager Wait Online...
-[UART NXP]
-[UART NXP]          Starting DNS forwarder and DHCP server...
-[UART NXP]
-[UART NXP] [  OK  ] Started Log Server Service.
-[UART NXP]
-[UART NXP]          Starting Enable switch OOB interface...
-[UART NXP]
-[UART NXP]          Starting Redis In-Memory Data Store...
-[UART NXP]
-[UART NXP]          Starting Permit User Sessions...
-[UART NXP]
-[UART NXP] [  OK  ] Started Xinetd A Powerful Replacement For Inetd.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Enable switch OOB interface.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Permit User Sessions.
-[UART NXP]
-[UART NXP] [  OK  ] Started Getty on tty1.
-[UART NXP]
-[UART NXP] [  OK  ] Started Serial Getty on ttyS0.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target Login Prompts.
-[UART NXP]
-[UART NXP] [  OK  ] Started DNS forwarder and DHCP server.
-[UART NXP]
-[UART NXP] [  OK  ] Started Redis In-Memory Data Store.
-[UART NXP]
-[UART NXP TX] \r
-[UART NXP TX] \r
-[UART NXP TX] root\r
-[UART NXP TX] toor\r
-[UART NXP] [  OK  ] Finished OpenSSH Key Generation.
-[UART NXP]
-[UART NXP]
-[UART NXP]
-[UART NXP] Satixfy Landing Station Distro 5.0.4 ls1046afrwy ttyS0
-[UART NXP]
-[UART NXP] ls1046afrwy login:
-[UART NXP]
-[UART NXP] ls1046afrwy login:
-[UART NXP]
-[UART NXP] ls1046afrwy login: root
-[UART NXP]
-[UART NXP] Password:
-Traceback (most recent call last):
-  File "C:\Users\alexeyt\source\repos\LscriptWin\lscriptnxp.py", line 1509, in <module>
-    raise SystemExit(main())
-                     ~~~~^^
-  File "C:\Users\alexeyt\source\repos\LscriptWin\lscriptnxp.py", line 1502, in main
-    return run_nxp_flow(config, provision, args, run_dir)
-  File "C:\Users\alexeyt\source\repos\LscriptWin\lscriptnxp.py", line 1450, in run_nxp_flow
-    run_deploy_script(nxp, config, provision)
-    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\alexeyt\source\repos\LscriptWin\lscriptnxp.py", line 1286, in run_deploy_script
-    wait_for_post_deploy_uart_login(session, config)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
-  File "C:\Users\alexeyt\source\repos\LscriptWin\lscriptnxp.py", line 1267, in wait_for_post_deploy_uart_login
-    session.wait_for_pattern(
-    ~~~~~~~~~~~~~~~~~~~~~~~~^
-        shell_prompt,
-        ^^^^^^^^^^^^^
-        timeout=max(config.timeouts.emergency_boot_seconds, 180),
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        label="configured DUT shell prompt after direct post-reboot login",
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    )
-    ^
-  File "C:\Users\alexeyt\source\repos\LscriptWin\lscriptnxp.py", line 540, in wait_for_pattern
-    self.poll()
-    ~~~~~~~~~^^
-  File "C:\Users\alexeyt\source\repos\LscriptWin\lscriptnxp.py", line 502, in poll
-    data = self.serial.read(self.serial.in_waiting or 1)
-  File "C:\Users\alexeyt\AppData\Local\Programs\Python\Python314\Lib\site-packages\serial\serialwin32.py", line 288, inread
-    result_ok = win32.GetOverlappedResult(
-        self._port_handle,
-        ctypes.byref(self._overlapped_read),
-        ctypes.byref(rc),
-        True)
-KeyboardInterrupt
-PS C:\Users\alexeyt\source\repos\LscriptWin> python lscriptnxp.py --dig_sn CLSDM-09-0926-260528-002
-[INFO] NXP log: C:\Logs\Deployment\CLSDM-09-0926-260528-002\20260523-121216\20260523-121216-nxp.log
-[INFO] Switch log: C:\Logs\Deployment\CLSDM-09-0926-260528-002\20260523-121216\20260523-121216-switch.log
-
-[STAGE 1] Stop autoboot and configure NXP + switch at U-Boot
-[INFO] NXP: NXP U-Boot: gpio clear 27
-[INFO] NXP: NXP U-Boot: mac read
-[INFO] NXP: NXP U-Boot: mac id
-[INFO] NXP: NXP U-Boot: mac ports 4
-[INFO] NXP: NXP U-Boot: mac 0 70:B3:D5:97:07:D8
-[INFO] NXP: NXP U-Boot: mac 1 00:04:9F:08:44:A2
-[INFO] NXP: NXP U-Boot: mac 2 00:04:9F:08:44:A3
-[INFO] NXP: NXP U-Boot: mac 3 00:04:9F:08:44:A4
-[INFO] NXP: NXP U-Boot: mac save
-[INFO] Switch: Switch U-Boot: setenv ethaddr
-[INFO] Switch: Switch U-Boot: saveenv
-
-[STAGE 2] Reset NXP after MAC save and enter emergency mode using YAML prompt
-[INFO] NXP: sending reset from U-Boot, waiting 65 seconds without UART reads, then checking YAML emergency prompt
-[INFO] NXP boot delay: waiting about 1:05
-NXP boot delay: 100%|███████████████████████████████████████████████████████████████████| 65/65 [01:05<00:00,  1.00s/s]
-[INFO] NXP boot delay: timer completed
-
-[STAGE 3] Send IP and ping commands from NXP to the PC
-[INFO] NXP: Configure DUT IP in emergency mode
-[INFO] NXP: Ping the PC from emergency mode
-
-[STAGE 4] Start dropbear and push the deployment script from Windows to the DUT
-[INFO] NXP: Create dropbear runtime directory
-[INFO] NXP: Start dropbear service in emergency mode
-[INFO] Windows->DUT SCP: scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\deploy-lsbb-1.1.1-20260324.sh root@10.10.10.2:/tmp
-[INFO] NXP: Verify deployment script exists in DUT temporary directory
-
-[STAGE 5] Start the deployment script, then reboot out of emergency mode
-[INFO] NXP: Change to temporary deployment directory
-[INFO] NXP: starting deployment script
-NXP deploy script: 100%|████████████████████████████████████████████████████████████| 2400/2400 [02:08<00:00, 18.70s/s]
-[INFO] NXP: deploy script completed, sending reboot to leave emergency mode
-[INFO] NXP: showing live UART after deployment reboot, then waiting for login before sending credentials
-[UART NXP] [    1.971167] systemd[1]: Hostname set to <ls1046afrwy>.
-[UART NXP] [    1.983660] systemd[1]: Initializing machine ID from random generator.
-[UART NXP] [    2.372494] systemd[1]: Queued start job for default target Multi-User System.
-[UART NXP] [    2.395719] systemd[1]: Created slice Slice /system/getty.
-[UART NXP] [  OK  ] Created slice Slice /system/getty.
-[UART NXP]
-[UART NXP] [    2.418442] systemd[1]: Created slice Slice /system/modprobe.
-[UART NXP] [  OK  ] Created slice Slice /system/modprobe.
-[UART NXP]
-[UART NXP] [    2.442413] systemd[1]: Created slice Slice /system/serial-getty.
-[UART NXP] [  OK  ] Created slice Slice /system/serial-getty.
-[UART NXP]
-[UART NXP] [    2.466742] systemd[1]: Created slice User and Session Slice.
-[UART NXP] [  OK  ] Created slice User and Session Slice.
-[UART NXP]
-[UART NXP] [    2.489980] systemd[1]: Started Dispatch Password Requests to Console Directory Watch.
-[UART NXP] [  OK  ] Started Dispatch Password Requests to Console Directory Watch.
-[UART NXP]
-[UART NXP] [    2.517933] systemd[1]: Started Forward Password Requests to Wall Directory Watch.
-[UART NXP] [  OK  ] Started Forward Password Requests to Wall Directory Watch.
-[UART NXP]
-[UART NXP] [    2.541777] systemd[1]: Expecting device /dev/mmcblk0p3...
-[UART NXP]          Expecting device /dev/mmcblk0p3...
-[UART NXP]
-[UART NXP] [    2.561801] systemd[1]: Reached target Path Units.
-[UART NXP] [  OK  ] Reached target Path Units.
-[UART NXP]
-[UART NXP] [    2.581742] systemd[1]: Reached target Remote File Systems.
-[UART NXP] [  OK  ] Reached target Remote File Systems.
-[UART NXP]
-[UART NXP] [    2.601736] systemd[1]: Reached target Slice Units.
-[UART NXP] [  OK  ] Reached target Slice Units.
-[UART NXP]
-[UART NXP] [    2.621769] systemd[1]: Reached target Swaps.
-[UART NXP] [  OK  ] Reached target Swaps.
-[UART NXP]
-[UART NXP] [    2.642361] systemd[1]: Listening on Syslog Socket.
-[UART NXP] [  OK  ] Listening on Syslog Socket.
-[UART NXP]
-[UART NXP] [    2.662004] systemd[1]: Listening on initctl Compatibility Named Pipe.
-[UART NXP] [  OK  ] Listening on initctl Compatibility Named Pipe.
-[UART NXP]
-[UART NXP] [    2.686380] systemd[1]: Listening on Journal Audit Socket.
-[UART NXP] [  OK  ] Listening on Journal Audit Socket.
-[UART NXP]
-[UART NXP] [    2.706125] systemd[1]: Listening on Journal Socket (/dev/log).
-[UART NXP] [  OK  ] Listening on Journal Socket (/dev/log).
-[UART NXP]
-[UART NXP] [    2.730251] systemd[1]: Listening on Journal Socket.
-[UART NXP] [  OK  ] Listening on Journal Socket.
-[UART NXP]
-[UART NXP] [    2.750455] systemd[1]: Listening on udev Control Socket.
-[UART NXP] [  OK  ] Listening on udev Control Socket.
-[UART NXP]
-[UART NXP] [    2.770103] systemd[1]: Listening on udev Kernel Socket.
-[UART NXP] [  OK  ] Listening on udev Kernel Socket.
-[UART NXP]
-[UART NXP] [    2.790173] systemd[1]: Listening on User Database Manager Socket.
-[UART NXP] [  OK  ] Listening on User Database Manager Socket.
-[UART NXP]
-[UART NXP] [    2.841772] systemd[1]: Mounting Huge Pages File System...
-[UART NXP]          Mounting Huge Pages File System...
-[UART NXP]
-[UART NXP] [    2.864561] systemd[1]: Mounting POSIX Message Queue File System...
-[UART NXP]          Mounting POSIX Message Queue File System...
-[UART NXP]
-[UART NXP] [    2.917873] systemd[1]: Mounting Kernel Debug File System...
-[UART NXP]          Mounting Kernel Debug File System...
-[UART NXP]
-[UART NXP] [    2.942055] systemd[1]: Kernel Trace File System was skipped because of an unmet condition check (ConditionPathExists=/sys/kernel/tracing).
-[UART NXP] [    2.958779] systemd[1]: Mounting Temporary Directory /tmp...
-[UART NXP]          Mounting Temporary Directory /tmp...
-[UART NXP]
-[UART NXP] [    2.981942] systemd[1]: Create List of Static Device Nodes was skipped because of an unmet condition check (ConditionFileNotEmpty=/lib/modules/6.6.52-ge0f9e2afd4cf-dirty/modules.devname).
-[UART NXP] [    3.002108] systemd[1]: Starting Load Kernel Module configfs...
-[UART NXP]          Starting Load Kernel Module configfs...
-[UART NXP]
-[UART NXP] [    3.028133] systemd[1]: Starting Load Kernel Module drm...
-[UART NXP]          Starting Load Kernel Module drm...
-[UART NXP]
-[UART NXP] [    3.056251] systemd[1]: Starting Load Kernel Module fuse...
-[UART NXP]          Starting Load Kernel Module fuse...
-[UART NXP]
-[UART NXP] [    3.081923] systemd[1]: File System Check on Root Device was skipped because of an unmet condition check (ConditionPathIsReadWrite=!/).
-[UART NXP] [    3.097666] systemd[1]: Starting Journal Service...
-[UART NXP]          Starting Journal Service...
-[UART NXP]
-[UART NXP] [    3.124612] systemd[1]: Load Kernel Modules was skipped because no trigger condition checks were met.
-[UART NXP] [    3.135749] systemd[1]: Starting Generate network units from Kernel command line...
-[UART NXP]          Starting Generate network units from Kernel command line...
-[UART NXP]
-[UART NXP] [    3.167658] systemd[1]: Starting Remount Root and Kernel File Systems...
-[UART NXP]          Starting Remount Root and Kern[    3.178270] systemd-journald[107]: Collecting audit messages is enabled.
-[UART NXP] el File Systems...
-[UART NXP]
-[UART NXP] [    3.229918] systemd[1]: Starting Apply Kernel Variables...
-[UART NXP]          Starting Apply Kernel Variables...
-[UART NXP]
-[UART NXP] [    3.251771] systemd[1]: Starting Create Static Device Nodes in /dev gracefully...
-[UART NXP]          Starting Creat[    3.261835] EXT4-fs (mmcblk0p1): re-mounted d174e98d-95d0-4022-bf3c-cf238fcd64de r/w. Quota mode: disabled.
-[UART NXP] e Static Device Nodes in /dev gracefully...
-[UART NXP]
-[UART NXP] [    3.309973] systemd[1]: Starting Coldplug All udev Devices...
-[UART NXP]          Starting Coldplug All udev Devices...
-[UART NXP]
-[UART NXP] [    3.332908] systemd[1]: Started Journal Service.
-[UART NXP] [  OK  ] Started Journal Service.
-[UART NXP]
-[UART NXP] [  OK  ] Mounted Huge Pages File System.
-[UART NXP]
-[UART NXP] [  OK  ] Mounted POSIX Message Queue File System.
-[UART NXP]
-[UART NXP] [  OK  ] Mounted Kernel Debug File System.
-[UART NXP]
-[UART NXP] [  OK  ] Mounted Temporary Directory /tmp.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Load Kernel Module configfs.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Load Kernel Module drm.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Load Kernel Module fuse.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Generate network units from Kernel command line.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Remount Root and Kernel File Systems.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Apply Kernel Variables.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Create Static Device Nodes in /dev gracefully.
-[UART NXP]
-[UART NXP]          Mounting Kernel Configuration File System...
-[UART NXP]
-[UART NXP]          Starting Flush Journal to Persistent Storage...
-[UART NXP]
-[UART NXP]          Starting Create System Users...
-[UART NXP]
-[UART NXP] [    3.666664] systemd-journald[107]: Received client request to flush runtime journal.
-[UART NXP] [  OK  ] Finished Coldplug All udev Devices.
-[UART NXP]
-[UART NXP] [  OK  ] Mounted Kernel Configuration File System.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Flush Journal to Persistent Storage.
-[UART NXP]
-[UART NXP] [    3.744324] audit: type=1334 audit(1709054765.904:2): prog-id=6 op=LOAD
-[UART NXP] [    3.750979] audit: type=1334 audit(1709054765.916:3): prog-id=7 op=LOAD
-[UART NXP] [    3.757623] audit: type=1334 audit(1709054765.920:4): prog-id=8 op=LOAD
-[UART NXP]          Starting User Database Manager...
-[UART NXP]
-[UART NXP] [  OK  ] Started User Database Manager.
-[UART NXP]
-[UART NXP] [  OK  ] Finished Create System Users.
-[UART NXP]
-[UART NXP]          Starting Create Static Device Nodes in /dev...
-[UART NXP]
-[UART NXP] [  OK  ] Finished Create Static Device Nodes in /dev.
-[UART NXP]
-[UART NXP] [  OK  ] Reached target Preparation for Local File Systems.
-[UART NXP]
-[UART NXP]          Mounting /var/volatile...
-[UART NXP]
-[UART NXP] [    3.995597] audit: type=1334 audit(1709054766.156:5): prog-id=9 op=LOAD
-[UART NXP] [    4.002271] audit: type=1334 audit(1709054766.164:6): prog-id=10 op=LOAD
-[UART NXP]          Starting Rule-based Manager for Device Events and Files...
-[UART NXP]
-[UART NXP] [  OK  ] Mounted /var/volatile.
-[UART NXP]
-[UART NXP]          Starting Load/Save OS Random Seed...
-[UART NXP]
-[UART NXP] [  OK  ] Started Rule-based Manager for Device Events and Files.
-[UART NXP]
-[UART NXP] [    4.446982] fsl_dpa soc:fsl,dpaa:ethernet@9 fm1-mac10: renamed from eth3
-[UART NXP] [    4.474266] fsl_dpa soc:fsl,dpaa:ethernet@5 fm1-mac6: renamed from eth1
-[UART NXP] [    4.516100] fsl_dpa soc:fsl,dpaa:ethernet@8 fm1-mac9: renamed from eth2
-[UART NXP] [    4.551390] fsl_dpa soc:fsl,dpaa:ethernet@4 fm1-mac5: renamed from eth0
-[UART NXP] [    4.698672] gpio-mux mux-controller: 2-way mux-controller registered
-[UART NXP] [    4.703373] EDAC MC0: Giving out device to module fsl_ddr_edac controller fsl_mc_err: DEV fsl_mc_err (INTERRUPT)
-[UART NXP] [    4.734650] fsl_ddr_edac acquired irq 57 for MC
-[UART NXP] [    4.740207] fsl_ddr_edac MC err registered
-[UART NXP] [    4.818847] lm75 7-004c: supply vs not found, using dummy regulator
-[UART NXP] [    4.840954] at24 1-0050: supply vcc not found, using dummy regulator
-[UART NXP] [    4.841717] ftm-alarm 29d0000.timer: registered as rtc1
-[UART NXP] [    4.843356] ina2xx 3-0043: power monitor ina219 (Rshunt = 1000 uOhm)
-[UART NXP] [    4.853326] caam 1700000.crypto: Linux CAAM Queue I/F driver initialised
-[UART NXP] [    4.865838] hwmon hwmon6: temp1_input not attached to any thermal zone
-[UART NXP] [    4.868067] caam 1700000.crypto: device ID = 0x0a11030100000000 (Era 8)
-[UART NXP] [    4.872384] lm75 7-004c: hwmon6: sensor 'tmp100'
-[UART NXP] [    4.872504] lm75 8-004d: supply vs not found, using dummy regulator
-[UART NXP] [    4.879352] at24 1-0050: 256 byte 24c02 EEPROM, writable, 1 bytes/write
-[UART NXP] [    4.896692] caam 1700000.crypto: job rings = 3, qi = 1
-[UART NXP] [    4.899394] at24 9-0056: supply vcc not found, using dummy regulator
-[UART NXP] [    4.912979] ina2xx 4-0049: power monitor ina219 (Rshunt = 1000 uOhm)
-[UART NXP] [    4.923990] at24 9-0056: 256 byte 24c02 EEPROM, writable, 8 bytes/write
-[UART NXP] [    4.927304] hwmon hwmon8: temp1_input not attached to any thermal zone
-[UART NXP] [    4.930926] at24 10-0057: supply vcc not found, using dummy regulator
-[UART NXP] [    4.937365] lm75 8-004d: hwmon8: sensor 'tmp100'
-[UART NXP] [    4.948436] lm75 9-004e: supply vs not found, using dummy regulator
-[UART NXP] [    4.958040] at24 10-0057: 256 byte 24c02 EEPROM, writable, 8 bytes/write
-[UART NXP] [    4.961133] ina2xx 4-0048: power monitor ina219 (Rshunt = 1000 uOhm)
-[UART NXP] [    4.964317] hwmon hwmon10: temp1_input not attached to any thermal zone
-[UART NXP] [    4.964323] lm75 9-004e: hwmon10: sensor 'tmp100'
-[UART NXP] [    4.964409] lm75 10-004f: supply vs not found, using dummy regulator
-[UART NXP] [    4.974828] hwmon hwmon11: temp1_input not attached to any thermal zone
-[UART NXP] [    4.995996] lm75 10-004f: hwmon11: sensor 'tmp100'
-[UART NXP] [    5.020972] ina2xx 5-0040: power monitor ina219 (Rshunt = 500 uOhm)
-[UART NXP] [    5.037875] ina2xx 5-0044: power monitor ina219 (Rshunt = 1000 uOhm)
-[UART NXP] [    5.059933] ina2xx 6-0045: power monitor ina219 (Rshunt = 1000 uOhm)
-[UART NXP] [    5.075002] xo3-rd1125 spi2.0: CPLD Ver: 1.4, Build: 0, Compiled Date: 24-04-26
-[UART NXP] [    5.077126] ina2xx 7-0041: power monitor ina219 (Rshunt = 1000 uOhm)
-[UART NXP] [    5.083166] xo3-rd1125 spi2.0: CPLD IRQ domain: RD=4, HSI1=8, HSI2=8 child IRQs (parents: cpld-nxp-irq0..3)
-[UART NXP] [    5.090944] gpio-lsbb cpld-sx1-ctrl-gpio: LSBB GPIO registered: reg-base=0x25, gpio-base=640, direction=0xE3
-[UART NXP] [    5.098644] xo3-rd1125 spi2.0: DT mode: relying on device tree for child SPI master instantiation
-[UART NXP] [    5.108780] gpio-lsbb cpld-sx2-ctrl-gpio: LSBB GPIO registered: reg-base=0x35, gpio-base=648, direction=0xE3
-[UART NXP]          Startin[    5.127754] gpio-lsbb cpld-eth-ctrl-gpio: LSBB GPIO registered: reg-base=0x45, gpio-base=656, direction=0xFF
-[UART NXP] g Virtu[    5.139300] gpio-lsbb cpld-eth-stat-gpio: LSBB GPIO registered: reg-base=0x46, gpio-base=664, direction=0x00
-[UART NXP] al Console Setup[    5.142503] ina2xx 8-0042: power monitor ina219 (Rshunt = 1000 uOhm)
-[UART NXP] ...
-[UART NXP]
-[UART NXP] [    5.157894] gpio-lsbb cpld-sky1-ctrl-gpio: LSBB GPIO registered: reg-base=0x55, gpio-base=672, direction=0xFD
-[UART NXP] [    5.168937] gpio-lsbb cpld-sky2-ctrl-gpio: LSBB GPIO registered: reg-base=0x56, gpio-base=680, direction=0xFD
-[UART NXP] [    5.173839] ina2xx 9-0046: power monitor ina219 (Rshunt = 1000 uOhm)
-[UART NXP] [    5.186526] gpio-lsbb cpld-fpga-ctrl-gpio: LSBB GPIO registered: reg-base=0x70, gpio-base=688, direction=0xE7
-[UART NXP] [    5.195190] ina2xx 10-0047: power monitor ina219 (Rshunt = 1000 uOhm)
-[UART NXP] [    5.197022] spi-lattice-xo3 xo3-spi-master-0: SPI controller registered: base=0x50, bus_num=10
-[UART NXP] [    5.214669] spi-lattice-xo3 xo3-spi-master-1: SPI controller registered: base=0x20, bus_num=11
-[UART NXP] [    5.223702] spi-lattice-xo3 xo3-spi-master-2: SPI controller registered: base=0x30, bus_num=12
-[UART NXP] [    5.233362] spi-lattice-xo3 xo3-spi-master-3: SPI controller registered: base=0x40, bus_num=13
-[UART NXP] [    5.242644] gpio-lsbb cpld-txfem-ctrl-gpio: LSBB GPIO registered: reg-base=0x80, gpio-base=696, direction=0x7F
-[UART NXP] [    5.254021] gpio-lsbb cpld-rxfem-ctrl-gpio: LSBB GPIO registered: reg-base=0x81, gpio-base=704, direction=0x7F
-[UART NXP] [    5.264463] gpio-lsbb cpld-rcm-ctrl-gpio: LSBB GPIO registered: reg-base=0x90, gpio-base=712, direction=0xFD
-[UART NXP] [    5.274819] gpio-lsbb cpld-uart-ctrl-gpio: LSBB GPIO registered: reg-base=0xA0, gpio-base=720, direction=0xFF
-[UART NXP] [    5.285891] si5395 spi10.0: DT: Default firmware-variant = 1
-[UART NXP] [    5.286132] gpio-lsbb cpld-led0-ctrl-gpio: LSBB GPIO registered: reg-base=0xC0, gpio-base=728, direction=0xFF
-[UART NXP] [    5.295299] si5395 spi10.0: Chip: 0x5395 Grade: 0 Rev: 0
-[UART NXP] [    5.302099] gpio-lsbb cpld-led1-ctrl-gpio: LSBB GPIO registered: reg-base=0xC1, gpio-base=736, direction=0xFF
-[UART NXP] [    5.318611] caam algorithms registered in /proc/crypto
-[UART NXP] [    5.323376] si5395 spi10.0: design_id: [DV1_V3.3] PLL: Locked
-[UART NXP] [    5.323874] caam 1700000.crypto: rng crypto API alg registered prng-caam
-[UART NXP] [    5.330091] lsbb-fpga-spi spi2.1: FPGA: fw=11.0 build=6 GP_CONT_VER=0x20260219 date=2026-05-05
-[UART NXP] [    5.341052] caam 1700000.crypto: registering rng-caam
-[UART NXP] [    5.341696] si5395 spi10.0: Si5395 ready (cs=0 variant=1)
-[UART NXP] [    5.341769] si5395 spi10.1: DT: Default firmware-variant = 2
-[UART NXP] [    5.356208] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@24: registered 2 read/write GPIO outputs at 0x00000024
-[UART NXP] [    5.361296] random: crng init done
-[UART NXP] [    5.371095] si5395 spi10.1: Chip: 0x5395 Grade: 0 Rev: 0
-[UART NXP] [    5.372007] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@28: registered 2 read/write GPIO outputs at 0x00000028
-[UART NXP] [    5.375037] Device caam-keygen registered
 [UART NXP] [    5.380509] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@2c: registered 2 read/write GPIO outputs at 0x0000002c
 [UART NXP] [    5.381259] si5395 spi10.1: design_id: [DV2_V3.3] PLL: Locked
 [UART NXP] [    5.381276] si5395 spi10.1: Si5395 ready (cs=1 variant=2)
@@ -8414,6 +6851,1575 @@ NXP deploy script: 100%|██████████████████�
 [UART NXP TX] toor\r
 [UART NXP] [  OK  ] Started Redis In-Memory Data Store.
 [UART NXP]
+[UART NXP] [  OK  ] Finished OpenSSH Key Generation.
+[UART NXP]
+[UART NXP]
+[UART NXP]
+[UART NXP] Satixfy Landing Station Distro 5.0.4 ls1046afrwy ttyS0
+[UART NXP]
+[UART NXP] ls1046afrwy login:
+[UART NXP]
+[UART NXP] ls1046afrwy login: root
+[UART NXP]
+[UART NXP] Password:
+[OK] NXP: entered DUT shell after reboot
+
+[STAGE 6] Log in on UART after reboot and save the DUT IP
+[INFO] NXP: Configure persistent DUT IP with nmcli
+[INFO] NXP: Bring up persistent DUT IP with nmcli
+[INFO] NXP: Enable DUT IP autoconnect with nmcli
+
+[STAGE 7] Copy LSBB_Utils from Windows to the DUT
+[INFO] Windows->DUT SFTP: C:\LSBB_Utils -> root@10.10.10.2:/root/LSBB_Utils
+[OK] Copied LSBB_Utils to root@10.10.10.2:/root/LSBB_Utils (30 files)
+[INFO] NXP: Verify LSBB_Utils exists on the DUT
+[INFO] NXP: Make LSBB_Utils run.sh executable
+[OK] NXP staged flow completed successfully.
+PS C:\Users\alexeyt\source\repos\LscriptWin> python lscriptnxp.py --dig_sn CLSDM-09-0926-260528-002
+[INFO] NXP log: C:\Logs\Deployment\CLSDM-09-0926-260528-002\20260523-175555\20260523-175555-nxp.log
+
+[STAGE 1] Stop autoboot and configure NXP at U-Boot
+[INFO] NXP: NXP U-Boot: gpio clear 27
+[INFO] NXP: NXP U-Boot: mac read
+[INFO] NXP: NXP U-Boot: mac id
+[INFO] NXP: NXP U-Boot: mac ports 4
+[INFO] NXP: NXP U-Boot: mac 0 70:B3:D5:97:07:D8
+[INFO] NXP: NXP U-Boot: mac 1 00:04:9F:08:44:A2
+[INFO] NXP: NXP U-Boot: mac 2 00:04:9F:08:44:A3
+[INFO] NXP: NXP U-Boot: mac 3 00:04:9F:08:44:A4
+[INFO] NXP: NXP U-Boot: mac save
+
+[STAGE 2] Reset NXP after MAC save and enter emergency mode using YAML prompt
+[INFO] NXP: sending reset from U-Boot, waiting 65 seconds without UART reads, then checking YAML emergency prompt
+[INFO] NXP boot delay: waiting about 1:05
+NXP boot delay: 100%|███████████████████████████████████████████████████████████████████| 65/65 [01:05<00:00,  1.00s/s]
+[INFO] NXP boot delay: timer completed
+
+[STAGE 3] Send IP and ping commands from NXP to the PC
+[INFO] NXP: Configure DUT IP in emergency mode
+[INFO] NXP: Ping the PC from emergency mode
+
+[STAGE 4] Start dropbear and push the deployment script from Windows to the DUT
+[INFO] NXP: Create dropbear runtime directory
+[INFO] NXP: Start dropbear service in emergency mode
+[INFO] Windows->DUT SCP: scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\deploy-lsbb-1.1.1-20260324.sh root@10.10.10.2:/tmp
+[INFO] NXP: Verify deployment script exists in DUT temporary directory
+
+[STAGE 5] Start the deployment script, then reboot out of emergency mode
+[INFO] NXP: Change to temporary deployment directory
+[INFO] NXP: starting deployment script
+NXP deploy script: 100%|██████████████████████████████████████████████████████████████| 900/900 [02:12<00:00,  6.80s/s]
+[INFO] NXP: deploy script completed, sending reboot to leave emergency mode
+[INFO] NXP: showing live UART after deployment reboot, then waiting for login before sending credentials
+[UART NXP] hgap)!
+[UART NXP]
+[UART NXP]
+[UART NXP] [    1.967173] systemd[1]: Hostname set to <ls1046afrwy>.
+[UART NXP] [    1.979661] systemd[1]: Initializing machine ID from random generator.
+[UART NXP] [    2.385244] systemd[1]: Queued start job for default target Multi-User System.
+[UART NXP] [    2.411738] systemd[1]: Created slice Slice /system/getty.
+[UART NXP] [  OK  ] Created slice Slice /system/getty.
+[UART NXP]
+[UART NXP] [    2.434444] systemd[1]: Created slice Slice /system/modprobe.
+[UART NXP] [  OK  ] Created slice Slice /system/modprobe.
+[UART NXP]
+[UART NXP] [    2.458415] systemd[1]: Created slice Slice /system/serial-getty.
+[UART NXP] [  OK  ] Created slice Slice /system/serial-getty.
+[UART NXP]
+[UART NXP] [    2.482760] systemd[1]: Created slice User and Session Slice.
+[UART NXP] [  OK  ] Created slice User and Session Slice.
+[UART NXP]
+[UART NXP] [    2.505986] systemd[1]: Started Dispatch Password Requests to Console Directory Watch.
+[UART NXP] [  OK  ] Started Dispatch Password Requests to Console Directory Watch.
+[UART NXP]
+[UART NXP] [    2.533953] systemd[1]: Started Forward Password Requests to Wall Directory Watch.
+[UART NXP] [  OK  ] Started Forward Password Requests to Wall Directory Watch.
+[UART NXP]
+[UART NXP] [    2.557780] systemd[1]: Expecting device /dev/mmcblk0p3...
+[UART NXP]          Expecting device /dev/mmcblk0p3...
+[UART NXP]
+[UART NXP] [    2.577826] systemd[1]: Reached target Path Units.
+[UART NXP] [  OK  ] Reached target Path Units.
+[UART NXP]
+[UART NXP] [    2.597746] systemd[1]: Reached target Remote File Systems.
+[UART NXP] [  OK  ] Reached target Remote File Systems.
+[UART NXP]
+[UART NXP] [    2.617735] systemd[1]: Reached target Slice Units.
+[UART NXP] [  OK  ] Reached target Slice Units.
+[UART NXP]
+[UART NXP] [    2.637760] systemd[1]: Reached target Swaps.
+[UART NXP] [  OK  ] Reached target Swaps.
+[UART NXP]
+[UART NXP] [    2.658402] systemd[1]: Listening on Syslog Socket.
+[UART NXP] [  OK  ] Listening on Syslog Socket.
+[UART NXP]
+[UART NXP] [    2.678002] systemd[1]: Listening on initctl Compatibility Named Pipe.
+[UART NXP] [  OK  ] Listening on initctl Compatibility Named Pipe.
+[UART NXP]
+[UART NXP] [    2.702394] systemd[1]: Listening on Journal Audit Socket.
+[UART NXP] [  OK  ] Listening on Journal Audit Socket.
+[UART NXP]
+[UART NXP] [    2.722172] systemd[1]: Listening on Journal Socket (/dev/log).
+[UART NXP] [  OK  ] Listening on Journal Socket (/dev/log).
+[UART NXP]
+[UART NXP] [    2.746246] systemd[1]: Listening on Journal Socket.
+[UART NXP] [  OK  ] Listening on Journal Socket.
+[UART NXP]
+[UART NXP] [    2.766457] systemd[1]: Listening on udev Control Socket.
+[UART NXP] [  OK  ] Listening on udev Control Socket.
+[UART NXP]
+[UART NXP] [    2.786114] systemd[1]: Listening on udev Kernel Socket.
+[UART NXP] [  OK  ] Listening on udev Kernel Socket.
+[UART NXP]
+[UART NXP] [    2.806182] systemd[1]: Listening on User Database Manager Socket.
+[UART NXP] [  OK  ] Listening on User Database Manager Socket.
+[UART NXP]
+[UART NXP] [    2.861788] systemd[1]: Mounting Huge Pages File System...
+[UART NXP]          Mounting Huge Pages File System...
+[UART NXP]
+[UART NXP] [    2.884536] systemd[1]: Mounting POSIX Message Queue File System...
+[UART NXP]          Mounting POSIX Message Queue File System...
+[UART NXP]
+[UART NXP] [    2.907479] systemd[1]: Mounting Kernel Debug File System...
+[UART NXP]          Mounting Kernel Debug File System...
+[UART NXP]
+[UART NXP] [    2.925890] systemd[1]: Kernel Trace File System was skipped because of an unmet condition check (ConditionPathExists=/sys/kernel/tracing).
+[UART NXP] [    2.942254] systemd[1]: Mounting Temporary Directory /tmp...
+[UART NXP]          Mounting Temporary Directory /tmp...
+[UART NXP]
+[UART NXP] [    2.961945] systemd[1]: Create List of Static Device Nodes was skipped because of an unmet condition check (ConditionFileNotEmpty=/lib/modules/6.6.52-ge0f9e2afd4cf-dirty/modules.devname).
+[UART NXP] [    2.981764] systemd[1]: Starting Load Kernel Module configfs...
+[UART NXP]          Starting Load Kernel Module configfs...
+[UART NXP]
+[UART NXP] [    3.025920] systemd[1]: Starting Load Kernel Module drm...
+[UART NXP]          Starting Load Kernel Module drm...
+[UART NXP]
+[UART NXP] [    3.048983] systemd[1]: Starting Load Kernel Module fuse...
+[UART NXP]          Starting Load Kernel Module fuse...
+[UART NXP]
+[UART NXP] [    3.069948] systemd[1]: File System Check on Root Device was skipped because of an unmet condition check (ConditionPathIsReadWrite=!/).
+[UART NXP] [    3.085722] systemd[1]: Starting Journal Service...
+[UART NXP]          Starting Journal Service...
+[UART NXP]
+[UART NXP] [    3.112611] systemd[1]: Load Kernel Modules was skipped because no trigger condition checks were met.
+[UART NXP] [    3.123602] systemd[1]: Starting Generate network units from Kernel command line...
+[UART NXP]          Starting Generate network units from Kernel command line...
+[UART NXP]
+[UART NXP] [    3.151466] systemd[1]: Starting Remount Root and Kernel File Systems...
+[UART NXP]          Starting Remount Root and Kernel File Systems...
+[UART NXP]
+[UART NXP] [    3.175404] systemd[1]: Starting Apply Kernel Variables...
+[UART NXP]          Starting Apply Kernel Variables...
+[UART NXP]
+[UART NXP] [    3.186653] systemd-journald[110]: Collecting audit messages is enabled.
+[UART NXP] [    3.197944] systemd[1]: Starting Create Static Device Nodes in /dev gracefully...
+[UART NXP]          Starting Create Static Device Nodes in /dev gr[    3.209945] EXT4-fs (mmcblk0p1): re-mounted d174e98d-95d0-4022-bf3c-cf238fcd64de r/w. Quota mode: disabled.
+[UART NXP] acefully...
+[UART NXP]
+[UART NXP] [    3.274127] systemd[1]: Starting Coldplug All udev Devices...
+[UART NXP]          Starting Coldplug All udev Devices...
+[UART NXP]
+[UART NXP] [    3.298210] systemd[1]: Started Journal Service.
+[UART NXP] [  OK  ] Started Journal Service.
+[UART NXP]
+[UART NXP] [  OK  ] Mounted Huge Pages File System.
+[UART NXP]
+[UART NXP] [  OK  ] Mounted POSIX Message Queue File System.
+[UART NXP]
+[UART NXP] [  OK  ] Mounted Kernel Debug File System.
+[UART NXP]
+[UART NXP] [  OK  ] Mounted Temporary Directory /tmp.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Load Kernel Module configfs.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Load Kernel Module drm.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Load Kernel Module fuse.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Generate network units from Kernel command line.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Remount Root and Kernel File Systems.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Apply Kernel Variables.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Create Static Device Nodes in /dev gracefully.
+[UART NXP]
+[UART NXP]          Mounting Kernel Configuration File System...
+[UART NXP]
+[UART NXP]          Starting Flush Journal to Persistent Storage...
+[UART NXP]
+[UART NXP]          Starting Create System Users...
+[UART NXP]
+[UART NXP] [    3.591991] systemd-journald[110]: Received client request to flush runtime journal.
+[UART NXP] [  OK  ] Finished Coldplug All udev Devices.
+[UART NXP]
+[UART NXP] [  OK  ] Mounted Kernel Configuration File System.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Flush Journal to Persistent Storage.
+[UART NXP]
+[UART NXP] [    3.656476] audit: type=1334 audit(1709054765.820:2): prog-id=6 op=LOAD
+[UART NXP] [    3.663124] audit: type=1334 audit(1709054765.828:3): prog-id=7 op=LOAD
+[UART NXP] [    3.669764] audit: type=1334 audit(1709054765.836:4): prog-id=8 op=LOAD
+[UART NXP]          Starting User Database Manager...
+[UART NXP]
+[UART NXP] [  OK  ] Started User Database Manager.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Create System Users.
+[UART NXP]
+[UART NXP]          Starting Create Static Device Nodes in /dev...
+[UART NXP]
+[UART NXP] [  OK  ] Finished Create Static Device Nodes in /dev.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target Preparation for Local File Systems.
+[UART NXP]
+[UART NXP]          Mounting /var/volatile...
+[UART NXP]
+[UART NXP] [    3.895612] audit: type=1334 audit(1709054766.060:5): prog-id=9 op=LOAD
+[UART NXP] [    3.902252] audit: type=1334 audit(1709054766.068:6): prog-id=10 op=LOAD
+[UART NXP]          Starting Rule-based Manager for Device Events and Files...
+[UART NXP]
+[UART NXP] [  OK  ] Mounted /var/volatile.
+[UART NXP]
+[UART NXP]          Starting Load/Save OS Random Seed...
+[UART NXP]
+[UART NXP] [  OK  ] Started Rule-based Manager for Device Events and Files.
+[UART NXP]
+[UART NXP] [    4.319518] fsl_dpa soc:fsl,dpaa:ethernet@8 fm1-mac9: renamed from eth2
+[UART NXP] [    4.371222] fsl_dpa soc:fsl,dpaa:ethernet@5 fm1-mac6: renamed from eth1
+[UART NXP] [    4.402650] fsl_dpa soc:fsl,dpaa:ethernet@4 fm1-mac5: renamed from eth0
+[UART NXP] [    4.426448] fsl_dpa soc:fsl,dpaa:ethernet@9 fm1-mac10: renamed from eth3
+[UART NXP] [    4.619484] gpio-mux mux-controller: 2-way mux-controller registered
+[UART NXP] [    4.632586] EDAC MC0: Giving out device to module fsl_ddr_edac controller fsl_mc_err: DEV fsl_mc_err (INTERRUPT)
+[UART NXP] [    4.654589] fsl_ddr_edac acquired irq 57 for MC
+[UART NXP] [    4.659149] fsl_ddr_edac MC err registered
+[UART NXP] [    4.715240] caam 1700000.crypto: Linux CAAM Queue I/F driver initialised
+[UART NXP] [    4.723388] caam 1700000.crypto: device ID = 0x0a11030100000000 (Era 8)
+[UART NXP] [    4.730986] caam 1700000.crypto: job rings = 3, qi = 1
+[UART NXP] [    4.737010] lm75 7-004c: supply vs not found, using dummy regulator
+[UART NXP] [    4.749037] ina2xx 3-0043: power monitor ina219 (Rshunt = 1000 uOhm)
+[UART NXP] [    4.754314] hwmon hwmon6: temp1_input not attached to any thermal zone
+[UART NXP] [    4.762001] lm75 7-004c: hwmon6: sensor 'tmp100'
+[UART NXP] [    4.764979] ina2xx 4-0049: power monitor ina219 (Rshunt = 1000 uOhm)
+[UART NXP] [    4.766834] lm75 8-004d: supply vs not found, using dummy regulator
+[UART NXP] [    4.780760] at24 1-0050: supply vcc not found, using dummy regulator
+[UART NXP] [    4.788720] at24 1-0050: 256 byte 24c02 EEPROM, writable, 1 bytes/write
+[UART NXP] [    4.790292] ftm-alarm 29d0000.timer: registered as rtc1
+[UART NXP] [    4.795674] at24 9-0056: supply vcc not found, using dummy regulator
+[UART NXP] [    4.802378] ina2xx 4-0048: power monitor ina219 (Rshunt = 1000 uOhm)
+[UART NXP] [    4.816204] hwmon hwmon9: temp1_input not attached to any thermal zone
+[UART NXP] [    4.822785] lm75 8-004d: hwmon9: sensor 'tmp100'
+[UART NXP] [    4.823431] at24 9-0056: 256 byte 24c02 EEPROM, writable, 8 bytes/write
+[UART NXP] [    4.827571] lm75 9-004e: supply vs not found, using dummy regulator
+[UART NXP] [    4.835126] at24 10-0057: supply vcc not found, using dummy regulator
+[UART NXP] [    4.851535] ina2xx 5-0040: power monitor ina219 (Rshunt = 500 uOhm)
+[UART NXP] [    4.853137] at24 10-0057: 256 byte 24c02 EEPROM, writable, 8 bytes/write
+[UART NXP] [    4.854498] hwmon hwmon11: temp1_input not attached to any thermal zone
+[UART NXP] [    4.854504] lm75 9-004e: hwmon11: sensor 'tmp100'
+[UART NXP] [    4.854590] lm75 10-004f: supply vs not found, using dummy regulator
+[UART NXP] [    4.869435] hwmon hwmon12: temp1_input not attached to any thermal zone
+[UART NXP] [    4.877783] ina2xx 5-0044: power monitor ina219 (Rshunt = 1000 uOhm)
+[UART NXP] [    4.882519] lm75 10-004f: hwmon12: sensor 'tmp100'
+[UART NXP] [    4.907758] ina2xx 6-0045: power monitor ina219 (Rshunt = 1000 uOhm)
+[UART NXP] [    4.922683] ina2xx 7-0041: power monitor ina219 (Rshunt = 1000 uOhm)
+[UART NXP] [    4.938053] ina2xx 8-0042: power monitor ina219 (Rshunt = 1000 uOhm)
+[UART NXP] [    4.959776] ina2xx 9-0046: power monitor ina219 (Rshunt = 1000 uOhm)
+[UART NXP] [    4.960068] xo3-rd1125 spi2.0: CPLD Ver: 1.4, Build: 0, Compiled Date: 24-04-26
+[UART NXP] [    4.969075] gpio-lsbb cpld-rcm-ctrl-gpio: LSBB GPIO registered: reg-base=0x90, gpio-base=640, direction=0xFD
+[UART NXP] [    4.973997] xo3-rd1125 spi2.0: CPLD IRQ domain: RD=4, HSI1=8, HSI2=8 child IRQs (parents: cpld-nxp-irq0..3)
+[UART NXP] [    4.993188] gpio-lsbb cpld-uart-ctrl-gpio: LSBB GPIO registered: reg-base=0xA0, gpio-base=648, direction=0xFF
+[UART NXP] [    4.993743] xo3-rd1125 spi2.0: DT mode: relying on device tree for child SPI master instantiation
+[UART NXP] [    4.996765] gpio-lsbb cpld-led0-ctrl-gpio: LSBB GPIO registered: reg-base=0xC0, gpio-base=656, direction=0xFF
+[UART NXP] [    4.997034] gpio-lsbb cpld-led1-ctrl-gpio: LSBB GPIO registered: reg-base=0xC1, gpio-base=664, direction=0xFF
+[UART NXP] [    4.999502] gpio-lsbb cpld-sx1-ctrl-gpio: LSBB GPIO registered: reg-base=0x25, gpio-base=672, direction=0xE3
+[UART NXP] [    4.999741] gpio-lsbb cpld-sx2-ctrl-gpio: LSBB GPIO registered: reg-base=0x35, gpio-base=680, direction=0xE3
+[UART NXP] [    4.999962] gpio-lsbb cpld-eth-ctrl-gpio: LSBB GPIO registered: reg-base=0x45, gpio-base=688, direction=0xFF
+[UART NXP] [    5.000180] gpio-lsbb cpld-eth-stat-gpio: LSBB GPIO registered: reg-base=0x46, gpio-base=696, direction=0x00
+[UART NXP] [    5.000394] gpio-lsbb cpld-sky1-ctrl-gpio: LSBB GPIO registered: reg-base=0x55, gpio-base=704, direction=0xFD
+[UART NXP] [    5.000613] gpio-lsbb cpld-sky2-ctrl-gpio: LSBB GPIO registered: reg-base=0x56, gpio-base=712, direction=0xFD
+[UART NXP] [    5.000833] gpio-lsbb cpld-fpga-ctrl-gpio: LSBB GPIO registered: reg-base=0x70, gpio-base=720, direction=0xE7
+[UART NXP] [    5.001054] gpio-lsbb cpld-txfem-ctrl-gpio: LSBB GPIO registered: reg-base=0x80, gpio-base=728, direction=0x7F
+[UART NXP] [    5.001274] gpio-lsbb cpld-rxfem-ctrl-gpio: LSBB GPIO registered: reg-base=0x81, gpio-base=736, direction=0x7F
+[UART NXP] [    5.042125] spi-lattice-xo3 xo3-spi-master-0: SPI controller registered: base=0x50, bus_num=10
+[UART NXP]          Starting Virtu[    5.132205] spi-lattice-xo3 xo3-spi-master-1: SPI controller registered: base=0x20, bus_num=11
+[UART NXP] al Console Setup[    5.135794] ina2xx 10-0047: power monitor ina219 (Rshunt = 1000 uOhm)
+[UART NXP] ...
+[UART NXP]
+[UART NXP] [    5.150582] si5395 spi10.0: DT: Default firmware-variant = 1
+[UART NXP] [    5.151201] lsbb-fpga-spi spi2.1: FPGA: fw=11.0 build=6 GP_CONT_VER=0x20260219 date=2026-05-05
+[UART NXP] [    5.159713] si5395 spi10.0: Chip: 0x5395 Grade: 0 Rev: 0
+[UART NXP] [    5.179866] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@24: registered 2 read/write GPIO outputs at 0x00000024
+[UART NXP] [    5.191004] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@28: registered 2 read/write GPIO outputs at 0x00000028
+[UART NXP] [    5.194485] si5395 spi10.0: design_id: [DV1_V3.3] PLL: Locked
+[UART NXP] [    5.201859] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@2c: registered 2 read/write GPIO outputs at 0x0000002c
+[UART NXP] [    5.207381] si5395 spi10.0: Si5395 ready (cs=0 variant=1)
+[UART NXP] [    5.217769] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@30: registered 1 read/write GPIO outputs at 0x00000030
+[UART NXP] [    5.223066] si5395 spi10.1: DT: Default firmware-variant = 2
+[UART NXP] [    5.233526] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@34: registered 6 read/write GPIO outputs at 0x00000034
+[UART NXP] [    5.247703] si5395 spi10.1: Chip: 0x5395 Grade: 0 Rev: 0
+[UART NXP] [    5.249592] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@38: registered 1 write-only GPIO outputs at 0x00000038
+[UART NXP] [    5.254817] caam algorithms registered in /proc/crypto
+[UART NXP] [    5.265232] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@3c: registered 2 read/write GPIO outputs at 0x0000003c
+[UART NXP] [    5.268605] tps546d24a 7-0025: power monitor tps546d24a
+[UART NXP] [    5.270220] caam 1700000.crypto: rng crypto API alg registered prng-caam
+[UART NXP] [    5.276638] si5395 spi10.1: design_id: [DV2_V3.3] PLL: Locked
+[UART NXP] [    5.276659] si5395 spi10.1: Si5395 ready (cs=1 variant=2)
+[UART NXP] [    5.280859] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@40: registered 6 read/write GPIO outputs at 0x00000040
+[UART NXP] [    5.285785] caam 1700000.crypto: registering rng-caam
+[UART NXP] [    5.292694] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@44: registered 2 read/write GPIO outputs at 0x00000044
+[UART NXP] [    5.299780] random: crng init done
+[UART NXP] [    5.303947] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@48: registered 1 read/write GPIO outputs at 0x00000048
+[UART NXP] [    5.314386] Device caam-keygen registered
+[UART NXP] [    5.319385] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@4c: registered 6 read/write GPIO outputs at 0x0000004c
+[UART NXP] [    5.346518] lsbb-fpga-spi spi2.1: BRAM comm-check PASSED: 1024/1024 dwords OK
+[UART NXP] [    5.347559] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@50: registered 8 read/write GPIO outputs at 0x00000050
+[UART NXP] [    5.357825] lsbb-fpga-spi spi2.1: LSBB FPGA: ready, SPI@5000000 Hz
+[UART NXP] [    5.364961] gpio gpiochip29: Detected name collision for GPIO name ''
+[UART NXP] [    5.375679] spi-lattice-xo3 xo3-spi-master-2: SPI controller registered: base=0x30, bus_num=12
+[UART NXP] [    5.381397] gpio gpiochip29: Detected name collision for GPIO name ''
+[UART NXP] [    5.381405] gpio gpiochip29: Detected name collision for GPIO name ''
+[UART NXP] [    5.381567] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@54: registered 8 read/write GPIO outputs at 0x00000054
+[UART NXP] [    5.388369] spi-lattice-xo3 xo3-spi-master-3: SPI controller registered: base=0x40, bus_num=13
+[UART NXP] [    5.396871] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@60: registered 7 read-only GPIOs at 0x00000060
+[UART NXP] [    5.431928] spi-xilinx-regmap 4000.spi: Xilinx AXI SPI regmap bridge at 0x4000 ready
+[UART NXP] [  OK  ] Finished Load/Save OS Random Seed.
+[UART NXP]
+[UART NXP] [    5.455924] tps546d24a 8-0015: power monitor tps546d24a
+[UART NXP] [  OK  ] Found device /dev/mmcblk0p3.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Virtual Console Setup.
+[UART NXP]
+[UART NXP]          Mounting /media/data...
+[UART NXP]
+[UART NXP] [    5.563666] adf4368 spi20.0: ADF4368 locked at 11700000000 Hz
+[UART NXP] [    5.563745] adf4368 spi21.0: ADF4368 locked at 9750000000 Hz
+[UART NXP] [    5.575401] spi-xilinx-regmap 4100.spi: Xilinx AXI SPI regmap bridge at 0x4100 ready
+[UART NXP] [    5.585777] spi-xilinx-regmap 4200.spi: Xilinx AXI SPI regmap bridge at 0x4200 ready
+[UART NXP] [    5.595936] spi-xilinx-regmap 4300.spi: Xilinx AXI SPI regmap bridge at 0x4300 ready
+[UART NXP] [    5.606114] spi-xilinx-regmap 4400.spi: Xilinx AXI SPI regmap bridge at 0x4400 ready
+[UART NXP] [    5.614024] ad8366 spi23.0: supply vcc not found, using dummy regulator
+[UART NXP] [    5.622865] ad8366 spi23.1: supply vcc not found, using dummy regulator
+[UART NXP] [    5.630472] ad8366 spi23.2: supply vcc not found, using dummy regulator
+[UART NXP] [    5.637705] ad8366 spi24.0: supply vcc not found, using dummy regulator
+[UART NXP] [    5.645531] ad8366 spi24.1: supply vcc not found, using dummy regulator
+[UART NXP] [    5.653294] ad8366 spi24.2: supply vcc not found, using dummy regulator
+[UART NXP] [    5.655196] EXT4-fs (mmcblk0p3): mounted filesystem 4f4a7020-4ae4-47d1-bc0a-0beb0ada5236 r/w with ordereddata mode. Quota mode: disabled.
+[UART NXP] [  OK  ] Mounted /media/data.
+[UART NXP]
+[UART NXP]          Mounting /home...
+[UART NXP]
+[UART NXP]          Mounting /root...
+[UART NXP]
+[UART NXP]          Mounting /srv...
+[UART NXP]
+[UART NXP] [  OK  ] Mounted /home.
+[UART NXP]
+[UART NXP] [  OK  ] Mounted /root.
+[UART NXP]
+[UART NXP] [  OK  ] Mounted /srv.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target Local File Systems.
+[UART NXP]
+[UART NXP]          Starting Rebuild Dynamic Linker Cache...
+[UART NXP]
+[UART NXP]          Starting Create Volatile Files and Directories...
+[UART NXP]
+[UART NXP] [  OK  ] Created slice Slice /system/systemd-fsck.
+[UART NXP]
+[UART NXP]          Expecting device /dev/mmcblk0p2...
+[UART NXP]
+[UART NXP] [  OK  ] Found device /dev/mmcblk0p2.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Create Volatile Files and Directories.
+[UART NXP]
+[UART NXP]          Starting File System Check on /dev/mmcblk0p2...
+[UART NXP]
+[UART NXP]          Starting Rebui[    6.121738] audit: type=1334 audit(1709054768.288:7): prog-id=11 op=LOAD
+[UART NXP] ld Journal Catalog...
+[UART NXP]
+[UART NXP]     [    6.131312] audit: type=1334 audit(1709054768.296:8): prog-id=12 op=LOAD
+[UART NXP]      Starting Network Name Resolution...
+[UART NXP]
+[UART NXP]          Starting Network Time Synchronization...
+[UART NXP]
+[UART NXP]          Starting Record System Boot/Shutdown in UTMP...
+[UART NXP]
+[UART NXP] [  OK  ] Finished Record System Boot/Shutdown in UTMP.
+[UART NXP]
+[UART NXP] [  OK  ] Started Network Time Synchronization.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target System Time Set.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Rebuild Journal Catalog.
+[UART NXP]
+[UART NXP] [  OK  ] Started Network Name Resolution.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target Host and Network Name Lookups.
+[UART NXP]
+[UART NXP] [  OK  ] Finished File System Check on /dev/mmcblk0p2.
+[UART NXP]
+[UART NXP]          Mounting /run/media/p2-mmcblk0p2...
+[UART NXP]
+[UART NXP] [    6.765928] EXT4-fs (mmcblk0p2): mounted filesystem d174e98d-95d0-4022-bf3c-cf238fcd64de r/w with ordereddata mode. Quota mode: disabled.
+[UART NXP] [  OK  ] Mounted /run/media/p2-mmcblk0p2.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Rebuild Dynamic Linker Cache.
+[UART NXP]
+[UART NXP]          Starting Update is Completed...
+[UART NXP]
+[UART NXP] [  OK  ] Finished Update is Completed.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target System Initialization.
+[UART NXP]
+[UART NXP] [  OK  ] Started Daily Cleanup of Temporary Directories.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target Timer Units.
+[UART NXP]
+[UART NXP] [  OK  ] Listening on D-Bus System Message Bus Socket.
+[UART NXP]
+[UART NXP]          Starting sshd.socket...
+[UART NXP]
+[UART NXP] [  OK  ] Listening on SWUpdate socket listener.
+[UART NXP]
+[UART NXP] [  OK  ] Listening on sshd.socket.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target Socket Units.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target Basic System.
+[UART NXP]
+[UART NXP]          Starting Bless boot...
+[UART NXP]
+[UART NXP]          Starting D-Bus System Message Bus...
+[UART NXP]
+[UART NXP]          Starting IPv6 Packet Filtering Framework...
+[UART NXP]
+[UART NXP]          Starting IPv4 Packet Filtering Framework...
+[UART NXP]
+[UART NXP] [  OK  ] Started ntp service.
+[UART NXP]
+[UART NXP]          Starting SWUpdate daemon...
+[UART NXP]
+[UART NXP] [  OK  ] Started System Logging Service.
+[UART NXP]
+[UART NXP]          Starting Resets System Activity Logs...
+[UART NXP]
+[UART NXP] [    7.880816] audit: type=1334 audit(1709054770.044:9): prog-id=13 op=LOAD
+[UART NXP] [    7.887731] audit: type=1334 audit(1709054770.052:10): prog-id=14 op=LOAD
+[UART NXP] [    7.894549] audit: type=1334 audit(1709054770.052:11): prog-id=15 op=LOAD
+[UART NXP]          Starting User Login Management...
+[UART NXP]
+[UART NXP]          Starting OpenSSH Key Generation...
+[UART NXP]
+[UART NXP] [  OK  ] Finished Bless boot.
+[UART NXP]
+[UART NXP] [  OK  ] Started D-Bus System Message Bus.
+[UART NXP]
+[UART NXP] [  OK  ] Finished IPv6 Packet Filtering Framework.
+[UART NXP]
+[UART NXP] [  OK  ] Finished IPv4 Packet Filtering Framework.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Resets System Activity Logs.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target Preparation for Network.
+[UART NXP]
+[UART NXP]          Starting Network Manager...
+[UART NXP]
+[UART NXP] [  OK  ] Started User Login Management.
+[UART NXP]
+[UART NXP] [  OK  ] Started SWUpdate daemon.
+[UART NXP]
+[UART NXP] [  OK  ] Started swupdate progress service.
+[UART NXP]
+[UART NXP]          Starting Hostname Service...
+[UART NXP]
+[UART NXP] [  OK  ] Started Hostname Service.
+[UART NXP]
+[UART NXP]          Starting Network Manager Script Dispatcher Service...
+[UART NXP]
+[UART NXP] [  OK  ] Started Network Manager Script Dispatcher Service.
+[UART NXP]
+[UART NXP] [  OK  ] Started Network Manager.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target Network.
+[UART NXP]
+[UART NXP]          Starting Network Manager Wait Online...
+[UART NXP]
+[UART NXP]          Starting DNS forwarder and DHCP server...
+[UART NXP]
+[UART NXP] [  OK  ] Started Log Server Service.
+[UART NXP]
+[UART NXP]          Starting Enable switch OOB interface...
+[UART NXP]
+[UART NXP]          Starting Redis In-Memory Data Store...
+[UART NXP]
+[UART NXP]          Starting Permit User Sessions...
+[UART NXP]
+[UART NXP] [  OK  ] Started Xinetd A Powerful Replacement For Inetd.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Enable switch OOB interface.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Permit User Sessions.
+[UART NXP]
+[UART NXP] [  OK  ] Started Getty on tty1.
+[UART NXP]
+[UART NXP] [  OK  ] Started Serial Getty on ttyS0.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target Login Prompts.
+[UART NXP]
+[UART NXP] [  OK  ] Started DNS forwarder and DHCP server.
+[UART NXP]
+[INFO] NXP: Redis detected, waiting up to 20 seconds for Satixfy login banner
+[UART NXP] [  OK  ] Started Redis In-Memory Data Store.
+[UART NXP]
+[INFO] NXP: Satixfy login banner not detected in 20 seconds; using blind UART credentials
+[INFO] NXP: sending UART credentials attempt 1/2 and waiting for DUT shell
+[UART NXP TX] \r
+[UART NXP TX] root\r
+[UART NXP TX] toor\r
+[UART NXP] [  OK  ] Finished OpenSSH Key Generation.
+[UART NXP]
+[UART NXP]
+[UART NXP]
+[UART NXP] Satixfy Landing Station Distro 5.0.4 ls1046afrwy ttyS0
+[UART NXP]
+[UART NXP] ls1046afrwy login:
+[UART NXP]
+[UART NXP] ls1046afrwy login: root
+[UART NXP]
+[UART NXP] Password:
+[OK] NXP: entered DUT shell after reboot
+
+[STAGE 6] Log in on UART after reboot and save the DUT IP
+[INFO] NXP: Configure persistent DUT IP with nmcli
+[INFO] NXP: Bring up persistent DUT IP with nmcli
+[INFO] NXP: Enable DUT IP autoconnect with nmcli
+
+[STAGE 7] Copy LSBB_Utils from Windows to the DUT
+[INFO] Windows->DUT SFTP: C:\LSBB_Utils -> root@10.10.10.2:/root/LSBB_Utils
+[OK] Copied LSBB_Utils to root@10.10.10.2:/root/LSBB_Utils (30 files)
+[INFO] NXP: Verify LSBB_Utils exists on the DUT
+[INFO] NXP: Make LSBB_Utils run.sh executable
+[OK] NXP staged flow completed successfully.
+PS C:\Users\alexeyt\source\repos\LscriptWin> python lscriptnxp.py --dig_sn CLSDM-09-0926-260528-002
+[INFO] NXP log: C:\Logs\Deployment\CLSDM-09-0926-260528-002\20260523-181658\20260523-181658-nxp.log
+
+[STAGE 1] Stop autoboot and configure NXP at U-Boot
+[INFO] NXP: NXP U-Boot: gpio clear 27
+[INFO] NXP: NXP U-Boot: mac read
+[INFO] NXP: NXP U-Boot: mac id
+[INFO] NXP: NXP U-Boot: mac ports 4
+[INFO] NXP: NXP U-Boot: mac 0 70:B3:D5:97:07:D8
+[INFO] NXP: NXP U-Boot: mac 1 00:04:9F:08:44:A2
+[INFO] NXP: NXP U-Boot: mac 2 00:04:9F:08:44:A3
+[INFO] NXP: NXP U-Boot: mac 3 00:04:9F:08:44:A4
+[INFO] NXP: NXP U-Boot: mac save
+
+[STAGE 2] Reset NXP after MAC save and enter emergency mode using YAML prompt
+[INFO] NXP: sending reset from U-Boot, waiting 65 seconds without UART reads, then checking YAML emergency prompt
+[INFO] NXP boot delay: waiting about 1:05
+NXP boot delay: 100%|███████████████████████████████████████████████████████████████████| 65/65 [01:05<00:00,  1.00s/s]
+[INFO] NXP boot delay: timer completed
+
+[STAGE 3] Send IP and ping commands from NXP to the PC
+[INFO] NXP: Configure DUT IP in emergency mode
+[INFO] NXP: Ping the PC from emergency mode
+
+[STAGE 4] Start dropbear and push the deployment script from Windows to the DUT
+[INFO] NXP: Create dropbear runtime directory
+[INFO] NXP: Start dropbear service in emergency mode
+[INFO] Windows->DUT SCP: scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\deploy-lsbb-1.1.1-20260324.sh root@10.10.10.2:/tmp
+[INFO] NXP: Verify deployment script exists in DUT temporary directory
+
+[STAGE 5] Start the deployment script, then reboot out of emergency mode
+[INFO] NXP: Change to temporary deployment directory
+[INFO] NXP: starting deployment script
+NXP deploy script: 100%|██████████████████████████████████████████████████████████████| 900/900 [02:08<00:00,  7.01s/s]
+[INFO] NXP: deploy script completed, sending reboot to leave emergency mode
+[INFO] NXP: showing live UART after deployment reboot, then waiting for login before sending credentials
+[UART NXP] [    1.971141] systemd[1]: Hostname set to <ls1046afrwy>.
+[UART NXP] [    1.983604] systemd[1]: Initializing machine ID from random generator.
+[UART NXP] [    2.364649] systemd[1]: Queued start job for default target Multi-User System.
+[UART NXP] [    2.395679] systemd[1]: Created slice Slice /system/getty.
+[UART NXP] [  OK  ] Created slice Slice /system/getty.
+[UART NXP]
+[UART NXP] [    2.418396] systemd[1]: Created slice Slice /system/modprobe.
+[UART NXP] [  OK  ] Created slice Slice /system/modprobe.
+[UART NXP]
+[UART NXP] [    2.442358] systemd[1]: Created slice Slice /system/serial-getty.
+[UART NXP] [  OK  ] Created slice Slice /system/serial-getty.
+[UART NXP]
+[UART NXP] [    2.466734] systemd[1]: Created slice User and Session Slice.
+[UART NXP] [  OK  ] Created slice User and Session Slice.
+[UART NXP]
+[UART NXP] [    2.489934] systemd[1]: Started Dispatch Password Requests to Console Directory Watch.
+[UART NXP] [  OK  ] Started Dispatch Password Requests to Console Directory Watch.
+[UART NXP]
+[UART NXP] [    2.517903] systemd[1]: Started Forward Password Requests to Wall Directory Watch.
+[UART NXP] [  OK  ] Started Forward Password Requests to Wall Directory Watch.
+[UART NXP]
+[UART NXP] [    2.541754] systemd[1]: Expecting device /dev/mmcblk0p3...
+[UART NXP]          Expecting device /dev/mmcblk0p3...
+[UART NXP]
+[UART NXP] [    2.561803] systemd[1]: Reached target Path Units.
+[UART NXP] [  OK  ] Reached target Path Units.
+[UART NXP]
+[UART NXP] [    2.581715] systemd[1]: Reached target Remote File Systems.
+[UART NXP] [  OK  ] Reached target Remote File Systems.
+[UART NXP]
+[UART NXP] [    2.601708] systemd[1]: Reached target Slice Units.
+[UART NXP] [  OK  ] Reached target Slice Units.
+[UART NXP]
+[UART NXP] [    2.621734] systemd[1]: Reached target Swaps.
+[UART NXP] [  OK  ] Reached target Swaps.
+[UART NXP]
+[UART NXP] [    2.642328] systemd[1]: Listening on Syslog Socket.
+[UART NXP] [  OK  ] Listening on Syslog Socket.
+[UART NXP]
+[UART NXP] [    2.661971] systemd[1]: Listening on initctl Compatibility Named Pipe.
+[UART NXP] [  OK  ] Listening on initctl Compatibility Named Pipe.
+[UART NXP]
+[UART NXP] [    2.686352] systemd[1]: Listening on Journal Audit Socket.
+[UART NXP] [  OK  ] Listening on Journal Audit Socket.
+[UART NXP]
+[UART NXP] [    2.706115] systemd[1]: Listening on Journal Socket (/dev/log).
+[UART NXP] [  OK  ] Listening on Journal Socket (/dev/log).
+[UART NXP]
+[UART NXP] [    2.730229] systemd[1]: Listening on Journal Socket.
+[UART NXP] [  OK  ] Listening on Journal Socket.
+[UART NXP]
+[UART NXP] [    2.750445] systemd[1]: Listening on udev Control Socket.
+[UART NXP] [  OK  ] Listening on udev Control Socket.
+[UART NXP]
+[UART NXP] [    2.770077] systemd[1]: Listening on udev Kernel Socket.
+[UART NXP] [  OK  ] Listening on udev Kernel Socket.
+[UART NXP]
+[UART NXP] [    2.790158] systemd[1]: Listening on User Database Manager Socket.
+[UART NXP] [  OK  ] Listening on User Database Manager Socket.
+[UART NXP]
+[UART NXP] [    2.837758] systemd[1]: Mounting Huge Pages File System...
+[UART NXP]          Mounting Huge [    2.845084] systemd[1]: Mounting POSIX Message Queue File System...
+[UART NXP] Pages File System...
+[UART NXP]
+[UART NXP]          Mounting POSIX[    2.871445] systemd[1]: Mounting Kernel Debug File System...
+[UART NXP]  Message Queue File System...
+[UART NXP]
+[UART NXP]          Mountin[    2.890119] systemd[1]: Kernel Trace File System was skipped because of an unmet condition check (ConditionPathExists=/sys/kernel/tracing).
+[UART NXP] g Kernel Debug File Sys[    2.906284] systemd[1]: Mounting Temporary Directory /tmp...
+[UART NXP] tem...
+[UART NXP]
+[UART NXP]          Mountin[    2.922008] systemd[1]: Create List of Static Device Nodes was skipped because of an unmet condition check (ConditionFileNotEmpty=/lib/modules/6.6.52-ge0f9e2afd4cf-dirty/modules.devname).
+[UART NXP] g Temporary Directory /[    2.941915] systemd[1]: Starting Load Kernel Module configfs...
+[UART NXP] tmp...
+[UART NXP]
+[UART NXP]          Starting Load [    2.959709] systemd[1]: Starting Load Kernel Module drm...
+[UART NXP] Kernel Module configfs...
+[UART NXP]
+[UART NXP]          Starting Load [    2.979751] systemd[1]: Starting Load Kernel Module fuse...
+[UART NXP] Kernel Module drm...
+[UART NXP]
+[UART NXP]          Startin[    3.002011] systemd[1]: File System Check on Root Device was skipped because of an unmet condition check (ConditionPathIsReadWrite=!/).
+[UART NXP] g Load Kernel Module fuse...
+[UART NXP]
+[UART NXP] [    3.018849] systemd[1]: Starting Journal Service...
+[UART NXP]          Starting Journal Service...
+[UART NXP]
+[UART NXP] [    3.040589] systemd[1]: Load Kernel Modules was skipped because no trigger condition checks were met.
+[UART NXP] [    3.051709] systemd[1]: Starting Generate network units from Kernel command line...
+[UART NXP]          Starting Generate network units from Kernel command line...
+[UART NXP]
+[UART NXP] [    3.079553] systemd[1]: Starting Remount Root and Kernel File Systems...
+[UART NXP]          Starting Remount Root and Kernel File Systems...
+[UART NXP]
+[UART NXP] [    3.103547] systemd[1]: Starting Apply Kernel Variables...
+[UART NXP]          Starting Apply Kernel Variable[    3.112913] systemd-journald[106]: Collecting audit messages is enabled.
+[UART NXP] s...
+[UART NXP]
+[UART NXP] [    3.126114] systemd[1]: Starting Create Static Device Nodes in /dev gracefully...
+[UART NXP]          Starting Create Static Device Nodes in /dev gracefully...
+[UART NXP]
+[UART NXP] [    3.152524] systemd[1]: Starting Coldplug All udev Devices...
+[UART NXP] [    3.157837] EXT4-fs (mmcblk0p1): re-mounted d174e98d-95d0-4022-bf3c-cf238fcd64de r/w. Quota mode: disabled.
+[UART NXP]          Starting Coldplug All udev Devices...
+[UART NXP]
+[UART NXP] [    3.197742] systemd[1]: Started Journal Service.
+[UART NXP] [  OK  ] Started Journal Service.
+[UART NXP]
+[UART NXP] [  OK  ] Mounted Huge Pages File System.
+[UART NXP]
+[UART NXP] [  OK  ] Mounted POSIX Message Queue File System.
+[UART NXP]
+[UART NXP] [  OK  ] Mounted Kernel Debug File System.
+[UART NXP]
+[UART NXP] [  OK  ] Mounted Temporary Directory /tmp.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Load Kernel Module configfs.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Load Kernel Module drm.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Load Kernel Module fuse.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Generate network units from Kernel command line.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Remount Root and Kernel File Systems.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Apply Kernel Variables.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Create Static Device Nodes in /dev gracefully.
+[UART NXP]
+[UART NXP]          Mounting Kernel Configuration File System...
+[UART NXP]
+[UART NXP]          Starting Flush Journal to Persistent Storage...
+[UART NXP]
+[UART NXP]          Starting Create System Users...
+[UART NXP]
+[UART NXP] [    3.520787] systemd-journald[106]: Received client request to flush runtime journal.
+[UART NXP] [  OK  ] Finished Coldplug All udev Devices.
+[UART NXP]
+[UART NXP] [  OK  ] Mounted Kernel Configuration File System.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Flush Journal to Persistent Storage.
+[UART NXP]
+[UART NXP] [    3.582860] audit: type=1334 audit(1709054765.748:2): prog-id=6 op=LOAD
+[UART NXP] [    3.589584] audit: type=1334 audit(1709054765.752:3): prog-id=7 op=LOAD
+[UART NXP] [    3.596280] audit: type=1334 audit(1709054765.760:4): prog-id=8 op=LOAD
+[UART NXP]          Starting User Database Manager...
+[UART NXP]
+[UART NXP] [  OK  ] Started User Database Manager.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Create System Users.
+[UART NXP]
+[UART NXP]          Starting Create Static Device Nodes in /dev...
+[UART NXP]
+[UART NXP] [  OK  ] Finished Create Static Device Nodes in /dev.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target Preparation for Local File Systems.
+[UART NXP]
+[UART NXP]          Mounting /var/volatile...
+[UART NXP]
+[UART NXP] [    3.827557] audit: type=1334 audit(1709054765.992:5): prog-id=9 op=LOAD
+[UART NXP] [    3.834409] audit: type=1334 audit(1709054766.000:6): prog-id=10 op=LOAD
+[UART NXP]          Starting Rule-based Manager for Device Events and Files...
+[UART NXP]
+[UART NXP] [  OK  ] Mounted /var/volatile.
+[UART NXP]
+[UART NXP]          Starting Load/Save OS Random Seed...
+[UART NXP]
+[UART NXP] [  OK  ] Started Rule-based Manager for Device Events and Files.
+[UART NXP]
+[UART NXP] [    4.335578] fsl_dpa soc:fsl,dpaa:ethernet@5 fm1-mac6: renamed from eth1
+[UART NXP] [    4.365971] fsl_dpa soc:fsl,dpaa:ethernet@8 fm1-mac9: renamed from eth2
+[UART NXP] [    4.389840] fsl_dpa soc:fsl,dpaa:ethernet@9 fm1-mac10: renamed from eth3
+[UART NXP] [    4.422024] fsl_dpa soc:fsl,dpaa:ethernet@4 fm1-mac5: renamed from eth0
+[UART NXP] [    4.557331] gpio-mux mux-controller: 2-way mux-controller registered
+[UART NXP] [    4.570075] EDAC MC0: Giving out device to module fsl_ddr_edac controller fsl_mc_err: DEV fsl_mc_err (INTERRUPT)
+[UART NXP] [    4.615373] caam 1700000.crypto: Linux CAAM Queue I/F driver initialised
+[UART NXP] [    4.622429] fsl_ddr_edac acquired irq 57 for MC
+[UART NXP] [    4.628379] caam 1700000.crypto: device ID = 0x0a11030100000000 (Era 8)
+[UART NXP] [    4.636818] caam 1700000.crypto: job rings = 3, qi = 1
+[UART NXP] [    4.647976] fsl_ddr_edac MC err registered
+[UART NXP] [    4.690972] lm75 7-004c: supply vs not found, using dummy regulator
+[UART NXP] [    4.691447] at24 1-0050: supply vcc not found, using dummy regulator
+[UART NXP] [    4.698150] ina2xx 3-0043: power monitor ina219 (Rshunt = 1000 uOhm)
+[UART NXP] [    4.709051] at24 1-0050: 256 byte 24c02 EEPROM, writable, 1 bytes/write
+[UART NXP] [    4.717404] at24 9-0056: supply vcc not found, using dummy regulator
+[UART NXP] [    4.726998] ftm-alarm 29d0000.timer: registered as rtc1
+[UART NXP] [    4.733192] hwmon hwmon6: temp1_input not attached to any thermal zone
+[UART NXP] [    4.739799] lm75 7-004c: hwmon6: sensor 'tmp100'
+[UART NXP] [    4.744589] lm75 8-004d: supply vs not found, using dummy regulator
+[UART NXP] [    4.752383] at24 9-0056: 256 byte 24c02 EEPROM, writable, 8 bytes/write
+[UART NXP] [    4.759229] at24 10-0057: supply vcc not found, using dummy regulator
+[UART NXP] [    4.769913] ina2xx 4-0049: power monitor ina219 (Rshunt = 1000 uOhm)
+[UART NXP] [    4.779510] at24 10-0057: 256 byte 24c02 EEPROM, writable, 8 bytes/write
+[UART NXP] [    4.793841] hwmon hwmon8: temp1_input not attached to any thermal zone
+[UART NXP] [    4.800414] lm75 8-004d: hwmon8: sensor 'tmp100'
+[UART NXP] [    4.805519] lm75 9-004e: supply vs not found, using dummy regulator
+[UART NXP] [    4.814476] ina2xx 4-0048: power monitor ina219 (Rshunt = 1000 uOhm)
+[UART NXP] [    4.835427] hwmon hwmon10: temp1_input not attached to any thermal zone
+[UART NXP] [    4.842118] lm75 9-004e: hwmon10: sensor 'tmp100'
+[UART NXP] [    4.847017] lm75 10-004f: supply vs not found, using dummy regulator
+[UART NXP] [    4.856342] ina2xx 5-0040: power monitor ina219 (Rshunt = 500 uOhm)
+[UART NXP] [    4.872764] hwmon hwmon12: temp1_input not attached to any thermal zone
+[UART NXP] [    4.879478] lm75 10-004f: hwmon12: sensor 'tmp100'
+[UART NXP] [    4.888603] xo3-rd1125 spi2.0: CPLD Ver: 1.4, Build: 0, Compiled Date: 24-04-26
+[UART NXP] [    4.889313] ina2xx 5-0044: power monitor ina219 (Rshunt = 1000 uOhm)
+[UART NXP] [    4.906137] gpio-lsbb cpld-sx1-ctrl-gpio: LSBB GPIO registered: reg-base=0x25, gpio-base=640, direction=0xE3
+[UART NXP] [    4.907912] xo3-rd1125 spi2.0: CPLD IRQ domain: RD=4, HSI1=8, HSI2=8 child IRQs (parents: cpld-nxp-irq0..3)
+[UART NXP] [    4.919296] ina2xx 6-0045: power monitor ina219 (Rshunt = 1000 uOhm)
+[UART NXP] [    4.920865] gpio-lsbb cpld-sx2-ctrl-gpio: LSBB GPIO registered: reg-base=0x35, gpio-base=648, direction=0xE3
+[UART NXP] [    4.925920] gpio-lsbb cpld-eth-ctrl-gpio: LSBB GPIO registered: reg-base=0x45, gpio-base=656, direction=0xFF
+[UART NXP] [    4.929556] xo3-rd1125 spi2.0: DT mode: relying on device tree for child SPI master instantiation
+[UART NXP] [    4.946780] ina2xx 7-0041: power monitor ina219 (Rshunt = 1000 uOhm)
+[UART NXP] [    4.952318] gpio-lsbb cpld-eth-stat-gpio: LSBB GPIO registered: reg-base=0x46, gpio-base=664, direction=0x00
+[UART NXP] [    4.977394] gpio-lsbb cpld-sky1-ctrl-gpio: LSBB GPIO registered: reg-base=0x55, gpio-base=672, direction=0xFD
+[UART NXP] [    4.979046] ina2xx 8-0042: power monitor ina219 (Rshunt = 1000 uOhm)
+[UART NXP] [    4.987680] gpio-lsbb cpld-sky2-ctrl-gpio: LSBB GPIO registered: reg-base=0x56, gpio-base=680, direction=0xFD
+[UART NXP] [    5.003554] ina2xx 9-0046: power monitor ina219 (Rshunt = 1000 uOhm)
+[UART NXP] [    5.004227] gpio-lsbb cpld-fpga-ctrl-gpio: LSBB GPIO registered: reg-base=0x70, gpio-base=688, direction=0xE7
+[UART NXP] [    5.017900] ina2xx 10-0047: power monitor ina219 (Rshunt = 1000 uOhm)
+[UART NXP] [    5.021426] spi-lattice-xo3 xo3-spi-master-0: SPI controller registered: base=0x50, bus_num=10
+[UART NXP]          Startin[    5.035560] si5395 spi10.0: DT: Default firmware-variant = 1
+[UART NXP] g Virtu[    5.041725] spi-lattice-xo3 xo3-spi-master-1: SPI controller registered: base=0x20, bus_num=11
+[UART NXP] al Console Setup...
+[UART NXP]
+[UART NXP] [    5.053665] spi-lattice-xo3 xo3-spi-master-2: SPI controller registered: base=0x30, bus_num=12
+[UART NXP] [    5.058866] si5395 spi10.0: Chip: 0x5395 Grade: 0 Rev: 0
+[UART NXP] [    5.064295] spi-lattice-xo3 xo3-spi-master-3: SPI controller registered: base=0x40, bus_num=13
+[UART NXP] [    5.078631] gpio-lsbb cpld-txfem-ctrl-gpio: LSBB GPIO registered: reg-base=0x80, gpio-base=696, direction=0x7F
+[UART NXP] [    5.088861] si5395 spi10.0: design_id: [DV1_V3.3] PLL: Locked
+[UART NXP] [    5.095211] si5395 spi10.0: Si5395 ready (cs=0 variant=1)
+[UART NXP] [    5.100413] lsbb-fpga-spi spi2.1: FPGA: fw=11.0 build=6 GP_CONT_VER=0x20260219 date=2026-05-05
+[UART NXP] [    5.100763] si5395 spi10.1: DT: Default firmware-variant = 2
+[UART NXP] [    5.127644] caam algorithms registered in /proc/crypto
+[UART NXP] [    5.131673] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@24: registered 2 read/write GPIO outputs at 0x00000024
+[UART NXP] [    5.135755] caam 1700000.crypto: rng crypto API alg registered prng-caam
+[UART NXP] [    5.143401] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@28: registered 2 read/write GPIO outputs at 0x00000028
+[UART NXP] [    5.156278] caam 1700000.crypto: registering rng-caam
+[UART NXP] [    5.160748] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@2c: registered 2 read/write GPIO outputs at 0x0000002c
+[UART NXP] [    5.167362] random: crng init done
+[UART NXP] [    5.179793] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@30: registered 1 read/write GPIO outputs at 0x00000030
+[UART NXP] [    5.180971] si5395 spi10.1: Chip: 0x5395 Grade: 0 Rev: 0
+[UART NXP] [    5.181978] Device caam-keygen registered
+[UART NXP] [    5.190434] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@34: registered 6 read/write GPIO outputs at 0x00000034
+[UART NXP] [    5.203021] si5395 spi10.1: design_id: [DV2_V3.3] PLL: Locked
+[UART NXP] [    5.210101] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@38: registered 1 write-only GPIO outputs at 0x00000038
+[UART NXP] [    5.215669] si5395 spi10.1: Si5395 ready (cs=1 variant=2)
+[UART NXP] [    5.217925] tps546d24a 7-0025: power monitor tps546d24a
+[UART NXP] [    5.226742] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@3c: registered 2 read/write GPIO outputs at 0x0000003c
+[UART NXP] [  OK      5.247950] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@40: registered 6 read/write GPIO outputs at 0x00000040
+[UART NXP] 0m] Finished     5.259108] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@44: registered 2 read/write GPIO outputs at 0x00000044
+[UART NXP] ;1;39mLoad/Save [    5.268125] lsbb-fpga-spi spi2.1: BRAM comm-check PASSED: 1024/1024 dwords OK
+[UART NXP] OS Random Seed    5.270781] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@48: registered 1 read/write GPIOoutputs at 0x00000048
+[UART NXP] 0m.
+[UART NXP]
+[UART NXP] [    5.279157] lsbb-fpga-spi spi2.1: LSBB FPGA: ready, SPI@5000000 Hz
+[UART NXP] [    5.291030] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@4c: registered 6 read/write GPIO outputs at 0x0000004c
+[UART NXP] [    5.297969] gpio-lsbb cpld-rxfem-ctrl-gpio: LSBB GPIO registered: reg-base=0x81, gpio-base=735, direction=0x7F
+[UART NXP] [    5.308134] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@50: registered 8 read/write GPIO outputs at 0x00000050
+[UART NXP] [    5.318315] gpio-lsbb cpld-rcm-ctrl-gpio: LSBB GPIO registered: reg-base=0x90, gpio-base=751, direction=0xFD
+[UART NXP] [    5.328434] gpio gpiochip26: Detected name collision for GPIO name ''
+[UART NXP] [    5.339115] gpio-lsbb cpld-uart-ctrl-gpio: LSBB GPIO registered: reg-base=0xA0, gpio-base=767, direction=0xFF
+[UART NXP] [    5.344625] gpio gpiochip26: Detected name collision for GPIO name ''
+[UART NXP] [    5.355497] gpio-lsbb cpld-led0-ctrl-gpio: LSBB GPIO registered: reg-base=0xC0, gpio-base=775, direction=0xFF
+[UART NXP] [    5.361002] gpio gpiochip26: Detected name collision for GPIO name ''
+[UART NXP] [    5.371338] gpio-lsbb cpld-led1-ctrl-gpio: LSBB GPIO registered: reg-base=0xC1, gpio-base=783, direction=0xFF
+[UART NXP] [    5.378001] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@54: registered 8 read/write GPIO outputs at 0x00000054
+[UART NXP] [    5.389027] tps546d24a 8-0015: power monitor tps546d24a
+[UART NXP] [    5.401467] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@60: registered 7 read-only GPIOs at 0x00000060
+[UART NXP] [  OK  ] Found device /dev/mmcblk0p3.
+[UART NXP]
+[UART NXP] [    5.439676] spi-xilinx-regmap 4000.spi: Xilinx AXI SPI regmap bridge at 0x4000 ready
+[UART NXP] [  OK  ] Finished Virtual Console Setup.
+[UART NXP]
+[UART NXP]          Mounting /media/data...
+[UART NXP]
+[UART NXP] [    5.539810] adf4368 spi21.0: ADF4368 locked at 9750000000 Hz
+[UART NXP] [    5.545925] spi-xilinx-regmap 4100.spi: Xilinx AXI SPI regmap bridge at 0x4100 ready
+[UART NXP] [    5.554296] adf4368 spi20.0: ADF4368 locked at 11700000000 Hz
+[UART NXP] [    5.558899] spi-xilinx-regmap 4200.spi: Xilinx AXI SPI regmap bridge at 0x4200 ready
+[UART NXP] [    5.570375] spi-xilinx-regmap 4300.spi: Xilinx AXI SPI regmap bridge at 0x4300 ready
+[UART NXP] [    5.580529] spi-xilinx-regmap 4400.spi: Xilinx AXI SPI regmap bridge at 0x4400 ready
+[UART NXP] [    5.601460] ad8366 spi23.0: supply vcc not found, using dummy regulator
+[UART NXP] [    5.608814] ad8366 spi23.1: supply vcc not found, using dummy regulator
+[UART NXP] [    5.616047] ad8366 spi23.2: supply vcc not found, using dummy regulator
+[UART NXP] [    5.623938] ad8366 spi24.0: supply vcc not found, using dummy regulator
+[UART NXP] [    5.631735] ad8366 spi24.1: supply vcc not found, using dummy regulator
+[UART NXP] [    5.632594] EXT4-fs (mmcblk0p3): mounted filesystem 4f4a7020-4ae4-47d1-bc0a-0beb0ada5236 r/w with ordereddata mode. Quota mode: disabled.
+[UART NXP] [    5.651257] ad8366 spi24.2: supply vcc not found, using dummy regulator
+[UART NXP] [  OK  ] Mounted /media/data.
+[UART NXP]
+[UART NXP]          Mounting /home...
+[UART NXP]
+[UART NXP]          Mounting /root...
+[UART NXP]
+[UART NXP]          Mounting /srv...
+[UART NXP]
+[UART NXP] [  OK  ] Mounted /home.
+[UART NXP]
+[UART NXP] [  OK  ] Mounted /root.
+[UART NXP]
+[UART NXP] [  OK  ] Mounted /srv.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target Local File Systems.
+[UART NXP]
+[UART NXP]          Starting Rebuild Dynamic Linker Cache...
+[UART NXP]
+[UART NXP]          Starting Create Volatile Files and Directories...
+[UART NXP]
+[UART NXP] [  OK  ] Created slice Slice /system/systemd-fsck.
+[UART NXP]
+[UART NXP]          Expecting device /dev/mmcblk0p2...
+[UART NXP]
+[UART NXP] [  OK  ] Found device /dev/mmcblk0p2.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Create Volatile Files and Directories.
+[UART NXP]
+[UART NXP]          Starting File System Check on /dev/mmcblk0p2...
+[UART NXP]
+[UART NXP]          Starting Rebui[    6.065340] audit: type=1334 audit(1709054768.228:7): prog-id=11 op=LOAD
+[UART NXP] ld Journal Catalog...
+[UART NXP]
+[UART NXP]     [    6.075046] audit: type=1334 audit(1709054768.240:8): prog-id=12 op=LOAD
+[UART NXP]      Starting Network Name Resolution...
+[UART NXP]
+[UART NXP]          Starting Network Time Synchronization...
+[UART NXP]
+[UART NXP]          Starting Record System Boot/Shutdown in UTMP...
+[UART NXP]
+[UART NXP] [  OK  ] Finished Record System Boot/Shutdown in UTMP.
+[UART NXP]
+[UART NXP] [  OK  ] Started Network Time Synchronization.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target System Time Set.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Rebuild Journal Catalog.
+[UART NXP]
+[UART NXP] [  OK  ] Started Network Name Resolution.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target Host and Network Name Lookups.
+[UART NXP]
+[UART NXP] [  OK  ] Finished File System Check on /dev/mmcblk0p2.
+[UART NXP]
+[UART NXP]          Mounting /run/media/p2-mmcblk0p2...
+[UART NXP]
+[UART NXP] [    6.768084] EXT4-fs (mmcblk0p2): mounted filesystem d174e98d-95d0-4022-bf3c-cf238fcd64de r/w with ordereddata mode. Quota mode: disabled.
+[UART NXP] [  OK  ] Mounted /run/media/p2-mmcblk0p2.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Rebuild Dynamic Linker Cache.
+[UART NXP]
+[UART NXP]          Starting Update is Completed...
+[UART NXP]
+[UART NXP] [  OK  ] Finished Update is Completed.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target System Initialization.
+[UART NXP]
+[UART NXP] [  OK  ] Started Daily Cleanup of Temporary Directories.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target Timer Units.
+[UART NXP]
+[UART NXP] [  OK  ] Listening on D-Bus System Message Bus Socket.
+[UART NXP]
+[UART NXP]          Starting sshd.socket...
+[UART NXP]
+[UART NXP] [  OK  ] Listening on SWUpdate socket listener.
+[UART NXP]
+[UART NXP] [  OK  ] Listening on sshd.socket.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target Socket Units.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target Basic System.
+[UART NXP]
+[UART NXP]          Starting Bless boot...
+[UART NXP]
+[UART NXP]          Starting D-Bus System Message Bus...
+[UART NXP]
+[UART NXP]          Starting IPv6 Packet Filtering Framework...
+[UART NXP]
+[UART NXP]          Starting IPv4 Packet Filtering Framework...
+[UART NXP]
+[UART NXP] [  OK  ] Started ntp service.
+[UART NXP]
+[UART NXP]          Starting SWUpdate daemon...
+[UART NXP]
+[UART NXP] [  OK  ] Started System Logging Service.
+[UART NXP]
+[UART NXP]          Starting Resets System Activity Logs...
+[UART NXP]
+[UART NXP] [    7.984816] audit: type=1334 audit(1709054770.148:9): prog-id=13 op=LOAD
+[UART NXP] [    7.991596] audit: type=1334 audit(1709054770.156:10): prog-id=14 op=LOAD
+[UART NXP] [    7.998595] audit: type=1334 audit(1709054770.164:11): prog-id=15 op=LOAD
+[UART NXP]          Starting User Login Management...
+[UART NXP]
+[UART NXP]          Starting OpenSSH Key Generation...
+[UART NXP]
+[UART NXP] [  OK  ] Started D-Bus System Message Bus.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Bless boot.
+[UART NXP]
+[UART NXP] [  OK  ] Finished IPv6 Packet Filtering Framework.
+[UART NXP]
+[UART NXP] [  OK  ] Finished IPv4 Packet Filtering Framework.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Resets System Activity Logs.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target Preparation for Network.
+[UART NXP]
+[UART NXP]          Starting Network Manager...
+[UART NXP]
+[UART NXP] [  OK  ] Started SWUpdate daemon.
+[UART NXP]
+[UART NXP] [  OK  ] Started User Login Management.
+[UART NXP]
+[UART NXP] [  OK  ] Started swupdate progress service.
+[UART NXP]
+[UART NXP]          Starting Hostname Service...
+[UART NXP]
+[UART NXP] [  OK  ] Started Hostname Service.
+[UART NXP]
+[UART NXP]          Starting Network Manager Script Dispatcher Service...
+[UART NXP]
+[UART NXP] [  OK  ] Started Network Manager Script Dispatcher Service.
+[UART NXP]
+[UART NXP] [  OK  ] Started Network Manager.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target Network.
+[UART NXP]
+[UART NXP]          Starting Network Manager Wait Online...
+[UART NXP]
+[UART NXP]          Starting DNS forwarder and DHCP server...
+[UART NXP]
+[UART NXP] [  OK  ] Started Log Server Service.
+[UART NXP]
+[UART NXP]          Starting Enable switch OOB interface...
+[UART NXP]
+[UART NXP]          Starting Redis In-Memory Data Store...
+[UART NXP]
+[UART NXP]          Starting Permit User Sessions...
+[UART NXP]
+[UART NXP] [  OK  ] Started Xinetd A Powerful Replacement For Inetd.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Enable switch OOB interface.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Permit User Sessions.
+[UART NXP]
+[UART NXP] [  OK  ] Started Getty on tty1.
+[UART NXP]
+[UART NXP] [  OK  ] Started Serial Getty on ttyS0.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target Login Prompts.
+[UART NXP]
+[UART NXP] [  OK  ] Started DNS forwarder and DHCP server.
+[UART NXP]
+[INFO] NXP: Redis detected, waiting up to 20 seconds for OpenSSH key generation
+[UART NXP] [  OK  ] Started Redis In-Memory Data Store.
+[UART NXP]
+[INFO] NXP: OpenSSH key generation finished; sending UART credentials
+[INFO] NXP: sending UART credentials attempt 1/2 and waiting for DUT shell
+[UART NXP TX] \r
+[UART NXP TX] root\r
+[UART NXP TX] toor\r
+[INFO] NXP: sending UART credentials attempt 2/2 and waiting for DUT shell
+[UART NXP TX] \r
+[UART NXP TX] root\r
+[UART NXP TX] toor\r
+[UART NXP] [  OK  ] Finished OpenSSH Key Generation.
+[UART NXP]
+[UART NXP]
+[UART NXP]
+[UART NXP] Satixfy Landing Station Distro 5.0.4 ls1046afrwy ttyS0
+[UART NXP]
+[UART NXP] ls1046afrwy login:
+[UART NXP]
+[UART NXP] ls1046afrwy login: root
+[UART NXP]
+[UART NXP] Password:
+[OK] NXP: entered DUT shell after reboot
+
+[STAGE 6] Log in on UART after reboot and save the DUT IP
+[INFO] NXP: Configure persistent DUT IP with nmcli
+[INFO] NXP: Bring up persistent DUT IP with nmcli
+[INFO] NXP: Enable DUT IP autoconnect with nmcli
+
+[STAGE 7] Copy LSBB_Utils from Windows to the DUT
+[INFO] Windows->DUT SFTP: C:\LSBB_Utils -> root@10.10.10.2:/root/LSBB_Utils
+[OK] Copied LSBB_Utils to root@10.10.10.2:/root/LSBB_Utils (30 files)
+[INFO] NXP: Verify LSBB_Utils exists on the DUT
+[INFO] NXP: Make LSBB_Utils run.sh executable
+[OK] NXP staged flow completed successfully.
+PS C:\Users\alexeyt\source\repos\LscriptWin> python lscriptnxp.py --dig_sn CLSDM-09-0926-260528-002
+[INFO] NXP log: C:\Logs\Deployment\CLSDM-09-0926-260528-002\20260523-183402\20260523-183402-nxp.log
+
+[STAGE 1] Stop autoboot and configure NXP at U-Boot
+[INFO] NXP: NXP U-Boot: gpio clear 27
+[INFO] NXP: NXP U-Boot: mac read
+[INFO] NXP: NXP U-Boot: mac id
+[INFO] NXP: NXP U-Boot: mac ports 4
+[INFO] NXP: NXP U-Boot: mac 0 70:B3:D5:97:07:D8
+[INFO] NXP: NXP U-Boot: mac 1 00:04:9F:08:44:A2
+[INFO] NXP: NXP U-Boot: mac 2 00:04:9F:08:44:A3
+[INFO] NXP: NXP U-Boot: mac 3 00:04:9F:08:44:A4
+[INFO] NXP: NXP U-Boot: mac save
+
+[STAGE 2] Reset NXP after MAC save and enter emergency mode using YAML prompt
+[INFO] NXP: sending reset from U-Boot, waiting 65 seconds without UART reads, then checking YAML emergency prompt
+[INFO] NXP boot delay: waiting about 1:05
+NXP boot delay: 100%|███████████████████████████████████████████████████████████████████| 65/65 [01:05<00:00,  1.00s/s]
+[INFO] NXP boot delay: timer completed
+
+[STAGE 3] Send IP and ping commands from NXP to the PC
+[INFO] NXP: Configure DUT IP in emergency mode
+[INFO] NXP: Ping the PC from emergency mode
+
+[STAGE 4] Start dropbear and push the deployment script from Windows to the DUT
+[INFO] NXP: Create dropbear runtime directory
+[INFO] NXP: Start dropbear service in emergency mode
+[INFO] Windows->DUT SCP: scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\deploy-lsbb-1.1.1-20260324.sh root@10.10.10.2:/tmp
+[INFO] NXP: Verify deployment script exists in DUT temporary directory
+
+[STAGE 5] Start the deployment script, then reboot out of emergency mode
+[INFO] NXP: Change to temporary deployment directory
+[INFO] NXP: starting deployment script
+NXP deploy script: 100%|██████████████████████████████████████████████████████████████| 900/900 [02:14<00:00,  6.71s/s]
+[INFO] NXP: deploy script completed, sending reboot to leave emergency mode
+[INFO] NXP: showing live UART after deployment reboot, then waiting for login before sending credentials
+[UART NXP] [    1.971227] systemd[1]: Hostname set to <ls1046afrwy>.
+[UART NXP] [    1.983712] systemd[1]: Initializing machine ID from random generator.
+[UART NXP] [    2.384849] systemd[1]: Queued start job for default target Multi-User System.
+[UART NXP] [    2.407719] systemd[1]: Created slice Slice /system/getty.
+[UART NXP] [  OK  ] Created slice Slice /system/getty.
+[UART NXP]
+[UART NXP] [    2.430440] systemd[1]: Created slice Slice /system/modprobe.
+[UART NXP] [  OK  ] Created slice Slice /system/modprobe.
+[UART NXP]
+[UART NXP] [    2.454444] systemd[1]: Created slice Slice /system/serial-getty.
+[UART NXP] [  OK  ] Created slice Slice /system/serial-getty.
+[UART NXP]
+[UART NXP] [    2.478754] systemd[1]: Created slice User and Session Slice.
+[UART NXP] [  OK  ] Created slice User and Session Slice.
+[UART NXP]
+[UART NXP] [    2.501978] systemd[1]: Started Dispatch Password Requests to Console Directory Watch.
+[UART NXP] [  OK  ] Started Dispatch Password Requests to Console Directory Watch.
+[UART NXP]
+[UART NXP] [    2.529955] systemd[1]: Started Forward Password Requests to Wall Directory Watch.
+[UART NXP] [  OK  ] Started Forward Password Requests to Wall Directory Watch.
+[UART NXP]
+[UART NXP] [    2.553793] systemd[1]: Expecting device /dev/mmcblk0p3...
+[UART NXP]          Expecting device /dev/mmcblk0p3...
+[UART NXP]
+[UART NXP] [    2.573843] systemd[1]: Reached target Path Units.
+[UART NXP] [  OK  ] Reached target Path Units.
+[UART NXP]
+[UART NXP] [    2.593768] systemd[1]: Reached target Remote File Systems.
+[UART NXP] [  OK  ] Reached target Remote File Systems.
+[UART NXP]
+[UART NXP] [    2.613750] systemd[1]: Reached target Slice Units.
+[UART NXP] [  OK  ] Reached target Slice Units.
+[UART NXP]
+[UART NXP] [    2.633767] systemd[1]: Reached target Swaps.
+[UART NXP] [  OK  ] Reached target Swaps.
+[UART NXP]
+[UART NXP] [    2.654392] systemd[1]: Listening on Syslog Socket.
+[UART NXP] [  OK  ] Listening on Syslog Socket.
+[UART NXP]
+[UART NXP] [    2.674019] systemd[1]: Listening on initctl Compatibility Named Pipe.
+[UART NXP] [  OK  ] Listening on initctl Compatibility Named Pipe.
+[UART NXP]
+[UART NXP] [    2.698398] systemd[1]: Listening on Journal Audit Socket.
+[UART NXP] [  OK  ] Listening on Journal Audit Socket.
+[UART NXP]
+[UART NXP] [    2.718166] systemd[1]: Listening on Journal Socket (/dev/log).
+[UART NXP] [  OK  ] Listening on Journal Socket (/dev/log).
+[UART NXP]
+[UART NXP] [    2.742271] systemd[1]: Listening on Journal Socket.
+[UART NXP] [  OK  ] Listening on Journal Socket.
+[UART NXP]
+[UART NXP] [    2.762470] systemd[1]: Listening on udev Control Socket.
+[UART NXP] [  OK  ] Listening on udev Control Socket.
+[UART NXP]
+[UART NXP] [    2.782121] systemd[1]: Listening on udev Kernel Socket.
+[UART NXP] [  OK  ] Listening on udev Kernel Socket.
+[UART NXP]
+[UART NXP] [    2.802206] systemd[1]: Listening on User Database Manager Socket.
+[UART NXP] [  OK  ] Listening on User Database Manager Socket.
+[UART NXP]
+[UART NXP] [    2.857780] systemd[1]: Mounting Huge Pages File System...
+[UART NXP]          Mounting Huge Pages File System...
+[UART NXP]
+[UART NXP] [    2.880526] systemd[1]: Mounting POSIX Message Queue File System...
+[UART NXP]          Mounting POSIX Message Queue File System...
+[UART NXP]
+[UART NXP] [    2.903502] systemd[1]: Mounting Kernel Debug File System...
+[UART NXP]          Mounting Kernel Debug File System...
+[UART NXP]
+[UART NXP] [    2.921942] systemd[1]: Kernel Trace File System was skipped because of an unmet condition check (ConditionPathExists=/sys/kernel/tracing).
+[UART NXP] [    2.947877] systemd[1]: Mounting Temporary Directory /tmp...
+[UART NXP]          Mounting Temporary Directory /tmp...
+[UART NXP]
+[UART NXP] [    2.969968] systemd[1]: Create List of Static Device Nodes was skipped because of an unmet condition check (ConditionFileNotEmpty=/lib/modules/6.6.52-ge0f9e2afd4cf-dirty/modules.devname).
+[UART NXP] [    2.989820] systemd[1]: Starting Load Kernel Module configfs...
+[UART NXP]          Starting Load Kernel Module configfs...
+[UART NXP]
+[UART NXP] [    3.012223] systemd[1]: Starting Load Kernel Module drm...
+[UART NXP]          Starting Load Kernel Module drm...
+[UART NXP]
+[UART NXP] [    3.036342] systemd[1]: Starting Load Kernel Module fuse...
+[UART NXP]          Starting Load Kernel Module fuse...
+[UART NXP]
+[UART NXP] [    3.057949] systemd[1]: File System Check on Root Device was skipped because of an unmet condition check (ConditionPathIsReadWrite=!/).
+[UART NXP] [    3.073699] systemd[1]: Starting Journal Service...
+[UART NXP]          Starting Journal Service...
+[UART NXP]
+[UART NXP] [    3.100598] systemd[1]: Load Kernel Modules was skipped because no trigger condition checks were met.
+[UART NXP] [    3.111752] systemd[1]: Starting Generate network units from Kernel command line...
+[UART NXP]          Starting Generate network units from Kernel command line...
+[UART NXP]
+[UART NXP] [    3.139444] systemd[1]: Starting Remount Root and Kernel File Systems...
+[UART NXP]          Starting Remount Root and Kernel File Systems...
+[UART NXP]
+[UART NXP] [    3.153785] systemd-journald[105]: Collecting audit messages is enabled.
+[UART NXP] [    3.163426] systemd[1]: Starting Apply Kernel Variables...
+[UART NXP]          Starting Apply Kernel Variables...
+[UART NXP]
+[UART NXP] [    3.187772] systemd[1]: Starting Create Static Device Nodes in /dev gracefully...
+[UART NXP]          Starting Creat[    3.197919] EXT4-fs (mmcblk0p1): re-mounted d174e98d-95d0-4022-bf3c-cf238fcd64de r/w. Quota mode: disabled.
+[UART NXP] e Static Device Nodes in /dev gracefully...
+[UART NXP]
+[UART NXP] [    3.223766] systemd[1]: Starting Coldplug All udev Devices...
+[UART NXP]          Starting Coldplug All udev Devices...
+[UART NXP]
+[UART NXP] [    3.248895] systemd[1]: Started Journal Service.
+[UART NXP] [  OK  ] Started Journal Service.
+[UART NXP]
+[UART NXP] [  OK  ] Mounted Huge Pages File System.
+[UART NXP]
+[UART NXP] [  OK  ] Mounted POSIX Message Queue File System.
+[UART NXP]
+[UART NXP] [  OK  ] Mounted Kernel Debug File System.
+[UART NXP]
+[UART NXP] [  OK  ] Mounted Temporary Directory /tmp.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Load Kernel Module configfs.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Load Kernel Module drm.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Load Kernel Module fuse.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Generate network units from Kernel command line.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Remount Root and Kernel File Systems.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Apply Kernel Variables.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Create Static Device Nodes in /dev gracefully.
+[UART NXP]
+[UART NXP]          Mounting Kernel Configuration File System...
+[UART NXP]
+[UART NXP]          Starting Flush Journal to Persistent Storage...
+[UART NXP]
+[UART NXP]          Starting Create System Users...
+[UART NXP]
+[UART NXP] [    3.535541] systemd-journald[105]: Received client request to flush runtime journal.
+[UART NXP] [  OK  ] Mounted Kernel Configuration File System.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Coldplug All udev Devices.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Flush Journal to Persistent Storage.
+[UART NXP]
+[UART NXP] [    3.611364] audit: type=1334 audit(1709054765.772:2): prog-id=6 op=LOAD
+[UART NXP] [    3.618173] audit: type=1334 audit(1709054765.780:3): prog-id=7 op=LOAD
+[UART NXP] [    3.624809] audit: type=1334 audit(1709054765.784:4): prog-id=8 op=LOAD
+[UART NXP]          Starting User Database Manager...
+[UART NXP]
+[UART NXP] [  OK  ] Started User Database Manager.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Create System Users.
+[UART NXP]
+[UART NXP]          Starting Create Static Device Nodes in /dev...
+[UART NXP]
+[UART NXP] [  OK  ] Finished Create Static Device Nodes in /dev.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target Preparation for Local File Systems.
+[UART NXP]
+[UART NXP]          Mounting /var/volatile...
+[UART NXP]
+[UART NXP] [    3.875563] audit: type=1334 audit(1709054766.036:5): prog-id=9 op=LOAD
+[UART NXP] [    3.882491] audit: type=1334 audit(1709054766.044:6): prog-id=10 op=LOAD
+[UART NXP]          Starting Rule-based Manager for Device Events and Files...
+[UART NXP]
+[UART NXP] [  OK  ] Mounted /var/volatile.
+[UART NXP]
+[UART NXP]          Starting Load/Save OS Random Seed...
+[UART NXP]
+[UART NXP] [  OK  ] Started Rule-based Manager for Device Events and Files.
+[UART NXP]
+[UART NXP] [    4.355467] fsl_dpa soc:fsl,dpaa:ethernet@9 fm1-mac10: renamed from eth3
+[UART NXP] [    4.400100] fsl_dpa soc:fsl,dpaa:ethernet@8 fm1-mac9: renamed from eth2
+[UART NXP] [    4.426059] fsl_dpa soc:fsl,dpaa:ethernet@5 fm1-mac6: renamed from eth1
+[UART NXP] [    4.454339] fsl_dpa soc:fsl,dpaa:ethernet@4 fm1-mac5: renamed from eth0
+[UART NXP] [    4.602281] gpio-mux mux-controller: 2-way mux-controller registered
+[UART NXP] [    4.653223] EDAC MC0: Giving out device to module fsl_ddr_edac controller fsl_mc_err: DEV fsl_mc_err (INTERRUPT)
+[UART NXP] [    4.668428] fsl_ddr_edac acquired irq 57 for MC
+[UART NXP] [    4.673102] fsl_ddr_edac MC err registered
+[UART NXP] [    4.721578] ftm-alarm 29d0000.timer: registered as rtc1
+[UART NXP] [    4.743483] lm75 7-004c: supply vs not found, using dummy regulator
+[UART NXP] [    4.751893] caam 1700000.crypto: Linux CAAM Queue I/F driver initialised
+[UART NXP] [    4.759124] ina2xx 3-0043: power monitor ina219 (Rshunt = 1000 uOhm)
+[UART NXP] [    4.760188] caam 1700000.crypto: device ID = 0x0a11030100000000 (Era 8)
+[UART NXP] [    4.760203] at24 1-0050: supply vcc not found, using dummy regulator
+[UART NXP] [    4.766718] at24 1-0050: 256 byte 24c02 EEPROM, writable, 1 bytes/write
+[UART NXP] [    4.769287] hwmon hwmon6: temp1_input not attached to any thermal zone
+[UART NXP] [    4.769293] lm75 7-004c: hwmon6: sensor 'tmp100'
+[UART NXP] [    4.769904] lm75 8-004d: supply vs not found, using dummy regulator
+[UART NXP] [    4.772293] caam 1700000.crypto: job rings = 3, qi = 1
+[UART NXP] [    4.779169] at24 9-0056: supply vcc not found, using dummy regulator
+[UART NXP] [    4.800187] ina2xx 4-0049: power monitor ina219 (Rshunt = 1000 uOhm)
+[UART NXP] [    4.821218] hwmon hwmon8: temp1_input not attached to any thermal zone
+[UART NXP] [    4.828055] lm75 8-004d: hwmon8: sensor 'tmp100'
+[UART NXP] [    4.833000] lm75 9-004e: supply vs not found, using dummy regulator
+[UART NXP] [    4.842209] at24 9-0056: 256 byte 24c02 EEPROM, writable, 8 bytes/write
+[UART NXP] [    4.848786] ina2xx 4-0048: power monitor ina219 (Rshunt = 1000 uOhm)
+[UART NXP] [    4.848940] at24 10-0057: supply vcc not found, using dummy regulator
+[UART NXP] [    4.859481] hwmon hwmon10: temp1_input not attached to any thermal zone
+[UART NXP] [    4.868323] lm75 9-004e: hwmon10: sensor 'tmp100'
+[UART NXP] [    4.869755] at24 10-0057: 256 byte 24c02 EEPROM, writable, 8 bytes/write
+[UART NXP] [    4.875241] lm75 10-004f: supply vs not found, using dummy regulator
+[UART NXP] [    4.884279] ina2xx 5-0040: power monitor ina219 (Rshunt = 500 uOhm)
+[UART NXP] [    4.905646] random: crng init done
+[UART NXP] [    4.909611] hwmon hwmon12: temp1_input not attached to any thermal zone
+[UART NXP] [    4.916515] lm75 10-004f: hwmon12: sensor 'tmp100'
+[UART NXP] [    4.927935] ina2xx 5-0044: power monitor ina219 (Rshunt = 1000 uOhm)
+[UART NXP] [    4.944141] ina2xx 6-0045: power monitor ina219 (Rshunt = 1000 uOhm)
+[UART NXP] [    4.954529] ina2xx 7-0041: power monitor ina219 (Rshunt = 1000 uOhm)
+[UART NXP] [    4.969524] ina2xx 8-0042: power monitor ina219 (Rshunt = 1000 uOhm)
+[UART NXP] [    4.976475] gpio-lsbb cpld-eth-ctrl-gpio: LSBB GPIO registered: reg-base=0x45, gpio-base=640, direction=0xFF
+[UART NXP] [    4.977219] xo3-rd1125 spi2.0: CPLD Ver: 1.4, Build: 0, Compiled Date: 24-04-26
+[UART NXP] [    4.994158] gpio-lsbb cpld-eth-stat-gpio: LSBB GPIO registered: reg-base=0x46, gpio-base=648, direction=0x00
+[UART NXP] [    4.994284] xo3-rd1125 spi2.0: CPLD IRQ domain: RD=4, HSI1=8, HSI2=8 child IRQs (parents: cpld-nxp-irq0..3)
+[UART NXP] [    5.013946] xo3-rd1125 spi2.0: DT mode: relying on device tree for child SPI master instantiation
+[UART NXP] [    5.013983] gpio-lsbb cpld-sky1-ctrl-gpio: LSBB GPIO registered: reg-base=0x55, gpio-base=656, direction=0xFD
+[UART NXP] [    5.033536] gpio-lsbb cpld-sky2-ctrl-gpio: LSBB GPIO registered: reg-base=0x56, gpio-base=664, direction=0xFD
+[UART NXP] [    5.037798] ina2xx 9-0046: power monitor ina219 (Rshunt = 1000 uOhm)
+[UART NXP]          Startin[    5.050018] gpio-lsbb cpld-fpga-ctrl-gpio: LSBB GPIO registered: reg-base=0x70, gpio-base=672, direction=0xE7
+[UART NXP] g Virtu[    5.057049] ina2xx 10-0047: power monitor ina219 (Rshunt = 1000 uOhm)
+[UART NXP] al Console Setup[    5.062451] gpio-lsbb cpld-txfem-ctrl-gpio: LSBB GPIO registered: reg-base=0x80, gpio-base=680, direction=0x7F
+[UART NXP] ...
+[UART NXP]
+[UART NXP] [    5.081781] gpio-lsbb cpld-rxfem-ctrl-gpio: LSBB GPIO registered: reg-base=0x81, gpio-base=688, direction=0x7F
+[UART NXP] [    5.092584] gpio-lsbb cpld-rcm-ctrl-gpio: LSBB GPIO registered: reg-base=0x90, gpio-base=696, direction=0xFD
+[UART NXP] [  OK      5.103011] gpio-lsbb cpld-uart-ctrl-gpio: LSBB GPIO registered: reg-base=0xA0, gpio-base=704, direction=0xFF
+[UART NXP] 0m] Finished     5.114908] gpio-lsbb cpld-led0-ctrl-gpio: LSBB GPIO registered: reg-base=0xC0, gpio-base=712, direction=0xFF
+[UART NXP] ;1;39mLoad/Save [    5.126277] gpio-lsbb cpld-led1-ctrl-gpio: LSBB GPIO registered: reg-base=0xC1, gpio-base=720, direction=0xFF
+[UART NXP] OS Random Seed.
+[UART NXP]
+[UART NXP] [    5.146269] spi-lattice-xo3 xo3-spi-master-0: SPI controller registered: base=0x50, bus_num=10
+[UART NXP] [    5.154376] tps546d24a 7-0025: power monitor tps546d24a
+[UART NXP] [    5.158432] spi-lattice-xo3 xo3-spi-master-1: SPI controller registered: base=0x20, bus_num=11
+[UART NXP] [    5.169010] si5395 spi10.0: DT: Default firmware-variant = 1
+[UART NXP] [    5.170921] spi-lattice-xo3 xo3-spi-master-2: SPI controller registered: base=0x30, bus_num=12
+[UART NXP] [    5.183202] si5395 spi10.0: Chip: 0x5395 Grade: 0 Rev: 0
+[UART NXP] [    5.187262] spi-lattice-xo3 xo3-spi-master-3: SPI controller registered: base=0x40, bus_num=13
+[UART NXP] [    5.194427] si5395 spi10.0: design_id: [DV1_V3.3] PLL: Locked
+[UART NXP] [    5.198546] gpio-lsbb cpld-sx1-ctrl-gpio: LSBB GPIO registered: reg-base=0x25, gpio-base=728, direction=0xE3
+[UART NXP] [    5.203006] si5395 spi10.0: Si5395 ready (cs=0 variant=1)
+[UART NXP] [    5.218739] caam algorithms registered in /proc/crypto
+[UART NXP] [    5.221808] si5395 spi10.1: DT: Default firmware-variant = 2
+[UART NXP] [    5.224216] caam 1700000.crypto: rng crypto API alg registered prng-caam
+[UART NXP] [    5.235830] si5395 spi10.1: Chip: 0x5395 Grade: 0 Rev: 0
+[UART NXP] [    5.236603] caam 1700000.crypto: registering rng-caam
+[UART NXP] [    5.244637] si5395 spi10.1: design_id: [DV2_V3.3] PLL: Locked
+[UART NXP] [    5.253957] si5395 spi10.1: Si5395 ready (cs=1 variant=2)
+[UART NXP] [    5.254346] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@54: registered 8 read/write GPIO outputs at 0x00000054
+[UART NXP] [    5.255524] Device caam-keygen registered
+[UART NXP] [    5.262733] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@24: registered 2 read/write GPIO outputs at 0x00000024
+[UART NXP] [    5.270195] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@60: registered 7 read-only GPIOs at 0x00000060
+[UART NXP] [    5.274411] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@28: registered 2 read/write GPIO outputs at 0x00000028
+[UART NXP] [    5.285579] lsbb-fpga-spi spi2.1: FPGA: fw=11.0 build=6 GP_CONT_VER=0x20260219 date=2026-05-05
+[UART NXP] [    5.294538] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@2c: registered 2 read/write GPIO outputs at 0x0000002c
+[UART NXP] [  OK      5.324011] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@30: registered 1 read/write GPIO outputs at 0x00000030
+[UART NXP] 0m] Found device[    5.335531] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@34: registered 6 read/write GPIO outputs at 0x00000034
+[UART NXP]  /dev/m[    5.343347] tps546d24a 8-0015: power monitor tps546d24a
+[UART NXP] mcblk0p3.
+[UART NXP]
+[UART NXP] [    5.347041] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@38: registered 1 write-only GPIO outputs at 0x00000038
+[UART NXP]          Mountin[    5.365407] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@3c: registered 2 read/write GPIO outputs at 0x0000003c
+[UART NXP] g /medi[    5.377217] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@40: registered 6 read/write GPIO outputs at 0x00000040
+[UART NXP] a/data...
+[UART NXP]
+[UART NXP] [    5.388902] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@44: registered 2 read/write GPIO outputs at 0x00000044
+[UART NXP] [    5.400688] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@48: registered 1 read/write GPIO outputs at 0x00000048
+[UART NXP] [    5.411283] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@4c: registered 6 read/write GPIO outputs at 0x0000004c
+[UART NXP] [    5.414923] lsbb-fpga-spi spi2.1: BRAM comm-check PASSED: 1024/1024 dwords OK
+[UART NXP] [    5.421777] gpio gpiochip29: Detected name collision for GPIO name ''
+[UART NXP] [    5.428829] lsbb-fpga-spi spi2.1: LSBB FPGA: ready, SPI@5000000 Hz
+[UART NXP] [    5.435239] gpio gpiochip29: Detected name collision for GPIO name ''
+[UART NXP] [    5.435245] gpio gpiochip29: Detected name collision for GPIO name ''
+[UART NXP] [    5.441880] gpio-lsbb cpld-sx2-ctrl-gpio: LSBB GPIO registered: reg-base=0x35, gpio-base=790, direction=0xE3
+[UART NXP] [    5.448003] lsbb-fpga-gp-gpio 2100000.spi:spi@0:fpga@1:gpio@50: registered 8 read/write GPIO outputs at 0x00000050
+[UART NXP] [    5.474551] leds-gpio fpga_leds: Failed to create device link (0x180) with 2100000.spi:spi@0:fpga@1:gpio@50
+[UART NXP] [    5.484320] leds-gpio fpga_leds: Failed to create device link (0x180) with 2100000.spi:spi@0:fpga@1:gpio@50
+[UART NXP] [  OK  ] Finished Virtual Console Setup.
+[UART NXP]
+[UART NXP] [    5.522125] spi-xilinx-regmap 4000.spi: Xilinx AXI SPI regmap bridge at 0x4000 ready
+[UART NXP] [    5.532992] spi-xilinx-regmap 4100.spi: Xilinx AXI SPI regmap bridge at 0x4100 ready
+[UART NXP] [    5.544189] spi-xilinx-regmap 4200.spi: Xilinx AXI SPI regmap bridge at 0x4200 ready
+[UART NXP] [    5.554486] spi-xilinx-regmap 4300.spi: Xilinx AXI SPI regmap bridge at 0x4300 ready
+[UART NXP] [    5.564611] spi-xilinx-regmap 4400.spi: Xilinx AXI SPI regmap bridge at 0x4400 ready
+[UART NXP] [    5.589943] ad8366 spi23.0: supply vcc not found, using dummy regulator
+[UART NXP] [    5.598118] ad8366 spi23.1: supply vcc not found, using dummy regulator
+[UART NXP] [    5.605769] ad8366 spi23.2: supply vcc not found, using dummy regulator
+[UART NXP] [    5.613410] ad8366 spi24.0: supply vcc not found, using dummy regulator
+[UART NXP] [    5.621230] ad8366 spi24.1: supply vcc not found, using dummy regulator
+[UART NXP] [    5.628764] ad8366 spi24.2: supply vcc not found, using dummy regulator
+[UART NXP] [    5.655594] adf4368 spi20.0: ADF4368 locked at 11700000000 Hz
+[UART NXP] [    5.683883] EXT4-fs (mmcblk0p3): mounted filesystem 4f4a7020-4ae4-47d1-bc0a-0beb0ada5236 r/w with ordereddata mode. Quota mode: disabled.
+[UART NXP] [    5.706334] adf4368 spi21.0: ADF4368 locked at 9750000000 Hz
+[UART NXP] [  OK  ] Mounted /media/data.
+[UART NXP]
+[UART NXP]          Mounting /home...
+[UART NXP]
+[UART NXP]          Mounting /root...
+[UART NXP]
+[UART NXP]          Mounting /srv...
+[UART NXP]
+[UART NXP] [  OK  ] Mounted /home.
+[UART NXP]
+[UART NXP] [  OK  ] Mounted /root.
+[UART NXP]
+[UART NXP] [  OK  ] Mounted /srv.
+[UART NXP]
+[UART NXP] [  OK  ] Created slice Slice /system/systemd-fsck.
+[UART NXP]
+[UART NXP]          Starting File System Check on /dev/mmcblk0p2...
+[UART NXP]
+[UART NXP] [  OK  ] Finished File System Check on /dev/mmcblk0p2.
+[UART NXP]
+[UART NXP]          Mounting /run/media/p2-mmcblk0p2...
+[UART NXP]
+[UART NXP] [    6.247484] EXT4-fs (mmcblk0p2): mounted filesystem d174e98d-95d0-4022-bf3c-cf238fcd64de r/w with ordereddata mode. Quota mode: disabled.
+[UART NXP] [  OK  ] Mounted /run/media/p2-mmcblk0p2.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target Local File Systems.
+[UART NXP]
+[UART NXP]          Starting Rebuild Dynamic Linker Cache...
+[UART NXP]
+[UART NXP]          Starting Create Volatile Files and Directories...
+[UART NXP]
+[UART NXP] [  OK  ] Finished Create Volatile Files and Directories.
+[UART NXP]
+[UART NXP]          Starting Rebuild Journal Catalog...
+[UART NXP]
+[UART NXP] [    6.544061] audit: type=1334 audit(1709054768.704:7): prog-id=11 op=LOAD
+[UART NXP]          Starting Network Name Resolution...
+[UART NXP]
+[UART NXP] [    6.567478] audit: type=1334 audit(1709054768.728:8): prog-id=12 op=LOAD
+[UART NXP]          Starting Network Time Synchronization...
+[UART NXP]
+[UART NXP]          Starting Record System Boot/Shutdown in UTMP...
+[UART NXP]
+[UART NXP] [  OK  ] Finished Record System Boot/Shutdown in UTMP.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Rebuild Journal Catalog.
+[UART NXP]
+[UART NXP] [  OK  ] Started Network Time Synchronization.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target System Time Set.
+[UART NXP]
+[UART NXP] [  OK  ] Started Network Name Resolution.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target Host and Network Name Lookups.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Rebuild Dynamic Linker Cache.
+[UART NXP]
+[UART NXP]          Starting Update is Completed...
+[UART NXP]
+[UART NXP] [  OK  ] Finished Update is Completed.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target System Initialization.
+[UART NXP]
+[UART NXP] [  OK  ] Started Daily Cleanup of Temporary Directories.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target Timer Units.
+[UART NXP]
+[UART NXP] [  OK  ] Listening on D-Bus System Message Bus Socket.
+[UART NXP]
+[UART NXP]          Starting sshd.socket...
+[UART NXP]
+[UART NXP] [  OK  ] Listening on SWUpdate socket listener.
+[UART NXP]
+[UART NXP] [  OK  ] Listening on sshd.socket.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target Socket Units.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target Basic System.
+[UART NXP]
+[UART NXP]          Starting Bless boot...
+[UART NXP]
+[UART NXP]          Starting D-Bus System Message Bus...
+[UART NXP]
+[UART NXP]          Starting IPv6 Packet Filtering Framework...
+[UART NXP]
+[UART NXP]          Starting IPv4 Packet Filtering Framework...
+[UART NXP]
+[UART NXP] [  OK  ] Started ntp service.
+[UART NXP]
+[UART NXP]          Starting SWUpdate daemon...
+[UART NXP]
+[UART NXP] [  OK  ] Started System Logging Service.
+[UART NXP]
+[UART NXP]          Starting Resets System Activity Logs...
+[UART NXP]
+[UART NXP] [    8.348635] audit: type=1334 audit(1709054770.508:9): prog-id=13 op=LOAD
+[UART NXP] [    8.355421] audit: type=1334 audit(1709054770.516:10): prog-id=14 op=LOAD
+[UART NXP] [    8.362323] audit: type=1334 audit(1709054770.524:11): prog-id=15 op=LOAD
+[UART NXP]          Starting User Login Management...
+[UART NXP]
+[UART NXP]          Starting OpenSSH Key Generation...
+[UART NXP]
+[UART NXP] [  OK  ] Finished Bless boot.
+[UART NXP]
+[UART NXP] [  OK  ] Finished IPv6 Packet Filtering Framework.
+[UART NXP]
+[UART NXP] [  OK  ] Finished IPv4 Packet Filtering Framework.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target Preparation for Network.
+[UART NXP]
+[UART NXP] [  OK  ] Started D-Bus System Message Bus.
+[UART NXP]
+[UART NXP] [  OK  ] Started User Login Management.
+[UART NXP]
+[UART NXP]          Starting Network Manager...
+[UART NXP]
+[UART NXP] [  OK  ] Started SWUpdate daemon.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Resets System Activity Logs.
+[UART NXP]
+[UART NXP] [  OK  ] Started swupdate progress service.
+[UART NXP]
+[UART NXP]          Starting Hostname Service...
+[UART NXP]
+[UART NXP] [  OK  ] Started Hostname Service.
+[UART NXP]
+[UART NXP]          Starting Network Manager Script Dispatcher Service...
+[UART NXP]
+[UART NXP] [  OK  ] Started Network Manager.
+[UART NXP]
+[UART NXP] [  OK  ] Started Network Manager Script Dispatcher Service.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target Network.
+[UART NXP]
+[UART NXP]          Starting Network Manager Wait Online...
+[UART NXP]
+[UART NXP]          Starting DNS forwarder and DHCP server...
+[UART NXP]
+[UART NXP] [  OK  ] Started Log Server Service.
+[UART NXP]
+[UART NXP]          Starting Enable switch OOB interface...
+[UART NXP]
+[UART NXP]          Starting Redis In-Memory Data Store...
+[UART NXP]
+[UART NXP]          Starting Permit User Sessions...
+[UART NXP]
+[UART NXP] [  OK  ] Started Xinetd A Powerful Replacement For Inetd.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Enable switch OOB interface.
+[UART NXP]
+[UART NXP] [  OK  ] Finished Permit User Sessions.
+[UART NXP]
+[UART NXP] [  OK  ] Started DNS forwarder and DHCP server.
+[UART NXP]
+[UART NXP] [  OK  ] Started Getty on tty1.
+[UART NXP]
+[UART NXP] [  OK  ] Started Serial Getty on ttyS0.
+[UART NXP]
+[UART NXP] [  OK  ] Reached target Login Prompts.
+[UART NXP]
+[INFO] NXP: Redis detected, waiting up to 20 seconds for OpenSSH key generation
+[UART NXP] [  OK  ] Started Redis In-Memory Data Store.
+[UART NXP]
+[INFO] NXP: OpenSSH key generation finished; sending UART credentials
+[INFO] NXP: waiting 6 seconds after OpenSSH readiness before sending UART credentials
+[INFO] NXP: sending UART credentials attempt 1/2 and waiting for DUT shell
+[UART NXP TX] \r
+[UART NXP TX] root\r
+[UART NXP TX] toor\r
 [UART NXP] [  OK  ] Finished OpenSSH Key Generation.
 [UART NXP]
 [UART NXP]

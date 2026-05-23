@@ -44,8 +44,6 @@ PING_SUCCESS_PATTERN = re.compile(r"1 packets transmitted,\s*1 packets received,
 DEPLOYMENT_COMPLETE_PATTERN = re.compile(r"\[4/4\]\s+Deployment complete!", re.IGNORECASE)
 DEPLOYMENT_RUN_REBOOT_PATTERN = re.compile(r"Run:\s*reboot", re.IGNORECASE)
 NXP_REDIS_STARTED_PATTERN = re.compile(r"Started\s+Redis\b.*Data\s+Store\.?", re.IGNORECASE)
-NXP_LOGIN_BANNER_PATTERN = re.compile(r"Satixfy[\s\S]{0,200}Landing\s+Station[\s\S]{0,200}Distro", re.IGNORECASE)
-NXP_OPENSSH_KEYGEN_DONE_PATTERN = re.compile(r"Finished\s+OpenSSH\s+Key\s+Generation\.?", re.IGNORECASE)
 HOST_KEY_CONFIRM_YES_PATTERN = re.compile(r"are you sure you want to continue connecting", re.IGNORECASE)
 HOST_KEY_CONFIRM_Y_PATTERN = re.compile(r"do you want to continue connecting\?\s*\(y/n\)", re.IGNORECASE)
 EMERGENCY_MAINTENANCE_PATTERN = re.compile(r"You\s+are\s+in\s+emergency\s+mode", re.IGNORECASE | re.DOTALL,
@@ -1282,17 +1280,7 @@ def wait_for_post_deploy_uart_login(session: SerialSession, config: AppConfig) -
             timeout=max(config.timeouts.emergency_boot_seconds, 180),
             label="Redis service startup after deploy reboot",
         )
-        info("NXP: Redis detected, waiting up to 20 seconds for OpenSSH key generation")
-        try:
-            session.wait_for_pattern(
-                NXP_OPENSSH_KEYGEN_DONE_PATTERN,
-                timeout=20,
-                label="OpenSSH key generation after deploy reboot",
-            )
-            info("NXP: OpenSSH key generation finished; sending UART credentials")
-        except TimeoutError:
-            info("NXP: OpenSSH key generation was not detected in 20 seconds; sending UART credentials anyway")
-        info("NXP: waiting 6 seconds after OpenSSH readiness before sending UART credentials")
+        info("NXP: Redis detected, waiting 6 seconds before blind UART credential attempts")
         time.sleep(6)
         last_error: TimeoutError | None = None
         for attempt in range(1, 3):
