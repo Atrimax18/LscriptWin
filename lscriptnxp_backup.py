@@ -30,7 +30,6 @@ AUTOBOOT_PATTERN = re.compile(r"Hit any key to stop autoboot:", re.IGNORECASE)
 LOGIN_PATTERN = re.compile(r"(?:^|\n).{0,40}login:\s*$", re.IGNORECASE | re.MULTILINE)
 NXP_LOGIN_WITH_TRAILING_OUTPUT_PATTERN = re.compile(r"(?:^|[\r\n]).{0,80}login:\s*(?:$|[\r\n]|\[)", re.IGNORECASE | re.MULTILINE)
 PASSWORD_PATTERN = re.compile(r"(?:^|\n).{0,80}password(?: for [^:]+)?:\s*$", re.IGNORECASE | re.MULTILINE)
-USERNAME_PROMPT_PATTERN = re.compile(r"(?:^|[\r\n])[^\r\n]*(?:login|username)\s*:\s*$", re.IGNORECASE | re.MULTILINE)
 NXP_CLU1_LOCKED_PATTERN = re.compile(r"CLU: DEV1: design: \[DV1_V3\.3\] \| PLL Status - Locked", re.IGNORECASE)
 NXP_CLU2_LOCKED_PATTERN = re.compile(r"CLU: DEV2: design: \[DV2_V3\.3\] \| PLL Status - Locked", re.IGNORECASE)
 NXP_SWITCH_READY_PATTERN = re.compile(r"(?:^|\n)Switch ready\s*$", re.IGNORECASE | re.MULTILINE)
@@ -38,12 +37,11 @@ NXP_FPGA_READY_PATTERN = re.compile(r"(?:^|\n)FPGA ready\s*$", re.IGNORECASE | r
 UBOOT_PROMPT_PATTERN = re.compile(r"(?:^|\n)\s*=>\s*$", re.MULTILINE)
 MAC_SAVE_SUCCESS_PATTERN = re.compile(r"Programming passed\.", re.IGNORECASE)
 ROOT_SHELL_PATTERN = re.compile(r"(?:^|\n).{0,120}#\s*$", re.MULTILINE)
-GENERIC_SHELL_PATTERN = re.compile(r"[#>$]\s*$", re.MULTILINE)
 ANSI_ESCAPE_PATTERN = re.compile(r"\x1B\[[0-?]*[ -/]*[@-~]")
 PING_SUCCESS_PATTERN = re.compile(r"1 packets transmitted,\s*1 packets received,\s*0% packet loss", re.IGNORECASE)
 DEPLOYMENT_COMPLETE_PATTERN = re.compile(r"\[4/4\]\s+Deployment complete!", re.IGNORECASE)
 DEPLOYMENT_RUN_REBOOT_PATTERN = re.compile(r"Run:\s*reboot", re.IGNORECASE)
-NXP_REDIS_STARTED_PATTERN = re.compile(r"Started\s+Redis\b.*Data\s+Store\.?", re.IGNORECASE)
+NXP_OPENSSH_KEYGEN_DONE_PATTERN = re.compile(r"Finished OpenSSH Key Generation", re.IGNORECASE)
 HOST_KEY_CONFIRM_YES_PATTERN = re.compile(r"are you sure you want to continue connecting", re.IGNORECASE)
 HOST_KEY_CONFIRM_Y_PATTERN = re.compile(r"do you want to continue connecting\?\s*\(y/n\)", re.IGNORECASE)
 EMERGENCY_MAINTENANCE_PATTERN = re.compile(r"You\s+are\s+in\s+emergency\s+mode", re.IGNORECASE | re.DOTALL,
@@ -54,8 +52,6 @@ NXP_REBOOT_TRANSITION_PATTERN = re.compile(r"(?:reboot: Restarting system|NOTICE
 DIG_SN_PATTERN = re.compile(r"^(?:CLS|MLS)DM-\d{2}-\d{4}-(?:\d{6}|[A-Z]\d)-\d{3,5}$")   #re.compile(r"^[A-Z]{5}-\d{2}-\d{4}-(?:\d{6}|[A-Z]\d)-\d{3,5}$")
 SQL_IDENTIFIER_PATTERN = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 LOG_ROOT = pathlib.Path(r"C:\Logs\Deployment")
-UART_BUFFER_MAX_CHARS = 100_000
-UART_BUFFER_TRIM_TO_CHARS = 50_000
 
 
 class BootValidationError(RuntimeError):
@@ -410,8 +406,9 @@ class SerialSession:
         self.buffer = ""
         self._ansi_carry = ""
         self._console_line_fragment = ""
+        self.log_file = log_path.open("ab")
         self.serial: serial.Serial | None = None
-        self.log_file = None
+        self._open_serial(open_timeout)
 
     def _open_serial(self, open_timeout: int) -> None:
         deadline = time.monotonic() + open_timeout
@@ -424,11 +421,13 @@ class SerialSession:
                     timeout=0.1,
                     write_timeout=1,
                 )
-                return
+                break
             except serial.SerialException as exc:
                 last_error = exc
                 time.sleep(0.5)
-        raise TimeoutError(f"Timed out opening {self.name} on {self.config.port}: {last_error}")
+        if self.serial is None:
+            self.log_file.close()
+            raise TimeoutError(f"Timed out opening {self.name} on {self.config.port}: {last_error}")
 
     def reopen_serial(self, reason: Exception) -> None:
         self.log_event("WARN", f"Serial read failed on {self.config.port}: {reason!r}. Reopening port.")
@@ -444,26 +443,17 @@ class SerialSession:
         self.log_event("INFO", f"Reopened serial port {self.config.port} after read failure.")
 
     def __enter__(self) -> "SerialSession":
-        self.log_file = self.log_path.open("ab")
-        try:
-            self._open_serial(self.open_timeout)
-        except Exception:
-            if self.log_file is not None and not self.log_file.closed:
-                self.log_file.close()
-            raise
         return self
 
     def __exit__(self, exc_type, exc, tb) -> None:
         try:
-            if self.log_file is not None and not self.log_file.closed:
-                self.log_file.close()
+            self.log_file.close()
         finally:
             if self.serial is not None and self.serial.is_open:
                 self.serial.close()
 
     def write(self, data: bytes) -> None:
         assert self.serial is not None
-        assert self.log_file is not None
         self.serial.flush()
         self.serial.write(data)
         self.log_file.flush()
@@ -477,15 +467,12 @@ class SerialSession:
         self.write(text.encode("utf-8") + b"\r")
 
     def log_event(self, level: str, message: str) -> None:
-        assert self.log_file is not None
         self.log_file.flush()
         self.log_file.write(f"\n[{level}] {message}\n".encode("utf-8", errors="replace"))
         
 
     def clear_buffer(self) -> None:
         self.buffer = ""
-        self._ansi_carry = ""
-        self._console_line_fragment = ""
 
     def emit_live_uart(self, text: str) -> None:
         if not self.live_uart_output or not text:
@@ -498,7 +485,6 @@ class SerialSession:
 
     def poll(self) -> str:
         assert self.serial is not None
-        assert self.log_file is not None
         try:
             data = self.serial.read(self.serial.in_waiting or 1)
         except (serial.SerialException, PermissionError, OSError) as exc:
@@ -512,8 +498,6 @@ class SerialSession:
             self.log_file.write(sanitized.encode("utf-8", errors="replace"))
             self.log_file.flush()
             self.buffer += sanitized
-            if len(self.buffer) > UART_BUFFER_MAX_CHARS:
-                self.buffer = self.buffer[-UART_BUFFER_TRIM_TO_CHARS:]
             self.emit_live_uart(sanitized)
         return sanitized
 
@@ -552,7 +536,7 @@ class SerialSession:
 
                 # Next scan starts near end of previous buffer
                 # Keeps regex working across chunk boundaries
-                scan_from = max(0, current_len - 8198)
+                scan_from = max(0, current_len - 1024)
 
                 last_buffer_len = current_len
 
@@ -585,7 +569,7 @@ class SerialSession:
                     match = pattern.search(self.buffer, scan_from)
                     if match:
                         return key
-                scan_from = max(0, current_len - 8198)
+                scan_from = max(0, current_len - 1024)
                 last_buffer_len = current_len
             time.sleep(0.01)           
 
@@ -710,69 +694,33 @@ def wait_for_linux_shell(
     boot_timeout: int,
     login_prompt: re.Pattern[str],
     scan_start_pos: int | None = None,
-    enter_kick_interval: float = 10.0,
 ) -> None:
-    window = session.buffer[scan_start_pos:] if scan_start_pos is not None else ""
-    sent_user = False
-    sent_password = False
-    deadline = time.monotonic() + boot_timeout
-    next_enter_kick = time.monotonic() + enter_kick_interval
-
-    while time.monotonic() < deadline:
-        data = session.poll()
-        if data:
-            window = (window + data)[-12000:]
-            next_enter_kick = time.monotonic() + enter_kick_interval
-        lower_window = window.lower()
-
-        if (shell_prompt.search(window) or GENERIC_SHELL_PATTERN.search(window)) and not sent_password:
-            session.log_event("INFO", "Linux shell detected before credentials were needed.")
-            return
-
-        if sent_password and (shell_prompt.search(window) or GENERIC_SHELL_PATTERN.search(window)):
-            session.log_event("INFO", "Linux shell detected after sending password.")
-            return
-
-        if not sent_user and (
-            login_prompt.search(window)
-            or USERNAME_PROMPT_PATTERN.search(lower_window)
-            or LOGIN_PATTERN.search(window)
-            or NXP_LOGIN_WITH_TRAILING_OUTPUT_PATTERN.search(window)
-        ):
-            session.log_event("INFO", f"Detected login prompt; sending username {username!r}.")
-            session.send_line(username)
-            sent_user = True
-            window = ""
-            continue
-
-        if sent_user and not sent_password and PASSWORD_PATTERN.search(lower_window):
-            session.log_event("INFO", "Detected password prompt; sending configured password.")
-            session.send_line(password)
-            sent_password = True
-            window = ""
-            continue
-
-        if not sent_user and time.monotonic() >= next_enter_kick:
-            session.log_event("INFO", "No login prompt detected yet; sending Enter to refresh UART login prompt.")
-            session.send_line("")
-            next_enter_kick = time.monotonic() + enter_kick_interval
-
-        time.sleep(0.05)
-
-    if sent_user and not sent_password:
-        session.log_event("WARN", "Password prompt was not detected before timeout; sending password anyway.")
-        session.send_line(password)
-        sent_password = True
-        final_deadline = time.monotonic() + 30
-        window = ""
-        while time.monotonic() < final_deadline:
-            data = session.poll()
-            if data:
-                window = (window + data)[-12000:]
-            if shell_prompt.search(window) or GENERIC_SHELL_PATTERN.search(window):
-                return
-            time.sleep(0.05)
-    raise TimeoutError(f"Timed out waiting for linux shell on {session.name} ({self.config.port if False else session.config.port})")
+    start_pos = scan_start_pos if scan_start_pos is not None else len(session.buffer)
+    login_patterns = {
+        "login": login_prompt,
+        "login_generic": LOGIN_PATTERN,
+        "login_nxp_trailing_output": NXP_LOGIN_WITH_TRAILING_OUTPUT_PATTERN,
+    }
+    result = session.wait_for_any_pattern(
+        {
+            "shell": shell_prompt,
+            **login_patterns,
+        },
+        timeout=boot_timeout,
+        label="linux shell or login prompt",
+        start_pos=start_pos,
+    )
+    if result == "shell":
+        return
+    start_pos = len(session.buffer)
+    session.send_line(username)
+    try:
+        session.wait_for_pattern(PASSWORD_PATTERN, timeout=30, label="password prompt", start_pos=start_pos)
+    except TimeoutError:
+        session.log_event("WARN", "Password prompt was not detected; sending password anyway.")
+    start_pos = len(session.buffer)
+    session.send_line(password)
+    session.wait_for_pattern(shell_prompt, timeout=boot_timeout, label="linux shell", start_pos=start_pos)
 
 
 def ensure_emergency_access(session: SerialSession, prompt_pattern: re.Pattern[str], boot_timeout: int, fresh: bool = False) -> None:
@@ -1172,44 +1120,32 @@ def upload_deploy_script_from_windows_to_dut(config: AppConfig, provision: Provi
         raise RuntimeError(f"Windows->DUT SCP failed for {local_path} -> {remote_spec}\n{output.strip()}")
 
 
-def mkdir_remote_path(sftp: paramiko.SFTPClient, remote_path: str) -> None:
-    current = ""
-    for part in remote_path.strip("/").split("/"):
-        current = f"{current}/{part}" if current else f"/{part}"
-        try:
-            sftp.mkdir(current)
-        except OSError:
-            pass
-
-
 def upload_lsbb_utils_from_windows_to_dut(config: AppConfig) -> None:
-    if paramiko is None:
-        raise RuntimeError("paramiko is required to copy LSBB_Utils with password authentication.")
     local_path = pathlib.Path(config.dut.utils_path)
     if not local_path.is_dir():
         raise FileNotFoundError(f"LSBB_Utils directory not found on the Windows host: {local_path}")
-    remote_root = f"/root/{local_path.name}"
-    info(
-        "Windows->DUT SFTP: "
-        f"{local_path} -> {config.dut.login}@{config.dut.final_ip}:{remote_root}"
+    remote_spec = f"{config.dut.login}@{config.dut.final_ip}:/root"
+    command = [
+        "scp",
+        "-r",
+        "-o",
+        "StrictHostKeyChecking=no",
+        "-o",
+        "UserKnownHostsFile=NUL",
+        str(local_path),
+        remote_spec,
+    ]
+    info(f"Windows->DUT SCP: {' '.join(command)}")
+    completed = subprocess.run(
+        command,
+        capture_output=True,
+        text=True,
+        timeout=max(config.timeouts.emergency_boot_seconds, 300),
+        check=False,
     )
-    client = connect_over_ssh_password(config)
-    uploaded_files = 0
-    try:
-        with client.open_sftp() as sftp:
-            mkdir_remote_path(sftp, remote_root)
-            for directory in sorted(path for path in local_path.rglob("*") if path.is_dir()):
-                relative = directory.relative_to(local_path).as_posix()
-                mkdir_remote_path(sftp, f"{remote_root}/{relative}")
-            for file_path in sorted(path for path in local_path.rglob("*") if path.is_file()):
-                relative = file_path.relative_to(local_path).as_posix()
-                remote_path = f"{remote_root}/{relative}"
-                mkdir_remote_path(sftp, remote_path.rsplit("/", 1)[0])
-                sftp.put(str(file_path), remote_path)
-                uploaded_files += 1
-    finally:
-        client.close()
-    ok(f"Copied LSBB_Utils to {config.dut.login}@{config.dut.final_ip}:{remote_root} ({uploaded_files} files)")
+    if completed.returncode != 0:
+        output = (completed.stdout or "") + (("\n" + completed.stderr) if completed.stderr else "")
+        raise RuntimeError(f"Windows->DUT SCP failed for {local_path} -> {remote_spec}\n{output.strip()}")
 
 
 def transfer_deploy_script_in_emergency(session: SerialSession, config: AppConfig, provision: ProvisionArgs) -> None:
@@ -1269,47 +1205,20 @@ def reboot_after_deploy(session: SerialSession, config: AppConfig) -> None:
 
 
 def wait_for_post_deploy_uart_login(session: SerialSession, config: AppConfig) -> None:
-    info("NXP: showing live UART after deployment reboot, then waiting for login before sending credentials")
-    previous_live_uart_output = session.live_uart_output
-    session.live_uart_output = True
+    info("NXP: waiting 75 seconds after reboot before UART login")
+    wait_with_operator_timer(75, "NXP post-deploy reboot delay")
     session.clear_buffer()
-    shell_prompt = compile_shell_prompt_pattern(config.dut.prompt)
-    try:
-        session.wait_for_pattern(
-            NXP_REDIS_STARTED_PATTERN,
-            timeout=max(config.timeouts.emergency_boot_seconds, 180),
-            label="Redis service startup after deploy reboot",
-        )
-        info("NXP: Redis detected, waiting 6 seconds before blind UART credential attempts")
-        time.sleep(6)
-        last_error: TimeoutError | None = None
-        for attempt in range(1, 3):
-            info(f"NXP: sending UART credentials attempt {attempt}/2 and waiting for DUT shell")
-            credential_start = len(session.buffer)
-            session.send_line("")
-            session.send_line(config.dut.login)
-            time.sleep(1)
-            session.send_line(config.dut.password)
-            try:
-                session.wait_for_any_pattern(
-                    {
-                        "configured shell": shell_prompt,
-                        "generic shell": GENERIC_SHELL_PATTERN,
-                    },
-                    timeout=10,
-                    label="DUT shell after blind UART credentials",
-                    start_pos=credential_start,
-                )
-                ok("NXP: entered DUT shell after reboot")
-                return
-            except TimeoutError as exc:
-                last_error = exc
-                session.log_event("WARN", f"UART credential attempt {attempt}/2 failed: {exc}")
-        if session.serial is not None and session.serial.is_open:
-            session.serial.close()
-        raise RuntimeError("NXP UART login failed after retry; serial port was closed.") from last_error
-    finally:
-        session.live_uart_output = previous_live_uart_output
+    session.send_line("")
+    session.send_line("")
+    login_prompt = compile_login_prompt_pattern(config.dut.login_prompt)
+    wait_for_linux_shell(
+        session,
+        config.dut.login,
+        config.dut.password,
+        ROOT_SHELL_PATTERN,
+        max(config.timeouts.emergency_boot_seconds, 300),
+        login_prompt,
+    )
 
 
 def run_deploy_script(session: SerialSession, config: AppConfig, provision: ProvisionArgs) -> None:
@@ -1319,7 +1228,6 @@ def run_deploy_script(session: SerialSession, config: AppConfig, provision: Prov
     deploy_start_pos = len(session.buffer)
     session.send_line(f"sh /{config.dut.tmp_path}/{provision.deploy_script}")
     wait_for_deploy_completion(session, config, deploy_start_pos)
-    session.clear_buffer()
     reboot_after_deploy(session, config)
     wait_for_post_deploy_uart_login(session, config)
 
@@ -1353,7 +1261,6 @@ def save_ip_over_uart(session: SerialSession, config: AppConfig) -> None:
         max(config.timeouts.prompt_wait_seconds, 60),
         "Enable DUT IP autoconnect with nmcli",
     )
-    session.clear_buffer()
 
 
 def transfer_lsbb_utils_after_login(session: SerialSession, config: AppConfig) -> None:
@@ -1368,13 +1275,6 @@ def transfer_lsbb_utils_after_login(session: SerialSession, config: AppConfig) -
     )
     if "OK" not in verify_output:
         raise RuntimeError("Expected /root/LSBB_Utils on the DUT after SCP transfer, but verification did not return OK.")
-    run_command(
-        session,
-        "chmod +x LSBB_Utils/run.sh",
-        shell_prompt,
-        max(config.timeouts.prompt_wait_seconds, 60),
-        "Make LSBB_Utils run.sh executable",
-    )
 
 
 def ssh_exec_checked(client: paramiko.SSHClient, command: str, timeout: int = 60) -> str:
@@ -1441,7 +1341,9 @@ def wait_for_ssh(host: str, port: int, timeout: int) -> None:
 
 def run_nxp_flow(config: AppConfig, provision: ProvisionArgs, args: argparse.Namespace, run_dir: pathlib.Path) -> int:
     nxp_log = timestamped_log_path(run_dir, "nxp")
+    switch_log = timestamped_log_path(run_dir, "switch")
     info(f"NXP log: {nxp_log}")
+    info(f"Switch log: {switch_log}")
     try:
         with SerialSession(
             "NXP",
@@ -1449,15 +1351,27 @@ def run_nxp_flow(config: AppConfig, provision: ProvisionArgs, args: argparse.Nam
             nxp_log,
             config.timeouts.serial_open_seconds,
             live_uart_output=args.show_uart,
-        ) as nxp:
-            stage(1, "Stop autoboot and configure NXP at U-Boot")
-            detect_nxp_uboot(
-                nxp,
-                config.timeouts.uboot_boot_seconds,
-                config.timeouts.uboot_boot_seconds,
-                boot_stop_bytes(args.boot_stop_key),
+        ) as nxp, SerialSession(
+            "Switch",
+            config.switch_serial,
+            switch_log,
+            config.timeouts.serial_open_seconds,
+            live_uart_output=args.show_uart,
+        ) as switch:
+            stage(1, "Stop autoboot and configure NXP + switch at U-Boot")
+            nxp_ready, switch_ready, switch_prompt = monitor_boot_parallel(
+                nxp=nxp,
+                switch=switch,
+                switch_prompt_text=config.prompts.switch,
+                stop_key=boot_stop_bytes(args.boot_stop_key),
+                timeout=max(config.timeouts.uboot_boot_seconds, config.timeouts.boot_interrupt_seconds),
             )
+            if not nxp_ready:
+                raise TimeoutError(f"Timed out waiting for NXP U-Boot on {config.nxp.port}")
+            if not switch_ready:
+                switch_prompt = detect_switch_prompt(switch, config.prompts.switch, config.timeouts.uboot_boot_seconds)
             burn_nxp_macs(nxp, provision, config.timeouts.prompt_wait_seconds)
+            burn_switch_mac(switch, switch_prompt, provision, config.timeouts.prompt_wait_seconds)
 
             if args.monitor_uart_seconds > 0:
                 stage(2, "Reset NXP after MAC save and monitor raw UART only")

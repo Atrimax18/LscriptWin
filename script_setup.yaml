@@ -53,7 +53,7 @@ timeouts:
   prompt_wait_seconds: 15
   boot_interrupt_seconds: 5
   uboot_boot_seconds: 300
-  emergency_boot_seconds: 600
+  emergency_boot_seconds: 60
   first_boot_seconds: 460
   sonic_boot_seconds: 460
   
