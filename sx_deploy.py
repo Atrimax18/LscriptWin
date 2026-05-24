@@ -317,7 +317,13 @@ def configure_sx4000_sequence_with_windows_scp(
                             sx4000_config.ROOT_SHELL_PATTERN,
                             config.prompt_wait_seconds,
                         )
-                        sx4000_config.ok("SX4000 deployment completed.")
+                        sx4000_config.info("NXP UART: cd /root")
+                        sx4000_config.run_command(
+                            nxp,
+                            "cd /root",
+                            sx4000_config.ROOT_SHELL_PATTERN,
+                            config.prompt_wait_seconds,
+                        )
                 except (RuntimeError, TimeoutError) as exc:
                     if not active_error:
                         raise
