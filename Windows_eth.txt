@@ -1,0 +1,1058 @@
+PS C:\Users\alexeyt\source\repos\LscriptWin> python .\eth_deploy.py --dig_sn MLSDM-08-0726-B1-00008
+[INFO] DIG SN: MLSDM-08-0726-B1-00008
+[INFO] Base MAC: 70:B3:D5:97:07:A8
+[INFO] MAC2 / switch ethaddr: 70:B3:D5:97:07:A9 (base MAC + 1)
+[INFO] Switch U-Boot prompt from YAML: Telesat>>
+[INFO] Switch log: C:\Logs\Deployment\MLSDM-08-0726-B1-00008\20260524-102832\20260524-102832-eth-switch.log
+[INFO] NXP UART log: C:\Logs\Deployment\MLSDM-08-0726-B1-00008\20260524-102832\20260524-102832-eth-nxp.log
+[INFO] Using existing MAC allocation from database.
+[INFO] NXP UART: detect Linux shell
+[OK] NXP Linux shell is ready
+[INFO] Step 1/7: detect switch U-Boot using the YAML prompt
+
+Telesat>> [OK] Switch U-Boot is ready
+[INFO] Step 2/7: write MAC2 as switch ethaddr and saveenv
+[INFO] Switch: Switch U-Boot: env default -a
+env default -a
+## Resetting to default environment
+Telesat>> [INFO] Switch: Switch U-Boot: setenv ethaddr 70:B3:D5:97:07:A9
+setenv ethaddr 70:B3:D5:97:07:A9
+Telesat>> [INFO] Switch: Switch U-Boot: saveenv
+saveenv
+Saving Environment to SPI Flash... SF: Detected n25q128a with page size 256 Bytes, erase size 64 KiB, total 16 MiB
+Erasing SPI flash...Writing to SPI flash...done
+OK
+Telesat>> [INFO] Step 3/7: use NXP UART, configure fm1-mac10, ping serverip, copy files, and start image servers
+[INFO] NXP UART: nmcli con add type ethernet ifname fm1-mac10 con-name fm1-mac10-static ipv4.addresses 192.168.2.1/24 ipv4.method manual
+[INFO] NXP UART: nmcli con up fm1-mac10-static
+[INFO] NXP UART: nmcli con show
+[INFO] Switch: Switch U-Boot: ping $serverip
+ping $serverip
+Using neta@7f020000 device
+host 192.168.2.1 is alive
+Telesat>> [OK] Switch ping $serverip reported alive
+[INFO] Windows->DUT SCP target: root@10.10.10.2:/tmp
+[INFO] NXP UART: Create /tmp
+[INFO] NXP UART: Check existing file: /tmp/sonic-marvell-arm64-SONiC.bin
+[OK] sonic-marvell-arm64-SONiC.bin already exists in DUT tmp; skipping copy
+[INFO] NXP UART: Check existing file: /tmp/telesat_lsbb-r0.itb
+[OK] telesat_lsbb-r0.itb already exists in DUT tmp; skipping copy
+[INFO] NXP UART: Verify copied file exists: /tmp/sonic-marvell-arm64-SONiC.bin
+[OK] Verified sonic-marvell-arm64-SONiC.bin exists in DUT tmp
+[INFO] NXP UART: Verify copied file exists: /tmp/telesat_lsbb-r0.itb
+[OK] Verified telesat_lsbb-r0.itb exists in DUT tmp
+[INFO] NXP UART: cd /tmp
+[INFO] NXP UART: ps -ef | grep udpsvd
+[INFO] NXP UART: ps -ef | grep httpserv
+[INFO] NXP UART: busybox udpsvd -vE 0.0.0.0 69 tftpd . &
+[INFO] NXP UART: ps -ef | grep udpsvd
+[INFO] NXP UART: httpserv -p 80 &
+[INFO] NXP UART: cd /root
+[INFO] Step 4/7: set switch ONIE install environment
+[INFO] Switch: Switch U-Boot: setenv ethaddr 70:B3:D5:97:07:A9
+setenv ethaddr 70:B3:D5:97:07:A9
+Telesat>> [INFO] Switch: Switch U-Boot: setenv onie_install_url install_url=http://192.168.2.1/sonic-marvell-arm64-SONiC.bin
+setenv onie_install_url install_url=http://192.168.2.1/sonic-marvell-arm64-SONiC.bin
+Telesat>> [INFO] Switch: Switch U-Boot: saveenv
+saveenv
+Saving Environment to SPI Flash... Erasing SPI flash...Writing to SPI flash...done
+OK
+Telesat>> [INFO] Step 5/7: boot switch ONIE image
+[INFO] Switch: Switch U-Boot: tftpboot $onie_loadaddr $onie_image_name
+tftpboot $onie_loadaddr $onie_image_name
+Using neta@7f020000 device
+TFTP from server 192.168.2.1; our IP address is 192.168.2.2
+Filename 'telesat_lsbb-r0.itb'.
+Load address: 0x210000000
+Loading: *
+TFTP error: 'can't open file' (1)
+Not retrying...
+Telesat>> Traceback (most recent call last):
+  File "C:\Users\alexeyt\source\repos\LscriptWin\eth_deploy.py", line 1341, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "C:\Users\alexeyt\source\repos\LscriptWin\eth_deploy.py", line 1334, in main
+    return run_eth_deploy(config, provision, args)
+  File "C:\Users\alexeyt\source\repos\LscriptWin\eth_deploy.py", line 1277, in run_eth_deploy
+    boot_switch_onie_image(switch, switch_prompt, config.timeouts.uboot_boot_seconds)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\alexeyt\source\repos\LscriptWin\eth_deploy.py", line 576, in boot_switch_onie_image
+    time.sleep(6)
+    ~~~~~~~~~~^^^
+KeyboardInterrupt
+PS C:\Users\alexeyt\source\repos\LscriptWin> python .\eth_deploy.py --dig_sn MLSDM-08-0726-B1-00008
+[INFO] DIG SN: MLSDM-08-0726-B1-00008
+[INFO] Base MAC: 70:B3:D5:97:07:A8
+[INFO] MAC2 / switch ethaddr: 70:B3:D5:97:07:A9 (base MAC + 1)
+[INFO] Switch U-Boot prompt from YAML: Telesat>>
+[INFO] Switch log: C:\Logs\Deployment\MLSDM-08-0726-B1-00008\20260524-103046\20260524-103046-eth-switch.log
+[INFO] NXP UART log: C:\Logs\Deployment\MLSDM-08-0726-B1-00008\20260524-103046\20260524-103046-eth-nxp.log
+[INFO] Using existing MAC allocation from database.
+[INFO] NXP UART: detect Linux shell
+[OK] NXP Linux shell is ready
+[INFO] Step 1/7: detect switch U-Boot using the YAML prompt
+
+Telesat>> [OK] Switch U-Boot is ready
+[INFO] Step 2/7: write MAC2 as switch ethaddr and saveenv
+[INFO] Switch: Switch U-Boot: env default -a
+env default -a
+## Resetting to default environment
+Telesat>> [INFO] Switch: Switch U-Boot: setenv ethaddr 70:B3:D5:97:07:A9
+setenv ethaddr 70:B3:D5:97:07:A9
+Telesat>> [INFO] Switch: Switch U-Boot: saveenv
+saveenv
+Saving Environment to SPI Flash... SF: Detected n25q128a with page size 256 Bytes, erase size 64 KiB, total 16 MiB
+Erasing SPI flash...Writing to SPI flash...done
+OK
+Telesat>> [INFO] Step 3/7: use NXP UART, configure fm1-mac10, ping serverip, copy files, and start image servers
+[INFO] NXP UART: nmcli con add type ethernet ifname fm1-mac10 con-name fm1-mac10-static ipv4.addresses 192.168.2.1/24 ipv4.method manual
+[INFO] NXP UART: nmcli con up fm1-mac10-static
+[INFO] NXP UART: nmcli con show
+[INFO] Switch: Switch U-Boot: ping $serverip
+ping $serverip
+Using neta@7f020000 device
+host 192.168.2.1 is alive
+Telesat>> [OK] Switch ping $serverip reported alive
+[INFO] Windows->DUT SCP target: root@10.10.10.2:/tmp
+[INFO] NXP UART: Create /tmp
+[INFO] NXP UART: Check existing file: /tmp/sonic-marvell-arm64-SONiC.bin
+[OK] sonic-marvell-arm64-SONiC.bin already exists in DUT tmp; skipping copy
+[INFO] NXP UART: Check existing file: /tmp/telesat_lsbb-r0.itb
+[OK] telesat_lsbb-r0.itb already exists in DUT tmp; skipping copy
+[INFO] NXP UART: Verify copied file exists: /tmp/sonic-marvell-arm64-SONiC.bin
+[OK] Verified sonic-marvell-arm64-SONiC.bin exists in DUT tmp
+[INFO] NXP UART: Verify copied file exists: /tmp/telesat_lsbb-r0.itb
+[OK] Verified telesat_lsbb-r0.itb exists in DUT tmp
+[INFO] NXP UART: cd /tmp
+[INFO] NXP UART: ps -ef | grep udpsvd
+[INFO] NXP UART: ps -ef | grep httpserv
+[INFO] NXP UART: busybox udpsvd -vE 0.0.0.0 69 tftpd . &
+[INFO] NXP UART: ps -ef | grep udpsvd
+[INFO] NXP UART: httpserv -p 80 &
+[INFO] NXP UART: cd /root
+[INFO] Step 4/7: set switch ONIE install environment
+[INFO] Switch: Switch U-Boot: setenv ethaddr 70:B3:D5:97:07:A9
+setenv ethaddr 70:B3:D5:97:07:A9
+Telesat>> [INFO] Switch: Switch U-Boot: setenv onie_install_url install_url=http://192.168.2.1/sonic-marvell-arm64-SONiC.bin
+setenv onie_install_url install_url=http://192.168.2.1/sonic-marvell-arm64-SONiC.bin
+Telesat>> [INFO] Switch: Switch U-Boot: saveenv
+saveenv
+Saving Environment to SPI Flash... Erasing SPI flash...Writing to SPI flash...done
+OK
+Telesat>> [INFO] Step 5/7: boot switch ONIE image
+[INFO] Switch: Switch U-Boot: tftpboot $onie_loadaddr $onie_image_name
+tftpboot $onie_loadaddr $onie_image_name
+Using neta@7f020000 device
+TFTP from server 192.168.2.1; our IP address is 192.168.2.2
+Filename 'telesat_lsbb-r0.itb'.
+Load address: 0x210000000
+Loading: *
+TFTP error: 'can't open file' (1)
+Not retrying...
+Telesat>> [INFO] Switch: Switch U-Boot: run onie_bootargs
+run onie_bootargs
+Telesat>> [INFO] Switch: Switch U-Boot: bootm $onie_loadaddr
+bootm $onie_loadaddr
+Wrong Image Format for bootm command
+ERROR: can't get kernel image!
+Telesat>> Traceback (most recent call last):
+  File "C:\Users\alexeyt\source\repos\LscriptWin\eth_deploy.py", line 1341, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "C:\Users\alexeyt\source\repos\LscriptWin\eth_deploy.py", line 1334, in main
+    return run_eth_deploy(config, provision, args)
+  File "C:\Users\alexeyt\source\repos\LscriptWin\eth_deploy.py", line 1277, in run_eth_deploy
+    boot_switch_onie_image(switch, switch_prompt, config.timeouts.uboot_boot_seconds)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\alexeyt\source\repos\LscriptWin\eth_deploy.py", line 585, in boot_switch_onie_image
+    session.wait_for_pattern(
+    ~~~~~~~~~~~~~~~~~~~~~~~~^
+        SWITCH_REBOOT_REQUEST_PATTERN,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        start_pos=start_pos,
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\alexeyt\source\repos\LscriptWin\eth_deploy.py", line 482, in wait_for_pattern
+    self.poll()
+    ~~~~~~~~~^^
+  File "C:\Users\alexeyt\source\repos\LscriptWin\eth_deploy.py", line 453, in poll
+    data = self.serial.read(self.serial.in_waiting or 1)
+  File "C:\Users\alexeyt\AppData\Local\Programs\Python\Python314\Lib\site-packages\serial\serialwin32.py", line 288, inread
+    result_ok = win32.GetOverlappedResult(
+        self._port_handle,
+        ctypes.byref(self._overlapped_read),
+        ctypes.byref(rc),
+        True)
+KeyboardInterrupt
+PS C:\Users\alexeyt\source\repos\LscriptWin> python .\eth_deploy.py --dig_sn MLSDM-08-0726-B1-00008
+[INFO] DIG SN: MLSDM-08-0726-B1-00008
+[INFO] Base MAC: 70:B3:D5:97:07:A8
+[INFO] MAC2 / switch ethaddr: 70:B3:D5:97:07:A9 (base MAC + 1)
+[INFO] Switch U-Boot prompt from YAML: Telesat>>
+[INFO] Switch log: C:\Logs\Deployment\MLSDM-08-0726-B1-00008\20260524-103815\20260524-103815-eth-switch.log
+[INFO] NXP UART log: C:\Logs\Deployment\MLSDM-08-0726-B1-00008\20260524-103815\20260524-103815-eth-nxp.log
+[INFO] Using existing MAC allocation from database.
+[INFO] NXP UART: detect Linux shell
+[OK] NXP Linux shell is ready
+[INFO] Step 1/7: detect switch U-Boot using the YAML prompt
+
+Telesat>> [OK] Switch U-Boot is ready
+[INFO] Step 2/7: write MAC2 as switch ethaddr and saveenv
+[INFO] Switch: Switch U-Boot: env default -a
+env default -a
+## Resetting to default environment
+Telesat>> [INFO] Switch: Switch U-Boot: setenv ethaddr 70:B3:D5:97:07:A9
+setenv ethaddr 70:B3:D5:97:07:A9
+Telesat>> [INFO] Switch: Switch U-Boot: saveenv
+saveenv
+Saving Environment to SPI Flash... SF: Detected n25q128a with page size 256 Bytes, erase size 64 KiB, total 16 MiB
+Erasing SPI flash...Writing to SPI flash...done
+OK
+Telesat>> [INFO] Step 3/7: use NXP UART, configure fm1-mac10, ping serverip, copy files, and start image servers
+[INFO] NXP UART: nmcli con add type ethernet ifname fm1-mac10 con-name fm1-mac10-static ipv4.addresses 192.168.2.1/24 ipv4.method manual
+[INFO] NXP UART: nmcli con up fm1-mac10-static
+[INFO] NXP UART: nmcli con show
+[INFO] Switch: Switch U-Boot: ping $serverip
+ping $serverip
+Using neta@7f020000 device
+host 192.168.2.1 is alive
+Telesat>> [OK] Switch ping $serverip reported alive
+[INFO] Windows->DUT SCP target: root@10.10.10.2:/tmp
+[INFO] NXP UART: Create /tmp
+[INFO] Windows->DUT SCP: scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\sonic-marvell-arm64-SONiC.bin root@10.10.10.2:/tmp
+Warning: Permanently added '10.10.10.2' (ED25519) to the list of known hosts.
+[OK] Copied sonic-marvell-arm64-SONiC.bin to DUT
+[INFO] Windows->DUT SCP: scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\telesat_lsbb-r0.itb root@10.10.10.2:/tmp
+Warning: Permanently added '10.10.10.2' (ED25519) to the list of known hosts.
+[OK] Copied telesat_lsbb-r0.itb to DUT
+[INFO] NXP UART: Verify copied file exists: /tmp/sonic-marvell-arm64-SONiC.bin
+[OK] Verified sonic-marvell-arm64-SONiC.bin exists in DUT tmp
+[INFO] NXP UART: Verify copied file exists: /tmp/telesat_lsbb-r0.itb
+[OK] Verified telesat_lsbb-r0.itb exists in DUT tmp
+[INFO] NXP UART: cd /tmp
+[INFO] NXP UART: ps -ef | grep udpsvd
+[INFO] NXP UART: ps -ef | grep httpserv
+[INFO] NXP UART: busybox udpsvd -vE 0.0.0.0 69 tftpd . &
+[INFO] NXP UART: ps -ef | grep udpsvd
+[INFO] NXP UART: httpserv -p 80 &
+[INFO] NXP UART: cd /root
+[INFO] Step 4/7: set switch ONIE install environment
+[INFO] Switch: Switch U-Boot: setenv ethaddr 70:B3:D5:97:07:A9
+setenv ethaddr 70:B3:D5:97:07:A9
+Telesat>> [INFO] Switch: Switch U-Boot: setenv onie_install_url install_url=http://192.168.2.1/sonic-marvell-arm64-SONiC.bin
+setenv onie_install_url install_url=http://192.168.2.1/sonic-marvell-arm64-SONiC.bin
+Telesat>> [INFO] Switch: Switch U-Boot: saveenv
+saveenv
+Saving Environment to SPI Flash... Erasing SPI flash...Writing to SPI flash...done
+OK
+Telesat>> [INFO] Step 5/7: boot switch ONIE image
+[INFO] Switch: Switch U-Boot: tftpboot $onie_loadaddr $onie_image_name
+tftpboot $onie_loadaddr $onie_image_name
+Using neta@7f020000 device
+TFTP from server 192.168.2.1; our IP address is 192.168.2.2
+Filename 'telesat_lsbb-r0.itb'.
+Load address: 0x210000000
+Loading: *#################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         #################################################################
+         ############################################################
+         2.9 MiB/s
+done
+Bytes transferred = 11950948 (b65b64 hex)
+Telesat>> [INFO] Switch: Switch U-Boot: run onie_bootargs
+run onie_bootargs
+Telesat>> [INFO] Switch: Switch U-Boot: bootm $onie_loadaddr
+bootm $onie_loadaddr
+## Loading kernel from FIT Image at 210000000 ...
+   Using 'telesat_lsbb' configuration
+   Trying 'kernel' kernel subimage
+     Description:  telesat_lsbb-r0 arm64 Kernel
+     Created:      2026-03-20  15:08:25 UTC
+     Type:         Kernel Image
+     Compression:  gzip compressed
+     Data Start:   0x2100000e4
+     Data Size:    9069481 Bytes = 8.6 MiB
+     Architecture: AArch64
+     OS:           Linux
+     Load Address: 0x202080000
+     Entry Point:  0x202080000
+     Hash algo:    crc32
+     Hash value:   afea5d8c
+   Verifying Hash Integrity ... crc32+ OK
+## Loading ramdisk from FIT Image at 210000000 ...
+   Using 'telesat_lsbb' configuration
+   Trying 'initramfs' ramdisk subimage
+     Description:  initramfs
+     Created:      2026-03-20  15:08:25 UTC
+     Type:         RAMDisk Image
+     Compression:  uncompressed
+     Data Start:   0x2108a6574
+     Data Size:    2872700 Bytes = 2.7 MiB
+     Architecture: AArch64
+     OS:           Linux
+     Load Address: 0x00000000
+     Entry Point:  0x00000000
+     Hash algo:    crc32
+     Hash value:   4584dfa3
+   Verifying Hash Integrity ... crc32+ OK
+## Loading fdt from FIT Image at 210000000 ...
+   Using 'telesat_lsbb' configuration
+   Trying 'dtb' fdt subimage
+     Description:  telesat_lsbb-r0.dtb
+     Created:      2026-03-20  15:08:25 UTC
+     Type:         Flat Device Tree
+     Compression:  uncompressed
+     Data Start:   0x210b63bcc
+     Data Size:    6693 Bytes = 6.5 KiB
+     Architecture: AArch64
+     Load Address: 0x201000000
+     Hash algo:    crc32
+     Hash value:   ca6d772a
+   Verifying Hash Integrity ... crc32+ OK
+   Loading fdt from 0x210b63bcc to 0x201000000
+   Booting using the fdt blob at 0x201000000
+   Uncompressing Kernel Image ... OK
+   Loading Ramdisk to 27f31c000, end 27f5d957c ... OK
+   Using Device Tree in place at 0000000201000000, end 0000000201004a24
+
+Starting kernel ...
+
+[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x412fd050]
+[    0.000000] Linux version 4.19.67-g9b06d22 (mhryshanov@node09) (gcc version 6.3.0 (crosstool-NG 271ee68 - ONIE-master-12092051-dirty)) #1 SMP PREEMPT Fri Mar 20 17:05:29 EET 2026
+[    0.000000] Machine model: lsbb
+[    0.000000] Reserved memory: created DMA memory pool at 0x0000000200000000, size 4 MiB
+[    0.000000] OF: reserved mem: initialized node buffer@0x200000000, compatible id shared-dma-pool
+[    0.000000] cma: Reserved 256 MiB at 0x00000002f0000000
+[    0.000000] NUMA: No NUMA configuration found
+[    0.000000] NUMA: Faking a node at [mem 0x0000000000000000-0x00000002ffffffff]
+[    0.000000] NUMA: NODE_DATA [mem 0x2effe9a40-0x2effeb1ff]
+[    0.000000] Zone ranges:
+[    0.000000]   DMA32    [mem 0x0000000200400000-0x00000002ffffffff]
+[    0.000000]   Normal   empty
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000200400000-0x00000002ffffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000200400000-0x00000002ffffffff]
+[    0.000000] On node 0 totalpages: 1047552
+[    0.000000]   DMA32 zone: 16368 pages used for memmap
+[    0.000000]   DMA32 zone: 0 pages reserved
+[    0.000000]   DMA32 zone: 1047552 pages, LIFO batch:63
+[    0.000000] psci: probing for conduit method from DT.
+[    0.000000] psci: PSCIv1.1 detected in firmware.
+[    0.000000] psci: Using standard PSCI v0.2 function IDs
+[    0.000000] psci: MIGRATE_INFO_TYPE not supported.
+[    0.000000] psci: SMC Calling Convention v1.1
+[    0.000000] random: get_random_bytes called from start_kernel+0xac/0x40c with crng_init=0
+[    0.000000] percpu: Embedded 26 pages/cpu s68952 r8192 d29352 u106496
+[    0.000000] pcpu-alloc: s68952 r8192 d29352 u106496 alloc=26*4096
+[    0.000000] pcpu-alloc: [0] 0 [0] 1
+[    0.000000] Detected VIPT I-cache on CPU0
+[    0.000000] Speculative Store Bypass Disable mitigation not required
+[    0.000000] CPU features: detected: Kernel page table isolation (KPTI)
+[    0.000000] CPU features: detected: Hardware dirty bit management
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 1031184
+[    0.000000] Policy zone: DMA32
+[    0.000000] Kernel command line: root=/dev/ram0 rw debug panic=1 console=ttyS0,115200 install_url=http://192.168.2.1/sonic-marvell-arm64-SONiC.bin ip=192.168.2.2::192.168.2.1:255.255.255.0 boot_reason=install
+[    0.000000] Memory: 3838744K/4190208K available (12478K kernel code, 1418K rwdata, 4924K rodata, 1280K init, 347K bss, 89320K reserved, 262144K cma-reserved)
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=2, Nodes=1
+[    0.000000] rcu: Preemptible hierarchical RCU implementation.
+[    0.000000] rcu:     RCU restricting CPUs from NR_CPUS=96 to nr_cpu_ids=2.
+[    0.000000]  Tasks RCU enabled.
+[    0.000000] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=2
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] GICv3: GIC: Using split EOI/Deactivate mode
+[    0.000000] GICv3: Distributor has no Range Selector support
+[    0.000000] GICv3: no VLPI support, no direct LPI support
+[    0.000000] ITS: No ITS available, not enabling LPIs
+[    0.000000] GICv3: CPU0: found redistributor 0 region 0:0x0000000080660000
+[    0.000000] rcu:     Offload RCU callbacks from CPUs: (none).
+[    0.000000] arch_timer: cp15 timer(s) running at 25.00MHz (phys).
+[    0.000000] clocksource: arch_sys_counter: mask: 0xffffffffffffff max_cycles: 0x5c40939b5, max_idle_ns: 440795202646ns
+[    0.000004] sched_clock: 56 bits at 25MHz, resolution 40ns, wraps every 4398046511100ns
+[    0.000155] Console: colour dummy device 80x25
+[    0.000221] Calibrating delay loop (skipped), value calculated using timer frequency.. 50.00 BogoMIPS (lpj=100000)
+[    0.000229] pid_max: default: 32768 minimum: 301
+[    0.000275] Security Framework initialized
+[    0.004294] Dentry cache hash table entries: 524288 (order: 10, 4194304 bytes)
+[    0.006275] Inode-cache hash table entries: 262144 (order: 9, 2097152 bytes)
+[    0.006381] Mount-cache hash table entries: 8192 (order: 4, 65536 bytes)
+[    0.006460] Mountpoint-cache hash table entries: 8192 (order: 4, 65536 bytes)
+[    0.028129] ASID allocator initialised with 32768 entries
+[    0.036113] rcu: Hierarchical SRCU implementation.
+[    0.052135] smp: Bringing up secondary CPUs ...
+[    0.084251] Detected VIPT I-cache on CPU1
+[    0.084284] GICv3: CPU1: found redistributor 100 region 0:0x0000000080680000
+[    0.084315] CPU1: Booted secondary processor 0x0000000100 [0x412fd050]
+[    0.084400] smp: Brought up 1 node, 2 CPUs
+[    0.084410] SMP: Total of 2 processors activated.
+[    0.084416] CPU features: detected: GIC system register CPU interface
+[    0.084419] CPU features: detected: Privileged Access Never
+[    0.084423] CPU features: detected: LSE atomic instructions
+[    0.084426] CPU features: detected: User Access Override
+[    0.084429] CPU features: detected: 32-bit EL0 Support
+[    0.084432] CPU features: detected: Data cache clean to Point of Persistence
+[    0.084435] CPU features: detected: RAS Extension Support
+[    0.088171] CPU: All CPU(s) started at EL2
+[    0.088212] alternatives: patching kernel code
+[    0.092830] devtmpfs: initialized
+[    0.094438] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.094465] futex hash table entries: 512 (order: 3, 32768 bytes)
+[    0.099773] xor: measuring software checksum speed
+[    0.136359]    8regs     :  3084.000 MB/sec
+[    0.176383]    8regs_prefetch:  2808.000 MB/sec
+[    0.216409]    32regs    :  3928.000 MB/sec
+[    0.256436]    32regs_prefetch:  3614.000 MB/sec
+[    0.256439] xor: using function: 32regs (3928.000 MB/sec)
+[    0.256452] pinctrl core: initialized pinctrl subsystem
+[    0.258114] NET: Registered protocol family 16
+[    0.258551] audit: initializing netlink subsys (disabled)
+[    0.258683] audit: type=2000 audit(0.256:1): state=initialized audit_enabled=0 res=1
+[    0.260556] cpuidle: using governor ladder
+[    0.260584] cpuidle: using governor menu
+[    0.260922] vdso: 2 pages (1 code @ (____ptrval____), 1 data @ (____ptrval____))
+[    0.260930] hw-breakpoint: found 6 breakpoint and 4 watchpoint registers.
+[    0.261638] DMA: preallocated 256 KiB pool for atomic allocations
+[    0.262107] Serial: AMBA PL011 UART driver
+[    0.288703] HugeTLB registered 2.00 MiB page size, pre-allocated 0 pages
+[    0.289953] cryptd: max_cpu_qlen set to 1000
+[    0.360890] raid6: int64x1  gen()   583 MB/s
+[    0.428945] raid6: int64x1  xor()   603 MB/s
+[    0.496968] raid6: int64x2  gen()   911 MB/s
+[    0.565009] raid6: int64x2  xor()   917 MB/s
+[    0.633059] raid6: int64x4  gen()  1287 MB/s
+[    0.701071] raid6: int64x4  xor()  1029 MB/s
+[    0.769144] raid6: int64x8  gen()  1453 MB/s
+[    0.837183] raid6: int64x8  xor()  1002 MB/s
+[    0.905218] raid6: neonx1   gen()   958 MB/s
+[    0.973248] raid6: neonx1   xor()  1324 MB/s
+[    1.041314] raid6: neonx2   gen()  1521 MB/s
+[    1.109328] raid6: neonx2   xor()  1858 MB/s
+[    1.177390] raid6: neonx4   gen()  2020 MB/s
+[    1.245415] raid6: neonx4   xor()  2129 MB/s
+[    1.313455] raid6: neonx8   gen()  2148 MB/s
+[    1.381487] raid6: neonx8   xor()  2124 MB/s
+[    1.381490] raid6: using algorithm neonx8 gen() 2148 MB/s
+[    1.381493] raid6: .... xor() 2124 MB/s, rmw enabled
+[    1.381497] raid6: using neon recovery algorithm
+[    1.382594] vgaarb: loaded
+[    1.382829] SCSI subsystem initialized
+[    1.383082] libata version 3.00 loaded.
+[    1.383343] usbcore: registered new interface driver usbfs
+[    1.383403] usbcore: registered new interface driver hub
+[    1.383461] usbcore: registered new device driver usb
+[    1.383656] usb_phy_generic soc:32bit-dma-peripherals@7f000000:usbphy: soc:32bit-dma-peripherals@7f000000:usbphy supply vcc not found, using dummy regulator
+[    1.383712] usb_phy_generic soc:32bit-dma-peripherals@7f000000:usbphy: Linked as a consumer to regulator.0
+[    1.384276] pps_core: LinuxPPS API ver. 1 registered
+[    1.384283] pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giometti@linux.it>
+[    1.384300] PTP clock support registered
+[    1.384401] EDAC MC: Ver: 3.0.0
+[    1.386067] Advanced Linux Sound Architecture Driver Initialized.
+[    1.386815] clocksource: Switched to clocksource arch_sys_counter
+[    1.386981] VFS: Disk quotas dquot_6.6.0
+[    1.387033] VFS: Dquot-cache hash table entries: 512 (order 0, 4096 bytes)
+[    1.392046] NET: Registered protocol family 2
+[    1.392616] tcp_listen_portaddr_hash hash table entries: 2048 (order: 3, 32768 bytes)
+[    1.392686] TCP established hash table entries: 32768 (order: 6, 262144 bytes)
+[    1.392906] TCP bind hash table entries: 32768 (order: 7, 524288 bytes)
+[    1.393603] TCP: Hash tables configured (established 32768 bind 32768)
+[    1.393764] UDP hash table entries: 2048 (order: 4, 65536 bytes)
+[    1.393841] UDP-Lite hash table entries: 2048 (order: 4, 65536 bytes)
+[    1.393996] NET: Registered protocol family 1
+[    1.394405] RPC: Registered named UNIX socket transport module.
+[    1.394409] RPC: Registered udp transport module.
+[    1.394413] RPC: Registered tcp transport module.
+[    1.394416] RPC: Registered tcp NFSv4.1 backchannel transport module.
+[    1.394424] PCI: CLS 0 bytes, default 64
+[    1.394558] Trying to unpack rootfs image as initramfs...
+[    2.011762] Freeing initrd memory: 2804K
+[    2.012444] hw perfevents: enabled with armv8_pmuv3 PMU driver, 7 counters available
+[    2.012703] kvm [1]: 16-bit VMID
+[    2.013013] kvm [1]: GICv3: no GICV resource entry
+[    2.013019] kvm [1]: disabling GICv2 emulation
+[    2.013047] kvm [1]: GIC system register CPU interface enabled
+[    2.013092] kvm [1]: vgic interrupt IRQ1
+[    2.013156] kvm [1]: Hyp mode initialized successfully
+[    2.016863] Initialise system trusted keyrings
+[    2.017021] workingset: timestamp_bits=44 max_order=20 bucket_order=0
+[    2.022245] squashfs: version 4.0 (2009/01/31) Phillip Lougher
+[    2.023292] NFS: Registering the id_resolver key type
+[    2.023319] Key type id_resolver registered
+[    2.023323] Key type id_legacy registered
+[    2.023333] nfs4filelayout_init: NFSv4 File Layout Driver Registering...
+[    2.023337] Installing knfsd (copyright (C) 1996 okir@monad.swb.de).
+[    2.023648] 9p: Installing v9fs 9p2000 file system support
+[    2.026418] Key type asymmetric registered
+[    2.026429] Asymmetric key parser 'x509' registered
+[    2.026488] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 245)
+[    2.026498] io scheduler noop registered
+[    2.026654] io scheduler cfq registered (default)
+[    2.026660] io scheduler mq-deadline registered
+[    2.026664] io scheduler kyber registered
+[    2.029100] ac5-pinctrl 80020100.pinctrl: registered pinctrl driver
+[    2.032703] armada8k-pcie 800a0000.pcie: host bridge /soc/pcie@800a0000 ranges:
+[    2.032732] armada8k-pcie 800a0000.pcie:   MEM 0x30000000..0x3ffeffff -> 0x30000000
+[    3.032880] armada8k-pcie 800a0000.pcie: Phy link never came up
+[    3.032890] armada8k-pcie 800a0000.pcie: Link not up after reconfiguration
+[    3.033021] armada8k-pcie 800a0000.pcie: PCI host bridge to bus 0000:00
+[    3.033034] pci_bus 0000:00: root bus resource [bus 00-ff]
+[    3.033040] pci_bus 0000:00: root bus resource [mem 0x30000000-0x3ffeffff]
+[    3.033073] pci 0000:00:00.0: [11ab:9821] type 00 class 0x060400
+[    3.033093] pci 0000:00:00.0: ignoring class 0x060400 (doesn't match header type 00)
+[    3.033138] pci 0000:00:00.0: supports D1
+[    3.033143] pci 0000:00:00.0: PME# supported from D0 D1 D3hot D3cold
+[    3.033171] pci 0000:00:00.0: 2.000 Gb/s available PCIe bandwidth, limited by 2.5 GT/s x1 link at 0000:00:00.0 (capable of 7.876 Gb/s with 8 GT/s x1 link)
+[    3.040171] Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
+[    3.042445] console [ttyS0] disabled
+[    3.063515] 7f012000.serial: ttyS0 at MMIO 0x7f012000 (irq = 7, base_baud = 20500000) is a 16550A
+[    4.138561] console [ttyS0] enabled
+[    4.142925] SuperH (H)SCI(F) driver initialized
+[    4.147739] msm_serial: driver initialized
+[    4.157812] brd: module loaded
+[    4.166608] loop: module loaded
+[    4.170490] megaraid cmm: 2.20.2.7 (Release Date: Sun Jul 16 00:01:03 EST 2006)
+[    4.178037] megaraid: 2.20.5.1 (Release Date: Thu Nov 16 15:32:35 EST 2006)
+[    4.185130] megasas: 07.706.03.00-rc1
+[    4.188891] mpt3sas version 26.100.00.00 loaded
+[    4.205126] m25p80 spi0.0: n25q128a11 (16384 Kbytes)
+[    4.210198] 1 fixed-partitions partitions found on MTD device spi0.0
+[    4.216617] Creating 1 MTD partitions on "spi0.0":
+[    4.221464] 0x000000000000-0x000000400000 : "uboot-env"
+[    4.229875] libphy: Fixed MDIO Bus: probed
+[    4.236065] tun: Universal TUN/TAP device driver, 1.6
+[    4.242264] e100: Intel(R) PRO/100 Network Driver, 3.5.24-k2-NAPI
+[    4.248843] e100: Copyright(c) 1999-2006 Intel Corporation
+[    4.254464] e1000: Intel(R) PRO/1000 Network Driver - version 7.3.21-k8-NAPI
+[    4.261650] e1000: Copyright (c) 1999-2006 Intel Corporation.
+[    4.267499] e1000e: Intel(R) PRO/1000 Network Driver - 3.2.6-k
+[    4.273435] e1000e: Copyright(c) 1999 - 2015 Intel Corporation.
+[    4.279454] igb: Intel(R) Gigabit Ethernet Network Driver - version 5.4.0-k
+[    4.286487] igb: Copyright (c) 2007-2014 Intel Corporation.
+[    4.292158] igbvf: Intel(R) Gigabit Virtual Function Network Driver - version 2.4.0-k
+[    4.300068] igbvf: Copyright (c) 2009 - 2012 Intel Corporation.
+[    4.306078] ixgbe: Intel(R) 10 Gigabit PCI Express Network Driver - version 5.1.0-k
+[    4.313812] ixgbe: Copyright (c) 1999-2016 Intel Corporation.
+[    4.319749] ixgbevf: Intel(R) 10 Gigabit PCI Express Virtual Function Network Driver - version 4.1.0-k
+[    4.329149] ixgbevf: Copyright (c) 2009 - 2015 Intel Corporation.
+[    4.335410] i40e: Intel(R) Ethernet Connection XL710 Network Driver - version 2.3.2-k
+[    4.343338] i40e: Copyright (c) 2013 - 2014 Intel Corporation.
+[    4.349360] ixgb: Intel(R) PRO/10GbE Network Driver - version 1.0.135-k2-NAPI
+[    4.356578] ixgb: Copyright (c) 1999-2008 Intel Corporation.
+[    4.362329] i40evf: Intel(R) 40-10 Gigabit Virtual Function Network Driver - version 3.2.2-k
+[    4.370851] Copyright (c) 2013 - 2015 Intel Corporation.
+[    4.376301] Intel(R) Ethernet Switch Host Interface Driver - version 0.23.4-k
+[    4.383513] Copyright(c) 2013 - 2018 Intel Corporation.
+[    4.389198] libphy: orion_mdio_bus: probed
+[    4.397352] mvneta 7f020000.ethernet eth0: Using hardware mac address 70:b3:d5:97:07:a9
+[    4.405789] sky2: driver version 1.30
+[    4.409585] PPP generic driver version 2.4.2
+[    4.414135] PPP MPPE Compression module registered
+[    4.419038] usbcore: registered new interface driver r8152
+[    4.424673] usbcore: registered new interface driver dm9601
+[    4.430339] usbcore: registered new interface driver CoreChips
+[    4.436282] usbcore: registered new interface driver smsc75xx
+[    4.442124] usbcore: registered new interface driver smsc95xx
+[    4.447966] usbcore: registered new interface driver plusb
+[    4.453540] usbcore: registered new interface driver MOSCHIP usb-ethernet driver
+[    4.461191] VFIO - User Level meta-driver version: 0.3
+[    4.467590] ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver
+[    4.474204] ehci-pci: EHCI PCI platform driver
+[    4.478742] ehci-platform: EHCI generic platform driver
+[    4.484111] ehci-orion: EHCI orion driver
+[    4.488342] orion-ehci 7f080000.usb: EHCI Host Controller
+[    4.493825] orion-ehci 7f080000.usb: new USB bus registered, assigned bus number 1
+[    4.501827] orion-ehci 7f080000.usb: irq 11, io mem 0x7f080000
+[    4.522822] orion-ehci 7f080000.usb: USB 2.0 started, EHCI 1.00
+[    4.529294] hub 1-0:1.0: USB hub found
+[    4.533112] hub 1-0:1.0: 1 port detected
+[    4.537369] ehci-exynos: EHCI EXYNOS driver
+[    4.541748] ohci_hcd: USB 1.1 'Open' Host Controller (OHCI) Driver
+[    4.548017] ohci-pci: OHCI PCI platform driver
+[    4.552590] ohci-platform: OHCI generic platform driver
+[    4.557999] ohci-exynos: OHCI EXYNOS driver
+[    4.562689] usbcore: registered new interface driver usb-storage
+[    4.569792] mousedev: PS/2 mouse device common for all mice
+[    4.576509] i2c /dev entries driver
+[    4.583119] sdhci: Secure Digital Host Controller Interface driver
+[    4.589454] sdhci: Copyright(c) Pierre Ossman
+[    4.594037] Synopsys Designware Multimedia Card Interface Driver
+[    4.600449] sdhci-pltfm: SDHCI platform and OF driver helper
+[    4.630857] mmc0: SDHCI controller on 805c0000.sdhci [805c0000.sdhci] using PIO
+[    4.638935] ledtrig-cpu: registered to indicate activity on CPUs
+[    4.646423] usbcore: registered new interface driver usbhid
+[    4.652132] usbhid: USB HID core driver
+[    4.658646] NET: Registered protocol family 17
+[    4.663260] 8021q: 802.1Q VLAN Support v1.8
+[    4.667675] 9pnet: Installing 9P2000 support
+[    4.672131] Key type dns_resolver registered
+[    4.676515] mpls_gso: MPLS GSO support
+[    4.680924] registered taskstats version 1
+[    4.685102] Loading compiled-in X.509 certificates
+[    4.691446] Btrfs loaded, crc32c=crc32c-arm64-ce
+[    4.696861] hctosys: unable to open rtc device (rtc0)
+[    4.706211] mvneta 7f020000.ethernet eth0: configuring for fixed/sgmii link mode
+[    4.713881] mvneta 7f020000.ethernet eth0: Link is Up - 1Gbps/Full - flow control off
+[    4.726374] mmc0: new high speed MMC card at address 0001
+[    4.730822] IP-Config: Complete:
+[    4.735101]      device=eth0, hwaddr=70:b3:d5:97:07:a9, ipaddr=192.168.2.2, mask=255.255.255.0, gw=192.168.2.1
+[    4.737171] mmcblk0: mmc0:0001 0IM20E 29.6 GiB
+[    4.745209]      host=192.168.2.2, domain=, nis-domain=(none)
+[    4.745213]      bootserver=255.255.255.255, rootserver=255.255.255.255, rootpath=
+[    4.745366] ALSA device list:
+[    4.750741] mmcblk0boot0: mmc0:0001 0IM20E partition 1 31.5 MiB
+[    4.755618]   No soundcards found.
+[    4.777068] mmcblk0boot1: mmc0:0001 0IM20E partition 2 31.5 MiB
+[    4.777538] Freeing unused kernel memory: 1280K
+[    4.783409] mmcblk0rpmb: mmc0:0001 0IM20E partition 3 4.00 MiB, chardev (511:0)
+[    4.787882] Run /init as init process
+Info: Mounting kernel filesystems... done.
+Failure: Unable to find u-boot environment device-tree node
+Caution: invalid main GPT header, but valid backup; regenerating main header
+from backup!
+
+Warning! Main partition table CRC mismatch! Loaded backup partition table
+instead of main partition table!
+
+Warning! One or more CRCs don't match. You should repair the disk!
+
+Invalid partition data!
+No ONIE partition. Format and re-create partition table
+Caution: invalid main GPT header, but valid backup; regenerating main header
+from backup!
+
+Caution! After loading partitions, the CRC doesn't check out!
+Warning! Main partition table CRC mismatch! Loaded backup partition table
+instead of main partition table!
+
+Warning! One or more CRCs don't match. You should repair the disk!
+
+Invalid partition data!
+Information: Creating fresh partition table; will override earlier problems!
+GPT data structures destroyed! You may now partition the disk using fdisk or
+other utilities.
+Creating new GPT entries.
+Disk /dev/mmcblk0: 62160896 sectors, 29.6 GiB
+Logical sector size: 512 bytes
+Disk identifier (GUID): 00A1C531-5360-4313-B7B4-105ACA6D533C
+Partition table holds up to 128 entries
+First usable sector is 34, last usable sector is 62160862
+Partitions will be aligned on 2048-sector boundaries
+Total free space is 61816765 sectors (29.5 GiB)
+
+Number  Start (sector)    End (sector)  Size       Code  Name
+   1            2048          346111   168.0 MiB   8300  ONIE
+The operation has completed successfully.
+mke2fs 1.42.13 (17-May-2015)
+Discarding device blocks:   1024/172032             done
+Creating filesystem with 172032 1k blocks and 43008 inodes
+Filesystem UUID: d27f3b43-e62e-4225-98a4-6f6cdf0dcc7e
+Superblock backups stored on blocks:
+        8193, 24577, 40961, 57345, 73729
+
+Allocating group tables:  0/21     done
+Writing inode tables:  0/21     done
+Creating journal (4096 blocks): done
+Writing superblocks and filesystem accounting information:  0/21     done
+
+Info: Making NOS install boot mode persistent.
+Info: Using eth0 MAC address: 70:b3:d5:97:07:a9
+Info: eth0:  Checking link... up.
+ONIE: eth0: Using static IP config: ip=192.168.2.2::192.168.2.1:255.255.255.0
+Starting: klogd... done.
+Starting: dropbear ssh daemon...[    8.694578] urandom_read: 1 callbacks suppressed
+Cannot parse config file: No such file or directory
+Failure: Unable to save dropbear ssh server keys
+ done.
+Starting: telnetd... done.
+discover: installer mode detected.  Running installer.
+Starting: discover... done.
+
+Please press Enter to activate this console. Info: eth0:  Checking link... up.
+ONIE: eth0: Using static IP config: ip=192.168.2.2::192.168.2.1:255.255.255.0
+ONIE: Starting ONIE Service Discovery
+Info: Found static url: http://192.168.2.1/sonic-marvell-arm64-SONiC.bin
+Info: Attempting http://192.168.2.1/sonic-marvell-arm64-SONiC.bin ...
+ONIE: Executing installer: http://192.168.2.1/sonic-marvell-arm64-SONiC.bin
+Verifying image checksum ... OK.
+Preparing image archive ... OK.
+Installing SONiC in ONIE
+ONIE Installer: platform: arm64-marvell-r0
+onie_platform: arm64-telesat_lsbb-r0
+Preparing for installation ...
+Intalling SONiC from onie on Platform arm64-telesat_lsbb-r0
+/dev/mmcblk0
+Selected mmc /dev/mmcblk0
+/dev/mmcblk0
+Selected mmc /dev/mmcblk0
+Remove all existing partitions starting partnum: 2 from /dev/mmcblk0
+Disk /dev/mmcblk0: 62160896 sectors, 29.6 GiB
+Logical sector size: 512 bytes
+Disk identifier (GUID): 00A1C531-5360-4313-B7B4-105ACA6D533C
+Partition table holds up to 128 entries
+First usable sector is 34, last usable sector is 62160862
+Partitions will be aligned on 2048-sector boundaries
+Total free space is 36830 sectors (18.0 MiB)
+
+Number  Start (sector)    End (sector)  Size       Code  Name
+   1            2048          346111   168.0 MiB   8300  ONIE
+   2          346112        62126046   29.5 GiB    8300  SONiC-OS
+The operation has completed successfully.
+Disk /dev/mmcblk0: 62160896 sectors, 29.6 GiB
+Logical sector size: 512 bytes
+Disk identifier (GUID): 00A1C531-5360-4313-B7B4-105ACA6D533C
+Partition table holds up to 128 entries
+First usable sector is 34, last usable sector is 62160862
+Partitions will be aligned on 2048-sector boundaries
+Total free space is 4062 sectors (2.0 MiB)
+
+Number  Start (sector)    End (sector)  Size       Code  Name
+   1            2048          346111   168.0 MiB   8300  ONIE
+   2          346112        62126046   29.5 GiB    8300  SONiC-OS
+   3        62126080        62158847   16.0 MiB    8300  ONIE-TIP-CA-CERT
+The operation has completed successfully.
+demo label: SONiC-OS. /dev/mmcblk0p2...
+mke2fs 1.42.13 (17-May-2015)
+Discarding device blocks:    4096/7722491 528384/77224911052672/77224911576960/77224912101248/77224912625536/77224913149824/77224913674112/77224914198400/77224914722688/77224915246976/77224915771264/77224916295552/77224916819840/77224917344128/7722491               done
+Creating filesystem with 7722491 4k blocks and 1933312 inodes
+Filesystem UUID: 66b124dd-d5eb-46c8-8b9b-7480ec620ab4
+Superblock backups stored on blocks:
+        32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208,
+        4096000
+
+Allocating group tables:   0/236       done
+Writing inode tables:   0/236       done
+Creating journal (32768 blocks): done
+Writing superblocks and filesystem accounting information:   0/236       done
+
+cert label: ONIE-TIP-CA-CERT. /dev/mmcblk0p3...
+mke2fs 1.42.13 (17-May-2015)
+Discarding device blocks:  1024/16384           done
+Creating filesystem with 16384 1k blocks and 4096 inodes
+Filesystem UUID: d1dd4d2d-8907-451a-8c93-ee452cc72942
+Superblock backups stored on blocks:
+        8193
+
+Allocating group tables: 0/2   done
+Writing inode tables: 0/2   done
+Creating journal (1024 blocks): done
+Writing superblocks and filesystem accounting information: 0/2   done
+
+Installing SONiC to /tmp/image-SONiC-LSBB-Ver.0.9.0.1
+Archive:  fs.zip
+   creating: boot/
+  inflating: boot/sonic_fit.its
+  inflating: boot/cn9131-db-comexpress.dts
+  inflating: boot/ac5x-ln38xx.dtb
+  inflating: boot/ln3612y2zt.dtb
+  inflating: boot/pegatron_dm8218_f-r0.dtb
+  inflating: boot/cn9130-db-comexpress.dts
+  inflating: boot/vmlinuz-6.1.0-29-2-arm64
+  inflating: boot/sonic_arm64.fit
+  inflating: boot/qn-sr-100.dtb
+  inflating: boot/ln3604g.dtb
+  inflating: boot/cn9131-db-comexpress.dtb
+  inflating: boot/cn9130-db-comexpress.dtb
+  inflating: boot/config-6.1.0-29-2-arm64
+  inflating: boot/ln3516xgf-4z.dtb
+  inflating: boot/qn-sr-400.dtb
+  inflating: boot/initrd.img-6.1.0-29-2-arm64
+  inflating: boot/cn9131-ext-98cx.dtb
+  inflating: boot/qn-sr-50.dtb
+  inflating: boot/canisminor.dtb
+  inflating: boot/qn-sr-200.dtb
+  inflating: boot/ac5x-ln38xx.dts
+  inflating: boot/cn9130-eps6800-r0.dtb
+  inflating: boot/System.map-6.1.0-29-2-arm64
+  inflating: fs.squashfs
+ONIE_IMAGE_PART_SIZE=32768
+EXTRA_CMDLINE_LINUX=
+Sync up cache ...
+Setting up U-Boot environment...
+Using pre-configured uboot env
+## Error: "sonic_boot_load" not defined
+Installed SONiC image successfully
+umount: can't unmount /tmp/tmp.SSOxXA: No such file or directory
+ONIE: NOS install successful: http://192.168.2.1/sonic-marvell-arm64-SONiC.bin
+ONIE: Rebooting...
+discover: installer mode detected.
+Stopping: discover...start-stop-daemon: warning: killing process 1850: No such process
+ done.
+Stopping: dropbear ssh daemon... done.
+Stopping: telnetd... done.
+Stopping: klogd... done.
+Stopping: syslogd... done.
+Info: Unmounting kernel filesystems
+umount: can't unmount /: Invalid argument
+The system is going down NOW!
+Sent SIGTERM to all processes
+[INFO] Step 6/7: reset switch from NXP and wait for SONiC boot
+[INFO] NXP UART: Return to /root before switch reset
+[INFO] NXP UART: NXP reset switch: cpld w 0x45 0
+[INFO] NXP UART: NXP reset switch: cpld w 0x45 3
+[INFO] Switch SONiC boot: waiting 5:30
+Switch SONiC boot: 100%|██████████████████████████████████████████████████████████████| 330/330 [05:30<00:00,  1.00s/s]
+[INFO] Step 7/7: log into SONiC, configure management, and verify ping
+[INFO] Switch UART: detect SONiC login prompt
+Sent SIGKILL to all processes
+Requesting system reboot
+[  219.567682] reboot: Restarting system
+
+
+
+
+Bootrom version 1.29
+Booting from: SPI NOR
+mv_ddr: CnM-1.0.25-g9a6a2c3 (Mar 26 2026 - 12:33:14)
+tot_mem_sz: 4096 MB
+** snps_init **
+Synopsys DDR43 PHY Firmware version: A-2019.11
+Load static  section for PHY Configuration
+Load static update  section for PHY Configuration
+Load static  section for 1D IMEM
+Load static  section for 1D DMEM
+Load static update  section for 1D DMEM
+training_log_level = a
+SNPS DDR: 1D training passed
+Load static  section for 2D IMEM
+Load static  section for 2D DMEM
+Load static update  section for 2D DMEM
+training_log_level = a
+SNPS DDR: 2D training passed
+Load static  section for PHY Init Engine (PIE)
+SNPS DDR: training completed
+scrubbing ddr (4096 MB)...
+no CLI
+Pass control
+NOTICE:  Booting Trusted Firmware
+NOTICE:  BL1: v2.1(release):CNM_23.04-1-gf1754d55 (Marvell-devel-18.12.0)
+NOTICE:  BL1: Built : 16:35:34, Jan 24 2026
+NOTICE:  BL1: Booting BL2
+NOTICE:  BL2: v2.1(release):CNM_23.04-1-gf1754d55 (Marvell-devel-18.12.0)
+NOTICE:  BL2: Built : 16:35:35, Jan 24 2026
+NOTICE:  Switching from AArch64 EL3 to AArch64 EL2
+NOTICE:  BL1: Booting BL31
+�NOTICE:  BL31: v2.1(release):CNM_23.04-1-gf1754d55-dirty (Marvell-devel-18.12.0)
+NOTICE:  BL31: Built : 17:47:55, Mar  6 2026
+
+
+U-Boot 2018.03-3.0.0-0.9.0.1-g23d4c4adff (Mar 26 2026 - 12:33:17 +0000)
+
+Model: Marvell AC5X board
+SoC: Alleycat5X 98DX3510-A1
+Clock:  CPU     1600 [MHz]
+        DDR     800  [MHz]
+        MNG     325  [MHz]
+        CM3     650  [MHz]
+DRAM:  4 GiB
+Running in RAM - U-Boot at: 0x27feeb000
+                 Env at:    0x2000aa2b3
+NAND:  0 MiB
+MMC:   sdhci@805c0000: 0
+Loading Environment from SPI Flash... SF: Detected n25q128a with page size 256 Bytes, erase size 64 KiB, total 16 MiB
+OK
+Model: Marvell AC5X board
+Net:   eth0: neta@7f020000 [PRIME]
+Hit any key to stop autoboot:  1  0
+---------------------------------------------------
+
+ > Boot1: SONiC-OS-SONiC-LSBB-Ver.0.9.0.1 - run sonic_image_1
+
+ > Boot2: None - run sonic_image_2
+
+ > Boot3: ONIE - run onie_boot
+
+---------------------------------------------------
+
+105148244 bytes read in 3679 ms (27.3 MiB/s)
+## Loading kernel from FIT Image at 210000000 ...
+   Using 'conf_lsbb' configuration
+   Trying 'kernel_internal_A55' kernel subimage
+     Description:  Linux Kernel for AC5x
+     Created:      2026-03-28  18:00:36 UTC
+     Type:         Kernel Image
+     Compression:  uncompressed
+     Data Start:   0x2100000e8
+     Data Size:    36749824 Bytes = 35 MiB
+     Architecture: AArch64
+     OS:           Linux
+     Load Address: 0x202000000
+     Entry Point:  0x202000000
+     Hash algo:    sha1
+     Hash value:   a0c2b73985fcb412ff5eefb0a0433009c165cbfc
+   Verifying Hash Integrity ... sha1+ OK
+## Loading ramdisk from FIT Image at 210000000 ...
+   Using 'conf_lsbb' configuration
+   Trying 'ramdisk_common' ramdisk subimage
+     Description:  ramdisk for all devices
+     Created:      2026-03-28  18:00:36 UTC
+     Type:         RAMDisk Image
+     Compression:  uncompressed
+     Data Start:   0x2146186f4
+     Data Size:    31385050 Bytes = 29.9 MiB
+     Architecture: AArch64
+     OS:           Linux
+     Load Address: unavailable
+     Entry Point:  unavailable
+     Hash algo:    sha1
+     Hash value:   4f03324d83dd5b5a0af8b18d4c1b9e3fd39c2dc0
+   Verifying Hash Integrity ... sha1+ OK
+## Loading fdt from FIT Image at 210000000 ...
+   Using 'conf_lsbb' configuration
+   Trying 'fdt_lsbb' fdt subimage
+     Description:  Flattened Device Tree blob
+     Created:      2026-03-28  18:00:36 UTC
+     Type:         Flat Device Tree
+     Compression:  uncompressed
+     Data Start:   0x216444124
+     Data Size:    7667 Bytes = 7.5 KiB
+     Architecture: AArch64
+     Load Address: 0x201000000
+     Hash algo:    sha1
+     Hash value:   75a1cccb5052db5ccc9f4c77db2ac869070fdcc5
+   Verifying Hash Integrity ... sha1+ OK
+   Loading fdt from 0x216444124 to 0x201000000
+   Booting using the fdt blob at 0x201000000
+   Loading Kernel Image ... OK
+   Loading Ramdisk to 27d7ea000, end 27f5d85da ... OK
+   Using Device Tree in place at 0000000201000000, end 0000000201004df2
+
+Starting kernel ...
+
+[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x412fd050]
+[    0.000000] Linux version 6.1.0-29-2-arm64 (debian-kernel@lists.debian.org) (gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #1 SMP Debian 6.1.123-1 (2025-01-02)
+[    0.000000] Machine model: Telesat LSBB AC5X Board
+[    0.000000] efi: UEFI not found.
+[    0.000000] NUMA: No NUMA configuration found
+[    0.000000] NUMA: Faking a node at [mem 0x0000000200000000-0x00000002ffffffff]
+[    0.000000] NUMA: NODE_DATA [mem 0x2ff7ec380-0x2ff7eefff]
+[    0.000000] Zone ranges:
+[    0.000000]   DMA      [mem 0x0000000200000000-0x00000002ffffffff]
+[    0.000000]   DMA32    empty
+[    0.000000]   Normal   empty
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000200000000-0x00000002ffffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000200000000-0x00000002ffffffff]
+[    0.000000] cma: Reserved 64 MiB at 0x0000000204600000
+[    0.000000] psci: probing for conduit method from DT.
+[    0.000000] psci: PSCIv1.1 detected in firmware.
+[    0.000000] psci: Using standard PSCI v0.2 function IDs
+[    0.000000] psci: MIGRATE_INFO_TYPE not supported.
+[    0.000000] psci: SMC Calling Convention v1.1
+[    0.000000] percpu: Embedded 31 pages/cpu s86568 r8192 d32216 u126976
+[    0.000000] Detected VIPT I-cache on CPU0
+[    0.000000] CPU features: detected: GIC system register CPU interface
+[    0.000000] CPU features: detected: Virtualization Host Extensions
+[    0.000000] CPU features: detected: Qualcomm erratum 1009, or ARM erratum 1286807, 2441009
+[    0.000000] CPU features: detected: ARM errata 1165522, 1319367, or 1530923
+[    0.000000] alternatives: applying boot alternatives
+[    0.000000] Fallback order for Node 0: 0
+[    0.000000] Built 1 zonelists, mobility gro
+
+sonic login: [INFO] Switch UART: send SONiC username admin
+admin
+Password:
+Linux sonic 6.1.0-29-2-arm64 #1 SMP Debian 6.1.123-1 (2025-01-02) aarch64
+You are on
+  ____   ___  _   _ _  ____
+ / ___| / _ \| \ | (_)/ ___|
+ \___ \| | | |  \| | | |
+  ___) | |_| | |\  | | |___
+ |____/ \___/|_| \_|_|\____|
+
+-- Software for Open Networking in the Cloud --
+
+Unauthorized access and/or use are prohibited.
+All access and/or use are subject to monitoring.
+
+Help:    https://sonic-net.github.io/SONiC/
+
+admin@sonic:~$ [OK] Logged into SONiC over switch UART
+[INFO] SONiC: sudo sonic-cfggen -w -j /usr/share/sonic/device/arm64-telesat_lsbb-r0/telesat-lsbb/default_config.json
+sudo sonic-cfggen -w -j /usr/share/sonic/device/arm64-telesat_lsbb-r0/telesat-lsbb/default_config.json
+admin@sonic:~$ [INFO] SONiC: sudo config qos reload
+[  328.218548] PortChannel1: Mode changed to "loadbalance"
+[  329.415245] 8021q: 802.1Q VLAN Support v1.8
+[  329.423270] 8021q: adding VLAN 0 to HW filter on device PortChannel1
+[  330.767594] Bridge: port 2(Ethernet0) entered blocking state
+[  330.773406] Bridge: port 2(Ethernet0) entered disabled state
+[  330.868293] device Ethernet0 entered promiscuous mode
+[  331.027126] Bridge: port 2(Ethernet0) entered blocking state
+[  331.032934] Bridge: port 2(Ethernet0) entered forwarding state
+[  331.042536] PortChannel1: Port device Ethernet10 added
+[  332.851405] PortChannel1: Port device Ethernet11 added
+[  333.274840] Bridge: port 3(Ethernet1) entered blocking state
+[  333.280720] Bridge: port 3(Ethernet1) entered disabled state
+[  333.473228] device Ethernet1 entered promiscuous mode
+[  335.173130] Bridge: port 4(Ethernet3) entered blocking state
+[  335.178910] Bridge: port 4(Ethernet3) entered disabled state
+[  335.524163] device Ethernet3 entered promiscuous mode
+[  336.925942] Bridge: port 5(PortChannel1) entered blocking state
+[  336.931984] Bridge: port 5(PortChannel1) entered disabled state
+[  337.323070] device PortChannel1 entered promiscuous mode
+[  337.328620] device Ethernet10 entered promiscuous mode
+[  337.334150] device Ethernet11 entered promiscuous mode
+sudo config qos reload
+
+Mar 28 18:04:41.701164 System is not ready - one or more services are not up
+[  351.274164] mvneta 7f020000.ethernet eth0: Link is Down
+Running command: /usr/local/bin/sonic-cfggen -d -t /usr/share/sonic/device/arm64-telesat_lsbb-r0/telesat-lsbb/buffers.json.j2,/tmp/cfg_buffer.json -t /usr/share/sonic/device/arm64-telesat_lsbb-r0/telesat-lsbb/qos.json.j2,/tmp/cfg_qos.json -y /etc/sonic/sonic_version.yml
+Running command: /usr/local/bin/sonic-cfggen -j /tmp/cfg_buffer.json -j /tmp/cfg_qos.json --write-to-db
+admin@sonic:~$ [INFO] SONiC: sudo config interface ip add eth0 192.168.2.2/24
+[  368.623539] mvneta 7f020000.ethernet eth0: configuring for fixed/sgmii link mode
+[  368.631674] mvneta 7f020000.ethernet eth0: Link is Up - 1Gbps/Full - flow control off
+[  368.661333] IPv6: ADDRCONF(NETDEV_CHANGE): eth0: link becomes ready
+sudo config interface ip add eth0 192.168.2.2/24
+admin@sonic:~$ [INFO] SONiC: sudo config save -y
+
+Mar 28 18:05:32.555539 System is ready
+sudo config save -y
+[  397.272542] mvneta 7f020000.ethernet eth0: Link is Down
+Running command: /usr/local/bin/sonic-cfggen -d --print-data > /etc/sonic/config_db.json
+admin@sonic:~$ [INFO] SONiC: sudo ip vrf exec mgmt ping 192.168.2.1 -c1
+[  403.987022] mvneta 7f020000.ethernet eth0: configuring for fixed/sgmii link mode
+[  403.996855] mvneta 7f020000.ethernet eth0: Link is Up - 1Gbps/Full - flow control off
+[  404.008168] IPv6: ADDRCONF(NETDEV_CHANGE): eth0: link becomes ready
+sudo ip vrf exec mgmt ping 192.168.2.1 -c1
+PING 192.168.2.1 (192.168.2.1) 56(84) bytes of data.
+64 bytes from 192.168.2.1: icmp_seq=1 ttl=64 time=1.31 ms
+
+--- 192.168.2.1 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 1.307/1.307/1.307/0.000 ms
+admin@sonic:~$ [OK] SONiC management ping to 192.168.2.1 succeeded
+[OK] Deployment completed successfully.
+PS C:\Users\alexeyt\source\repos\LscriptWin>

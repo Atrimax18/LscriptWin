@@ -40,7 +40,7 @@ sonic:
   password: admin
   login_prompt: "sonic login: "
   prompt: "admin@sonic:~$"
-  image_file: sonic-marvell-arm64.bin
+  image_file: sonic-marvell-arm64-SONiC.bin
   mng_ip1: 10.10.10.15
   mng_ip2: 10.10.10.16  
 
