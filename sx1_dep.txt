@@ -1,0 +1,117 @@
+Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Install the latest PowerShell for new features and improvements! https://aka.ms/PSWindows
+
+PS C:\Users\alexeyt\source\repos\LscriptWin> python .\sx_ver2.py --dig_sn CLSDM-09-0926-260528-002
+[INFO] SX ver2 log: C:\Logs\Deployment\CLSDM-09-0926-260528-002\20260528-112046\20260528-112046-sx-ver2.log
+[INFO] DIG SN: CLSDM-09-0926-260528-002
+[INFO] Starting SX ver2 stage.
+[OK] SX ver2 folders and startup file are present.
+[INFO] NXP SX ver2 log: C:\Logs\Deployment\CLSDM-09-0926-260528-002\20260528-112046\20260528-112046-sx-ver2-nxp.log
+[INFO] NXP: Create SX1 staging folder on NXP
+[INFO] Windows->NXP SCP scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\SX1\204c_m0_ref182_lnrate12_065625.json root@10.10.10.2:/tmp/sx1/204c_m0_ref182_lnrate12_065625.json
+ssh: connect to host 10.10.10.2 port 22: Connection refused
+scp: Connection closed
+[FAILED] Windows->NXP SCP 204c_m0_ref182_lnrate12_065625.json failed with exit status 255.
+ssh: connect to host 10.10.10.2 port 22: Connection refused
+scp: Connection closed
+PS C:\Users\alexeyt\source\repos\LscriptWin> python .\sx_ver2.py --dig_sn CLSDM-09-0926-260528-002
+[INFO] SX ver2 log: C:\Logs\Deployment\CLSDM-09-0926-260528-002\20260528-112111\20260528-112111-sx-ver2.log
+[INFO] DIG SN: CLSDM-09-0926-260528-002
+[INFO] Starting SX ver2 stage.
+[OK] SX ver2 folders and startup file are present.
+[INFO] NXP SX ver2 log: C:\Logs\Deployment\CLSDM-09-0926-260528-002\20260528-112111\20260528-112111-sx-ver2-nxp.log
+[INFO] NXP: Create SX1 staging folder on NXP
+[INFO] Windows->NXP SCP scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\SX1\204c_m0_ref182_lnrate12_065625.json root@10.10.10.2:/tmp/sx1/204c_m0_ref182_lnrate12_065625.json
+Warning: Permanently added '10.10.10.2' (ED25519) to the list of known hosts.
+[INFO] Windows->NXP SCP scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\SX1\204c_m1_ref182_lnrate12_065625.json root@10.10.10.2:/tmp/sx1/204c_m1_ref182_lnrate12_065625.json
+Warning: Permanently added '10.10.10.2' (ED25519) to the list of known hosts.
+[INFO] Windows->NXP SCP scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\SX1\ip_params.txt root@10.10.10.2:/tmp/sx1/ip_params.txt
+Warning: Permanently added '10.10.10.2' (ED25519) to the list of known hosts.
+[INFO] Windows->NXP SCP scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\SX1\srds_params_12_182.jsonroot@10.10.10.2:/tmp/sx1/srds_params_12_182.json
+Warning: Permanently added '10.10.10.2' (ED25519) to the list of known hosts.
+[INFO] Windows->NXP SCP scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\startup.sh root@10.10.10.2:/tmp/sx1/startup.sh
+Warning: Permanently added '10.10.10.2' (ED25519) to the list of known hosts.
+[OK] SX1: staged 5 file(s) to NXP /tmp/sx1
+[INFO] NXP: Create SX2 staging folder on NXP
+[INFO] Windows->NXP SCP scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\SX2\204c_m0_ref182_lnrate12_065625.json root@10.10.10.2:/tmp/sx2/204c_m0_ref182_lnrate12_065625.json
+Warning: Permanently added '10.10.10.2' (ED25519) to the list of known hosts.
+[INFO] Windows->NXP SCP scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\SX2\204c_m1_ref182_lnrate12_065625.json root@10.10.10.2:/tmp/sx2/204c_m1_ref182_lnrate12_065625.json
+Warning: Permanently added '10.10.10.2' (ED25519) to the list of known hosts.
+[INFO] Windows->NXP SCP scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\SX2\ip_params.txt root@10.10.10.2:/tmp/sx2/ip_params.txt
+Warning: Permanently added '10.10.10.2' (ED25519) to the list of known hosts.
+[INFO] Windows->NXP SCP scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\SX2\srds_params_12_182.jsonroot@10.10.10.2:/tmp/sx2/srds_params_12_182.json
+Warning: Permanently added '10.10.10.2' (ED25519) to the list of known hosts.
+[INFO] Windows->NXP SCP scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\startup.sh root@10.10.10.2:/tmp/sx2/startup.sh
+Warning: Permanently added '10.10.10.2' (ED25519) to the list of known hosts.
+[OK] SX2: staged 5 file(s) to NXP /tmp/sx2
+[INFO] NXP UART: starting LSBB interactive session in default TARGET mode: cd /root/LSBB_Utils && sh ./run.sh
+[INFO] NXP UART: sending Enter twice immediately after prompt detection.
+[OK] NXP UART LSBB interactive session is ready.
+[INFO] NXP UART: sx4000_ctrl.sx4000_reset_and_bootstrap_ov("SX1")
+[OK] SX1 reset/bootstrap command completed.
+SX1 boot wait: 100%|####################################################################| 20/20 [00:20<00:00,  1.00s/s]
+[INFO] SX1 log: C:\Logs\Deployment\CLSDM-09-0926-260528-002\20260528-112111\20260528-112212-sx1.log
+[OK] SX1 serial terminal is logged in.
+[INFO] SX1: ifconfig lan2 down
+[INFO] SX1: ifconfig lan0 up
+[INFO] SX1: ifconfig lan1 up
+[INFO] SX1: ifconfig nss0 10.2.4.3 netmask 255.255.255.0
+[INFO] SX1: ping -c1 10.2.4.2
+[INFO] NXP UART: quitting LSBB interactive session.
+[OK] Returned to NXP UART shell.
+[INFO] NXP UART: cpld w 0x25 0
+[INFO] NXP UART: cpld w 0x35 0
+[INFO] NXP UART: cd /root
+[FAILED] SX1: ping verification failed for ping -c1 10.2.4.2. Output:
+ping -c1 10.2.4.2
+PING 10.2.4.2 (10.2.4.2): 56 data bytes
+
+--- 10.2.4.2 ping statistics ---
+1 packets transmitted, 0 packets received, 100% packet loss
+/#
+PS C:\Users\alexeyt\source\repos\LscriptWin> python .\sx_ver2.py --dig_sn CLSDM-09-0926-260528-002
+[INFO] SX ver2 log: C:\Logs\Deployment\CLSDM-09-0926-260528-002\20260528-121012\20260528-121012-sx-ver2.log
+[INFO] DIG SN: CLSDM-09-0926-260528-002
+[INFO] Starting SX ver2 stage.
+[OK] SX ver2 folders and startup file are present.
+[INFO] NXP SX ver2 log: C:\Logs\Deployment\CLSDM-09-0926-260528-002\20260528-121012\20260528-121012-sx-ver2-nxp.log
+[INFO] NXP: Create SX1 staging folder on NXP
+[INFO] Windows->NXP SCP scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\SX1\204c_m0_ref182_lnrate12_065625.json root@10.10.10.2:/tmp/sx1/204c_m0_ref182_lnrate12_065625.json
+Warning: Permanently added '10.10.10.2' (ED25519) to the list of known hosts.
+[INFO] Windows->NXP SCP scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\SX1\204c_m1_ref182_lnrate12_065625.json root@10.10.10.2:/tmp/sx1/204c_m1_ref182_lnrate12_065625.json
+Warning: Permanently added '10.10.10.2' (ED25519) to the list of known hosts.
+[INFO] Windows->NXP SCP scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\SX1\ip_params.txt root@10.10.10.2:/tmp/sx1/ip_params.txt
+Warning: Permanently added '10.10.10.2' (ED25519) to the list of known hosts.
+[INFO] Windows->NXP SCP scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\SX1\srds_params_12_182.jsonroot@10.10.10.2:/tmp/sx1/srds_params_12_182.json
+Warning: Permanently added '10.10.10.2' (ED25519) to the list of known hosts.
+[INFO] Windows->NXP SCP scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\startup.sh root@10.10.10.2:/tmp/sx1/startup.sh
+Warning: Permanently added '10.10.10.2' (ED25519) to the list of known hosts.
+[OK] SX1: staged 5 file(s) to NXP /tmp/sx1
+[INFO] NXP: Create SX2 staging folder on NXP
+[INFO] Windows->NXP SCP scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\SX2\204c_m0_ref182_lnrate12_065625.json root@10.10.10.2:/tmp/sx2/204c_m0_ref182_lnrate12_065625.json
+Warning: Permanently added '10.10.10.2' (ED25519) to the list of known hosts.
+[INFO] Windows->NXP SCP scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\SX2\204c_m1_ref182_lnrate12_065625.json root@10.10.10.2:/tmp/sx2/204c_m1_ref182_lnrate12_065625.json
+Warning: Permanently added '10.10.10.2' (ED25519) to the list of known hosts.
+[INFO] Windows->NXP SCP scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\SX2\ip_params.txt root@10.10.10.2:/tmp/sx2/ip_params.txt
+Warning: Permanently added '10.10.10.2' (ED25519) to the list of known hosts.
+[INFO] Windows->NXP SCP scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\SX2\srds_params_12_182.jsonroot@10.10.10.2:/tmp/sx2/srds_params_12_182.json
+Warning: Permanently added '10.10.10.2' (ED25519) to the list of known hosts.
+[INFO] Windows->NXP SCP scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=NUL C:\Images\startup.sh root@10.10.10.2:/tmp/sx2/startup.sh
+Warning: Permanently added '10.10.10.2' (ED25519) to the list of known hosts.
+[OK] SX2: staged 5 file(s) to NXP /tmp/sx2
+[INFO] NXP UART: starting LSBB interactive session in default TARGET mode: cd /root/LSBB_Utils && sh ./run.sh
+[INFO] NXP UART: sending Enter twice immediately after prompt detection.
+[OK] NXP UART LSBB interactive session is ready.
+[INFO] NXP UART: sx4000_ctrl.sx4000_reset_and_bootstrap_ov("SX1")
+[OK] SX1 reset/bootstrap command completed.
+SX1 boot wait: 100%|####################################################################| 20/20 [00:20<00:00,  1.00s/s]
+[INFO] SX1 log: C:\Logs\Deployment\CLSDM-09-0926-260528-002\20260528-121012\20260528-121113-sx1.log
+[OK] SX1 serial terminal is logged in.
+[INFO] SX1: ifconfig nss0 10.2.4.3 netmask 255.255.255.0
+[INFO] SX1: ping -c1 10.2.4.2
+[INFO] NXP UART: quitting LSBB interactive session.
+[WARN] NXP UART: failed during SX ver2 cleanup after error: Timed out waiting for NXP shell after quit() on NXP (COM20)
+[FAILED] Timed out waiting for command completion for: scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null '/tmp/sx1/startup.sh' root@10.2.4.3:'/mnt/flash1/' on NXP (COM20)
+PS C:\Users\alexeyt\source\repos\LscriptWin>

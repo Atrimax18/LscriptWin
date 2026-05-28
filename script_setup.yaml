@@ -40,9 +40,7 @@ sonic:
   password: admin
   login_prompt: "sonic login: "
   prompt: "admin@sonic:~$"
-  image_file: sonic-marvell-arm64-SONiC.bin
-  mng_ip1: 10.10.10.15
-  mng_ip2: 10.10.10.16  
+  image_file: sonic-marvell-arm64-SONiC.bin   
 
 prompts:
   u_boot: "U-Boot"
@@ -57,20 +55,17 @@ timeouts:
   first_boot_seconds: 460
   sonic_boot_seconds: 460
   
-sx4000:
-  file1: C:\Images\srds_params_12_182.json
-  file2: C:\Images\204c_m0_ref182_lnrate12_065625.json
-  file3: C:\Images\204c_m1_ref182_lnrate12_065625.json
-  sx1_params: C:\Images\SX1_param\ip_params.txt
-  sx2_params: C:\Images\SX2_param\ip_params.txt
+sx4000:  
+  SX1_path: C:\Images\SX1
+  SX2_path: C:\Images\SX2
   startup_file: startup.sh
   modem_flash1_path: mnt/flash1 
   modem_flash2_path: mnt/flash2
   prompt: "/# "
     
 sx4000_ip:
-  sx1: 10.10.10.13
-  sx2: 10.10.10.14
+  sx1: 10.2.4.3
+  sx2: 10.2.4.4
   login: root
   password: root 
     

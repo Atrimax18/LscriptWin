@@ -19,10 +19,10 @@ DB_CONFIG_PATH = REPO_ROOT / "db_config.ini"
 SQL_IDENTIFIER_PATTERN = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 
 DEPLOYMENTS = {
-    "FULL DEPLOYMENT": [["lscriptnxp.py"], ["eth_deploy.py"], ["sx_deploy.py"]],
+    "FULL DEPLOYMENT": [["lscriptnxp.py"], ["eth_deploy.py"], ["sx_deploy2.py"]],
     "NXP DEPLOYMENT": [["lscriptnxp.py"]],
     "SWITCH DEPLOYMENT": [["eth_deploy.py"]],
-    "SX DEPLOYMENT": [["sx_deploy.py"]],
+    "SX DEPLOYMENT": [["sx_deploy2.py"]],
 }
 
 DEPLOYMENT_STAGE = {

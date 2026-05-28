@@ -1,0 +1,137 @@
+
+sonic login:
+sonic login:
+sonic login:
+sonic login:
+sonic login:
+sonic login: admin
+aPassword:
+[  OK  ] Started lldp.service - LLDP container.
+
+Login incorrect
+sonic login: admin
+Password: [  146.307462] IPv6: ADDRCONF(NETDEV_CHANGE): Ethernet0: link becomes ready
+[  146.347434] Bridge: port 3(Ethernet0) entered blocking state
+[  146.353225] Bridge: port 3(Ethernet0) entered forwarding state
+
+Linux sonic 6.1.0-29-2-arm64 #1 SMP Debian 6.1.123-1 (2025-01-02) aarch64
+You are on
+  ____   ___  _   _ _  ____
+ / ___| / _ \| \ | (_)/ ___|
+ \___ \| | | |  \| | | |
+  ___) | |_| | |\  | | |___
+ |____/ \___/|_| \_|_|\____|
+
+-- Software for Open Networking in the Cloud --
+
+Unauthorized access and/or use are prohibited.
+All access and/or use are subject to monitoring.
+
+Help:    https://sonic-net.github.io/SONiC/
+
+Last login: Sat Mar 28 22:24:25 UTC 2026 on ttyS0
+
+
+
+[  OK  ] Started ntpsec.service - Network Time Service.
+[  OK  ] Reached target multi-user.target - Multi-User System.
+[  OK  ] Reached target graphical.target - Graphical Interface.
+         Starting systemd-update-ut… Record Runlevel Change in UTMP...
+[  OK  ] Finished systemd-update-ut… - Record Runlevel Change in UTMP.
+admin@sonic:~$
+admin@sonic:~$
+admin@sonic:~$
+admin@sonic:~$
+Mar 28 22:20:39.601700 System is ready
+
+admin@sonic:~$
+admin@sonic:~$
+admin@sonic:~$ docker exec -it syncd telnet 127.0.0.1 12345
+Trying 127.0.0.1...
+Connected to 127.0.0.1.
+Escape character is '^]'.
+luaCLI_registerCfunction() error: symbol not found: wr_utils_mpd_print_phy_db
+luaCLI_registerCfunction() error: symbol not found: wr_utils_mpd_print_phy_db_full
+luaCLI_registerCfunction() error: symbol not found: wr_utils_mpd_mdio_c145_write
+luaCLI_registerCfunction() error: symbol not found: wr_utils_mpd_mdio_c145_read
+luaCLI_registerCfunction() error: symbol not found: wr_utils_mpd_mdio_c122_write
+luaCLI_registerCfunction() error: symbol not found: wr_utils_mpd_mdio_c122_read
+luaCLI_registerCfunction() error: symbol not found: wr_utils_mpd_mtd_debug_reg_dump
+Entering LuaCLI took 5249.250680 msec
+
+ LUA CLI based on LUA 5.1 from www.lua.org
+ LUA CLI uses Mini-XML engine from www.minixml.org
+***************************************************
+               LUA CLI shell ready
+***************************************************
+
+Console# configure
+Console(config)# interface range ethernet 0/1-4
+Console(config-if)# debug
+Console(config-if)# end
+Console# dbg link prbs interface ethernet 0/1-4 polynomial 7
+Console# [  362.219958] IPv6: ADDRCONF(NETDEV_CHANGE): Ethernet3: link becomes ready
+[  362.228091] Bridge: port 5(Ethernet3) entered blocking state
+[  362.233968] Bridge: port 5(Ethernet3) entered forwarding state
+[  362.414458] IPv6: ADDRCONF(NETDEV_CHANGE): Ethernet4: link becomes ready
+[  362.516693] IPv6: ADDRCONF(NETDEV_CHANGE): Ethernet40: link becomes ready
+[  363.089959] IPv6: ADDRCONF(NETDEV_CHANGE): Ethernet41: link becomes ready
+[  363.543132] IPv6: ADDRCONF(NETDEV_CHANGE): Ethernet42: link becomes ready
+[  363.881552] IPv6: ADDRCONF(NETDEV_CHANGE): Ethernet43: link becomes ready
+[  363.999836] IPv6: ADDRCONF(NETDEV_CHANGE): Ethernet44: link becomes ready
+[  364.071356] IPv6: ADDRCONF(NETDEV_CHANGE): Ethernet45: link becomes ready
+[  364.171648] IPv6: ADDRCONF(NETDEV_CHANGE): Ethernet46: link becomes ready
+[  364.248594] IPv6: ADDRCONF(NETDEV_CHANGE): Ethernet47: link becomes ready
+[  364.342367] IPv6: ADDRCONF(NETDEV_CHANGE): Ethernet48: link becomes ready
+[  364.440490] IPv6: ADDRCONF(NETDEV_CHANGE): Ethernet49: link becomes ready
+[  364.696994] IPv6: ADDRCONF(NETDEV_CHANGE): Ethernet50: link becomes ready
+[  364.940491] IPv6: ADDRCONF(NETDEV_CHANGE): Ethernet51: link becomes ready
+[  370.253070] Bridge: port 5(Ethernet3) entered disabled state
+
+Console# dbg link prbs show interface ethernet 0/1-4
+
+Interface | Lane | Polynomial | Status    | Lock      | Errors     | BER                       |
+----------+------+------------+-----------+-----------+------------+---------------------------+
+
+0/1       |  0   |   PRBS_7   | Passed    | Locked    | 0x00000000| 0.000000e+00              |
+0/2       |  0   |   PRBS_7   | Passed    | Locked    | 0x00000000| 0.000000e+00              |
+0/3       |  0   |   PRBS_7   | Passed    | Locked    | 0x00000000| 0.000000e+00              |
+0/4       |  0   |   PRBS_7   | Passed    | Locked    | 0x00000000| 0.000000e+00              |
+
+
+Console# dbg link prbs show interface ethernet 0/1-4
+
+Interface | Lane | Polynomial | Status    | Lock      | Errors     | BER                       |
+----------+------+------------+-----------+-----------+------------+---------------------------+
+
+0/1       |  0   |   PRBS_7   | Passed    | Locked    | 0x00000000| 0.000000e+00              |
+0/2       |  0   |   PRBS_7   | Passed    | Locked    | 0x00000000| 0.000000e+00              |
+0/3       |  0   |   PRBS_7   | Passed    | Locked    | 0x00000000| 0.000000e+00              |
+0/4       |  0   |   PRBS_7   | Passed    | Locked    | 0x00000000| 0.000000e+00              |
+
+
+Console# dbg link prbs interface ethernet 0/1-4 polynomial 31
+Console# dbg link prbs show interface ethernet 0/1-4
+
+Interface | Lane | Polynomial | Status    | Lock      | Errors     | BER                       |
+----------+------+------------+-----------+-----------+------------+---------------------------+
+
+0/1       |  0   |   PRBS_31   | Passed    | Locked    | 0x00000000| 0.000000e+00              |
+0/2       |  0   |   PRBS_31   | Passed    | Locked    | 0x00000000| 0.000000e+00              |
+0/3       |  0   |   PRBS_31   | Passed    | Locked    | 0x00000000| 0.000000e+00              |
+0/4       |  0   |   PRBS_31   | Passed    | Locked    | 0x00000000| 0.000000e+00              |
+
+
+Console# dbg link prbs interface ethernet 0/1-4 polynomial 31
+Console# dbg link prbs show interface ethernet 0/1-4
+
+Interface | Lane | Polynomial | Status    | Lock      | Errors     | BER                       |
+----------+------+------------+-----------+-----------+------------+---------------------------+
+
+0/1       |  0   |   PRBS_31   | Passed    | Locked    | 0x00000000| 0.000000e+00              |
+0/2       |  0   |   PRBS_31   | Passed    | Locked    | 0x00000000| 0.000000e+00              |
+0/3       |  0   |   PRBS_31   | Passed    | Locked    | 0x00000000| 0.000000e+00              |
+0/4       |  0   |   PRBS_31   | Passed    | Locked    | 0x00000000| 0.000000e+00              |
+
+
+Console#
