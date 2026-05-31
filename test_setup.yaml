@@ -129,6 +129,10 @@ tests:
       min: 20
       max: 60
   eth:
+    eth10_pn: FTLF1318P3BTL
+    eth11_pn: FTLF1318P3BTL
+    eth12_pn: FTLF1436W5BTV
+    eth13_pn: FTLF1436W5BTV
     login: pass
     ping:
       sfp1_en: 1
@@ -158,6 +162,27 @@ tests:
         line1_ber_max: 0.0
         line1_errcount_min: 0
         line1_errcount_max: 0
+    ext_prbs:
+      eth10:
+        status: Locked
+        err: 0
+        ber_err_min: 0.0
+        ber_err_max: 0.0 
+      eth11:
+        status: Locked
+        err: 0
+        ber_err_min: 0.0
+        ber_err_max: 0.0 
+      eth12:
+        status: Locked
+        err: 0
+        ber_err_min: 0.0
+        ber_err_max: 0.0 
+      eth13:
+        status: Locked
+        err: 0
+        ber_err_min: 0.0
+        ber_err_max: 0.0       
   temp:
     limits:
       min: 20.0

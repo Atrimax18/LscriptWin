@@ -29,24 +29,21 @@ except ImportError:  # pragma: no cover - handled at runtime.
     serial = None
 
 
-ANSI_RE = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
+ANSI_RE = re.compile(r"\x1b\[[?0-9;]*[ -/]*[@-~]")
 CPR_RE = re.compile(r"\x1b\[(?:6n|\d+;\d+R)|(?<!\S)\[\d+;\d+R")
 BAD_PATH_CHARS_RE = re.compile(r'[<>:"/\\|?*\x00-\x1f]+')
 EXIT_MARKER_RE = re.compile(r"__TEST_EXIT__(\d+)")
 RUN_SH_DONE_RE = re.compile(r"Modem\s+Link\s+-\s+All\s+Disabled.*?Data\s+Path\s+-\s+Enabled", re.IGNORECASE | re.DOTALL)
 FULL_TEST_DONE_RE = re.compile(r"INA_MAIN\s*:\s*[-0-9.]+\s+[-0-9.]+\s+[-0-9.]+.*?>>>", re.IGNORECASE | re.DOTALL)
+SWITCH_CONSOLE_PROMPT_RE = re.compile(r"Console(?:\([^)]+\))?#\s*$", re.MULTILINE)
+NXP_PYTHON_PROMPT_RE = re.compile(r">>>\s*$")
 
-PRBS_INTERFACE_MAP = {
-    "sfp1": "0/10",
-    "sfp2": "0/11",
-    "sfp3": "0/12",
-    "sfp4": "0/13",
-}
-
-PRBS_INTERFACE_TO_SFP = {interface: sfp_name for sfp_name, interface in PRBS_INTERFACE_MAP.items()}
-
-SWITCH_CONSOLE_PROMPT_RE = r"Console(?:\([^)]*\))?#"
-
+INTERNAL_PRBS_SWITCH_INTERFACES = ("0/1", "0/2", "0/3", "0/4")
+EXTERNAL_PRBS_SWITCH_INTERFACES = ("0/10", "0/11", "0/12", "0/13")
+INTERNAL_PRBS_NXP_COMMANDS = (
+    'sx4000_ctrl.sds_prbs_en(sx_id="SX1", sds_type="ETH", near_end_lb=False, far_end_lb=False, prbs_type=31)',
+    'sx4000_ctrl.sds_prbs_en(sx_id="SX2", sds_type="ETH", near_end_lb=False, far_end_lb=False, prbs_type=31)',
+)
 
 @dataclass
 class CheckResult:
@@ -67,7 +64,9 @@ SECTION_TITLES = (
     ("tests.domain.", "Domain Lock Status"),
     ("tests.fpga.", "FPGA Tests"),
     ("tests.eth.login", "Switch Login"),
-    ("tests.eth.prbs.", "Switch PRBS"),
+    ("tests.eth.eth", "ETH Transceivers"),
+    ("tests.eth.prbs.", "Internal PRBS"),
+    ("tests.eth.ext_prbs.", "External PRBS"),
     ("tests.temp.", "Temperature"),
     ("tests.power.", "Power"),
 )
@@ -113,7 +112,6 @@ REPORT_ORDER = {
     "rxfem_init.pll.ven_id": 2,
     "rxfem_init.pll.freq": 3,
     "rxfem_init.pll.lock": 4,
-    "tests.fpga.dac_jesd_link": 0,
     "tests.fpga.mdm0_dig_loopback": 1,
     "tests.fpga.mdm1_dig_loopback": 2,
     "tests.fpga.mdm2_dig_loopback": 3,
@@ -122,10 +120,34 @@ REPORT_ORDER = {
     "tests.fpga.mdm1_full_loopback": 6,
     "tests.fpga.mdm2_full_loopback": 7,
     "tests.fpga.mdm3_full_loopback": 8,
-    "tests.eth.prbs.sfp1": 0,
-    "tests.eth.prbs.sfp2": 1,
-    "tests.eth.prbs.sfp3": 2,
-    "tests.eth.prbs.sfp4": 3,
+    "tests.eth.prbs.switch_0_1_lock": 0,
+    "tests.eth.prbs.switch_0_2_lock": 1,
+    "tests.eth.prbs.switch_0_3_lock": 2,
+    "tests.eth.prbs.switch_0_4_lock": 3,
+    "tests.eth.prbs.sx1_line0_ber": 4,
+    "tests.eth.prbs.sx1_line0_errcount": 5,
+    "tests.eth.prbs.sx1_line1_ber": 6,
+    "tests.eth.prbs.sx1_line1_errcount": 7,
+    "tests.eth.prbs.sx2_line0_ber": 8,
+    "tests.eth.prbs.sx2_line0_errcount": 9,
+    "tests.eth.prbs.sx2_line1_ber": 10,
+    "tests.eth.prbs.sx2_line1_errcount": 11,
+    "tests.eth.ext_prbs.eth10.status": 0,
+    "tests.eth.ext_prbs.eth10.err": 1,
+    "tests.eth.ext_prbs.eth10.ber_err": 2,
+    "tests.eth.ext_prbs.eth11.status": 3,
+    "tests.eth.ext_prbs.eth11.err": 4,
+    "tests.eth.ext_prbs.eth11.ber_err": 5,
+    "tests.eth.ext_prbs.eth12.status": 6,
+    "tests.eth.ext_prbs.eth12.err": 7,
+    "tests.eth.ext_prbs.eth12.ber_err": 8,
+    "tests.eth.ext_prbs.eth13.status": 9,
+    "tests.eth.ext_prbs.eth13.err": 10,
+    "tests.eth.ext_prbs.eth13.ber_err": 11,
+    "tests.eth.eth10_pn": 0,
+    "tests.eth.eth11_pn": 1,
+    "tests.eth.eth12_pn": 2,
+    "tests.eth.eth13_pn": 3,
 }
 
 HEX_REPORT_FIELDS = {
@@ -142,12 +164,40 @@ def strip_terminal_cpr(text: str) -> str:
     return CPR_RE.sub("", text)
 
 
+def clean_terminal_text(text: str) -> str:
+    text = strip_ansi(strip_terminal_cpr(text))
+    return text.replace("\x08", "")
+
+
 def clean_folder_name(value: str) -> str:
     cleaned = BAD_PATH_CHARS_RE.sub("_", value.strip())
     cleaned = cleaned.strip(" ._")
     if not cleaned:
         raise RuntimeError("Folder name cannot be empty.")
     return cleaned
+
+
+def realtime_log_path(args: argparse.Namespace, filename: str) -> pathlib.Path | None:
+    run_dir = getattr(args, "run_dir", None)
+    if run_dir is None:
+        return None
+    return pathlib.Path(run_dir) / filename
+
+
+def append_realtime_log(path: pathlib.Path | None, text: str) -> None:
+    if path is None or not text:
+        return
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8", errors="replace") as fh:
+        fh.write(text)
+
+
+def log_nxp(args: argparse.Namespace, text: str) -> None:
+    append_realtime_log(realtime_log_path(args, "nxp_realtime.log"), text)
+
+
+def log_switch(args: argparse.Namespace, text: str) -> None:
+    append_realtime_log(realtime_log_path(args, "switch_realtime.log"), text)
 
 
 def parse_scalar(raw: str) -> Any:
@@ -327,16 +377,26 @@ def report_label(name: str) -> str:
         return name.removeprefix("tests.sx4000.").upper()
     if name == "tests.fpga.uplink.snr_min":
         return "UPLINK_SNR"
-    if name == "tests.fpga.dac_jesd_link":
-        return "DAC_JESD_LINK"
     if name.startswith("tests.fpga.mdm") and name.endswith("_dig_loopback"):
         return name.removeprefix("tests.fpga.").removesuffix("_dig_loopback").upper() + "_DIG_LOOPBACK"
     if name.startswith("tests.fpga.mdm") and name.endswith("_full_loopback"):
         return name.removeprefix("tests.fpga.").removesuffix("_full_loopback").upper() + "_FULL_LOOPBACK"
     if name == "tests.eth.login":
         return "SWITCH_LOGIN"
-    if name.startswith("tests.eth.prbs."):
-        return "PRBS_" + name.rsplit(".", 1)[-1].upper()
+    eth_pn = re.fullmatch(r"tests\.eth\.(eth1[0-3])_pn", name)
+    if eth_pn:
+        return f"{eth_pn.group(1).upper()}_PN"
+    eth_sn = re.fullmatch(r"tests\.eth\.(eth1[0-3])_sn", name)
+    if eth_sn:
+        return f"{eth_sn.group(1).upper()}_SN"
+    if name.startswith("tests.eth.prbs.switch_") and name.endswith("_lock"):
+        return "PRBS_" + name.removeprefix("tests.eth.prbs.switch_").removesuffix("_lock").upper() + "_LOCK"
+    sx_prbs = re.fullmatch(r"tests\.eth\.prbs\.(sx[12])_line([01])_(ber|errcount)", name)
+    if sx_prbs:
+        return f"PRBS_{sx_prbs.group(1).upper()}_LINE{sx_prbs.group(2)}_{sx_prbs.group(3).upper()}"
+    ext_prbs = re.fullmatch(r"tests\.eth\.ext_prbs\.(eth\d+)\.(status|err|ber_err)", name)
+    if ext_prbs:
+        return f"EXT_PRBS_{ext_prbs.group(1).upper()}_{ext_prbs.group(2).upper()}"
     if ".jesd." in name:
         return name.removeprefix("txfem_init.jesd.").upper()
     return name
@@ -350,6 +410,11 @@ def report_value(value: Any, name: str | None = None) -> str:
     if name and name.startswith("tests.temp."):
         try:
             return f"{float(value):.1f}"
+        except (TypeError, ValueError):
+            return str(value)
+    if name and (name.endswith("_ber") or name.endswith(".ber_err")):
+        try:
+            return f"{float(value):.6e}"
         except (TypeError, ValueError):
             return str(value)
     if isinstance(value, float):
@@ -412,28 +477,125 @@ def parse_loopback_snr_group(
     text: str,
     pattern: str,
     key_suffix: str,
-) -> None:
-    matches = list(re.finditer(pattern, text, re.IGNORECASE))
-    if not matches:
-        return
+) -> re.Match[str] | None:
+    return parse_loopback_snr_group_after(data, text, pattern, key_suffix, 0)
 
-    selected = next((match for match in matches if match.group(2).lower() == "pass"), matches[-1])
-    status = "failed" if selected.group(2).lower().startswith("fail") else "pass"
+
+def parse_loopback_snr_group_after(
+    data: dict[str, Any],
+    text: str,
+    pattern: str,
+    key_suffix: str,
+    start_at: int,
+) -> re.Match[str] | None:
+    matches = [match for match in re.finditer(pattern, text, re.IGNORECASE) if match.start() >= start_at]
+    if not matches:
+        return None
+
+    selected = next(
+        (match for match in reversed(matches) if match.group(2).lower() == "pass"),
+        matches[-1],
+    )
+    status = "fail" if selected.group(2).lower().startswith("fail") else "pass"
     snr_values = [
         float(value)
         for value in re.findall(r"-?\d+(?:\.\d+)?", selected.group(1))
     ]
     if len(snr_values) < 4:
-        return
+        return None
 
     for modem, snr in enumerate(snr_values[:4]):
         data[f"tests.fpga.mdm{modem}_{key_suffix}"] = snr
         data[f"tests.fpga.mdm{modem}_{key_suffix}_status"] = status
+    return selected
+
+
+def parse_internal_prbs_output(text: str) -> dict[str, Any]:
+    data: dict[str, Any] = {}
+    clean_text = strip_ansi(text)
+    for interface, status, lock_state in re.findall(
+        r"^\s*(0/[1-4])\s*\|\s*\d+\s*\|\s*PRBS_31\s*\|\s*(Passed|Failed)\s*\|\s*(Locked|UnLocked)\s*\|",
+        clean_text,
+        re.IGNORECASE | re.MULTILINE,
+    ):
+        key = interface.replace("/", "_")
+        data[f"tests.eth.prbs.switch_{key}_status"] = status.lower()
+        data[f"tests.eth.prbs.switch_{key}_lock"] = lock_state.lower()
+
+    sx_read_re = re.compile(
+        r'sds_read_prbs_err\(sx_id="(SX[12])",\s*sds_type="ETH"\).*?'
+        r"(?=(?:\r?\n)>>>|\Z)",
+        re.IGNORECASE | re.DOTALL,
+    )
+    for match in sx_read_re.finditer(clean_text):
+        sx_id = match.group(1)
+        block = match.group(0)
+        for lane, errcount, ber in re.findall(
+            r"Lane\s+([01]),\s*ErrCnt\s*=\s*(\d+)\s*,\s*BER:\s*([0-9.eE+-]+)",
+            block,
+            re.IGNORECASE,
+        ):
+            sx_key = sx_id.lower()
+            data[f"tests.eth.prbs.{sx_key}_line{lane}_errcount"] = int(errcount)
+            data[f"tests.eth.prbs.{sx_key}_line{lane}_ber"] = float(ber)
+    return data
+
+
+def parse_external_prbs_output(text: str) -> dict[str, Any]:
+    data: dict[str, Any] = {}
+    clean_text = strip_ansi(text)
+    show_matches = list(re.finditer(r"dbg link prbs show interface ethernet 0/10-13", clean_text, re.IGNORECASE))
+    if show_matches:
+        clean_text = clean_text[show_matches[-1].start():]
+    for interface, _polynomial, _status, lock_state, errors, ber in re.findall(
+        r"^\s*(0/1[0-3])\s*\|\s*\d+\s*\|\s*(PRBS_7|PRBS_31)\s*\|\s*(Passed|Failed)\s*\|\s*(Locked|UnLocked)\s*\|\s*(0x[0-9a-fA-F]+|\d+)\s*\|\s*([0-9.eE+-]+)\s*\|?",
+        clean_text,
+        re.IGNORECASE | re.MULTILINE,
+    ):
+        eth_name = "eth" + interface.split("/", 1)[1]
+        data[f"tests.eth.ext_prbs.{eth_name}.status"] = lock_state
+        data[f"tests.eth.ext_prbs.{eth_name}.err"] = int(errors, 16) if errors.lower().startswith("0x") else int(errors)
+        data[f"tests.eth.ext_prbs.{eth_name}.ber_err"] = float(ber)
+    return data
+
+
+def parse_transceiver_eeprom_output(text: str) -> dict[str, Any]:
+    data: dict[str, Any] = {}
+    clean_text = strip_ansi(text)
+    block_re = re.compile(
+        r"^Ethernet(1[0-3]):\s*SFP EEPROM detected(?P<body>.*?)(?=^Ethernet\d+:|\Z)",
+        re.IGNORECASE | re.MULTILINE | re.DOTALL,
+    )
+    for match in block_re.finditer(clean_text):
+        eth_name = f"eth{match.group(1)}"
+        body = match.group("body")
+        pn_match = re.search(r"^\s*Vendor PN:\s*(\S+)\s*$", body, re.IGNORECASE | re.MULTILINE)
+        sn_match = re.search(r"^\s*Vendor SN:\s*(\S+)\s*$", body, re.IGNORECASE | re.MULTILINE)
+        if pn_match:
+            data[f"tests.eth.{eth_name}_pn"] = pn_match.group(1)
+        if sn_match:
+            data[f"tests.eth.{eth_name}_sn"] = sn_match.group(1)
+    return data
+
+
+def require_internal_prbs_switch_locks(show_output: str) -> None:
+    data = parse_internal_prbs_output(show_output)
+    missing_or_unlocked = []
+    for interface in INTERNAL_PRBS_SWITCH_INTERFACES:
+        key = interface.replace("/", "_")
+        lock_state = data.get(f"tests.eth.prbs.switch_{key}_lock")
+        if lock_state != "locked":
+            missing_or_unlocked.append(f"{interface}: {lock_state or 'not found'}")
+    if missing_or_unlocked:
+        raise RuntimeError("Switch PRBS lock check failed: " + ", ".join(missing_or_unlocked))
 
 
 def parse_output(output: str) -> dict[str, Any]:
     text = strip_ansi(output)
     data: dict[str, Any] = {}
+    data.update(parse_internal_prbs_output(text))
+    data.update(parse_external_prbs_output(text))
+    data.update(parse_transceiver_eeprom_output(text))
 
     sonic_sv = first_match(
         r"SONiC\s+Software\s+Version:\s*SONiC\.SONiC-LSBB-Ver\.([^\s]+)",
@@ -634,19 +796,20 @@ def parse_output(output: str) -> dict[str, Any]:
     if dac_jesd:
         data["tests.fpga.dac_jesd_link"] = dac_jesd.group(1).lower()
 
-    parse_loopback_snr_group(
+    dig_loopback_match = parse_loopback_snr_group(
         data,
         text,
         r"MDMs\s*<->\s*FPGA\s+Dig\s+Loopback\s+Check\s*"
         r"\(\s*SNRs\s*=\s*([^)]+?)\s*\)\s*-\s*(Pass|Fail(?:ed)?)",
         "dig_loopback",
     )
-    parse_loopback_snr_group(
+    parse_loopback_snr_group_after(
         data,
         text,
         r"Full\s+Loopback\s+Test\s*"
         r"\(\s*SNRs\s*=\s*([^)]+?)\s*\)\s*-\s*(Pass|Fail(?:ed)?)",
         "full_loopback",
+        dig_loopback_match.end() if dig_loopback_match else 0,
     )
 
     for modem, snr, status in re.findall(
@@ -743,8 +906,6 @@ def compare(
             passed = actual_snr is not None and float(actual_snr) >= float(uplink_cfg["snr_min"])
             results.append(CheckResult("tests.fpga.uplink.snr_min", f">= {uplink_cfg['snr_min']}", actual_snr, passed))
         if isinstance(fpga_cfg, dict):
-            if "dac_jesd_link" in fpga_cfg:
-                add_check(results, "tests.fpga.dac_jesd_link", fpga_cfg["dac_jesd_link"], actual.get("tests.fpga.dac_jesd_link"))
             if include_loopback_tests:
                 for modem in range(4):
                     dig_key = f"mdm{modem}_dig_loopback"
@@ -767,12 +928,57 @@ def compare(
         eth_cfg = tests_cfg.get("eth", {})
         if isinstance(eth_cfg, dict) and "login" in eth_cfg:
             add_check(results, "tests.eth.login", eth_cfg["login"], actual.get("tests.eth.login"))
+        if isinstance(eth_cfg, dict):
+            for interface in ("eth10", "eth11", "eth12", "eth13"):
+                pn_key = f"{interface}_pn"
+                if pn_key in eth_cfg:
+                    add_check(results, f"tests.eth.{pn_key}", eth_cfg[pn_key], actual.get(f"tests.eth.{pn_key}"))
         prbs_cfg = eth_cfg.get("prbs", {}) if isinstance(eth_cfg, dict) else {}
         if include_prbs_tests and isinstance(prbs_cfg, dict):
-            for sfp_name in PRBS_INTERFACE_MAP:
-                enabled = prbs_cfg.get(f"{sfp_name}_en")
-                if enabled is not None and int(enabled) == 1:
-                    add_check(results, f"tests.eth.prbs.{sfp_name}", "pass", actual.get(f"tests.eth.prbs.{sfp_name}"))
+            for interface in INTERNAL_PRBS_SWITCH_INTERFACES:
+                key = interface.replace("/", "_")
+                add_check(results, f"tests.eth.prbs.switch_{key}_lock", "locked", actual.get(f"tests.eth.prbs.switch_{key}_lock"))
+            for sx_name in ("sx1", "sx2"):
+                sx_limits = prbs_cfg.get(sx_name)
+                if isinstance(sx_limits, dict):
+                    for lane in (0, 1):
+                        for metric in ("ber", "errcount"):
+                            min_key = f"line{lane}_{metric}_min"
+                            max_key = f"line{lane}_{metric}_max"
+                            if min_key in sx_limits or max_key in sx_limits:
+                                limits = {
+                                    "min": sx_limits.get(min_key),
+                                    "max": sx_limits.get(max_key),
+                                }
+                                name = f"tests.eth.prbs.{sx_name}_line{lane}_{metric}"
+                                add_range_check(results, name, limits, actual.get(name))
+
+        ext_prbs_cfg = eth_cfg.get("ext_prbs", {}) if isinstance(eth_cfg, dict) else {}
+        if include_prbs_tests and isinstance(ext_prbs_cfg, dict):
+            for eth_name, eth_expected in ext_prbs_cfg.items():
+                if not isinstance(eth_expected, dict):
+                    continue
+                if "status" in eth_expected:
+                    add_check(
+                        results,
+                        f"tests.eth.ext_prbs.{eth_name}.status",
+                        eth_expected["status"],
+                        actual.get(f"tests.eth.ext_prbs.{eth_name}.status"),
+                    )
+                if "err" in eth_expected:
+                    add_check(
+                        results,
+                        f"tests.eth.ext_prbs.{eth_name}.err",
+                        eth_expected["err"],
+                        actual.get(f"tests.eth.ext_prbs.{eth_name}.err"),
+                    )
+                if "ber_err_min" in eth_expected or "ber_err_max" in eth_expected:
+                    limits = {
+                        "min": eth_expected.get("ber_err_min"),
+                        "max": eth_expected.get("ber_err_max"),
+                    }
+                    add_range_check(results, f"tests.eth.ext_prbs.{eth_name}.ber_err", limits, actual.get(f"tests.eth.ext_prbs.{eth_name}.ber_err"))
+
         temp_cfg = tests_cfg.get("temp", {})
         if isinstance(temp_cfg, dict):
             limits = temp_cfg.get("limits", {})
@@ -809,13 +1015,37 @@ def default_remote_dir(setup: dict[str, Any]) -> str:
     return raw
 
 
+def nxp_login_settings(setup: dict[str, Any]) -> dict[str, Any]:
+    host = get_nested(setup, "dut.final_ip")
+    username = get_nested(setup, "dut.login")
+    password = get_nested(setup, "dut.password")
+    missing = [
+        name
+        for name, value in (
+            ("dut.final_ip", host),
+            ("dut.login", username),
+            ("dut.password", password),
+        )
+        if value in (None, "")
+    ]
+    if missing:
+        raise RuntimeError(f"Missing NXP login settings in script_setup.yaml: {', '.join(missing)}")
+    return {
+        "host": str(host),
+        "username": str(username),
+        "password": str(password),
+        "remote_dir": default_remote_dir(setup),
+    }
+
+
 def apply_connection_defaults(args: argparse.Namespace, setup: dict[str, Any]) -> None:
-    args.host = args.host or get_nested(setup, "dut.final_ip")
-    args.user = args.user or get_nested(setup, "dut.login")
-    args.password = args.password or get_nested(setup, "dut.password")
+    nxp_settings = nxp_login_settings(setup)
+    args.host = args.host or nxp_settings["host"]
+    args.user = args.user or nxp_settings["username"]
+    args.password = args.password or nxp_settings["password"]
 
     if not hasattr(args, "remote_dir"):
-        args.remote_dir = default_remote_dir(setup)
+        args.remote_dir = nxp_settings["remote_dir"]
 
 
 def build_ssh_command(args: argparse.Namespace) -> list[str]:
@@ -870,12 +1100,436 @@ def run_paramiko_exec(args: argparse.Namespace, command: str) -> str:
         client.close()
 
     combined = output + error_output
+    log_nxp(args, combined)
     if exit_status != 0:
         raise RuntimeError(f"SSH command failed with exit code {exit_status}.\n{combined.strip()}")
     return combined
 
 
-def run_paramiko_interactive(args: argparse.Namespace, command: str) -> str:
+def recv_ssh_channel_until_prompt(
+    channel: Any,
+    args: argparse.Namespace,
+    output_parts: list[str],
+    timeout: float,
+) -> str:
+    started = time.monotonic()
+    segment_parts: list[str] = []
+    while True:
+        if time.monotonic() - started > timeout:
+            raise TimeoutError(f"Timed out after {timeout:g} seconds waiting for NXP Python prompt.")
+        if channel.recv_ready():
+            chunk = channel.recv(4096).decode(errors="replace")
+            output_parts.append(chunk)
+            segment_parts.append(chunk)
+            log_nxp(args, chunk)
+            print(strip_terminal_cpr(chunk), end="", flush=True)
+            if NXP_PYTHON_PROMPT_RE.search(clean_terminal_text("".join(segment_parts))):
+                return strip_terminal_cpr("".join(segment_parts))
+        else:
+            if channel.closed:
+                raise RuntimeError("SSH channel closed while waiting for NXP Python prompt.")
+            time.sleep(0.1)
+
+
+def drain_ssh_channel(channel: Any, args: argparse.Namespace, output_parts: list[str]) -> None:
+    while channel.recv_ready():
+        chunk = channel.recv(4096).decode(errors="replace")
+        output_parts.append(chunk)
+        log_nxp(args, chunk)
+        print(strip_terminal_cpr(chunk), end="", flush=True)
+        time.sleep(0.05)
+
+
+def send_nxp_python_command(
+    channel: Any,
+    args: argparse.Namespace,
+    output_parts: list[str],
+    command: str,
+    timeout: float = 60,
+) -> str:
+    print(f"[TX] nxp python {command}")
+    log_nxp(args, f"\n[TX] nxp python {command}\n")
+    drain_ssh_channel(channel, args, output_parts)
+    channel.send(command + "\r")
+    output = recv_ssh_channel_until_prompt(channel, args, output_parts, timeout)
+    time.sleep(1)
+    return output
+
+
+def send_sx_prbs_read_command(
+    channel: Any,
+    args: argparse.Namespace,
+    output_parts: list[str],
+    sx_id: str,
+) -> str:
+    command = f'sx4000_ctrl.sds_read_prbs_err(sx_id="{sx_id}", sds_type="ETH")'
+    output = send_nxp_python_command(channel, args, output_parts, command)
+    parsed = parse_internal_prbs_output(output)
+    sx_key = sx_id.lower()
+    missing = [
+        f"line{lane}_{metric}"
+        for lane in (0, 1)
+        for metric in ("errcount", "ber")
+        if f"tests.eth.prbs.{sx_key}_line{lane}_{metric}" not in parsed
+    ]
+    if missing:
+        raise RuntimeError(f"{sx_id} PRBS read output missing: {', '.join(missing)}")
+    return output
+
+
+def nxp_shell_prompt_pattern(setup: dict[str, Any]) -> str:
+    prompt = str(get_nested(setup, "dut.prompt", "")).strip()
+    if prompt:
+        return re.escape(prompt) + r".*[#>$]\s*$"
+    return r"(?m)^[^\r\n]*[#>$]\s*$"
+
+
+def recv_ssh_channel_until_pattern(
+    args: argparse.Namespace,
+    channel: Any,
+    output_parts: list[str],
+    pattern: str,
+    timeout: float,
+    description: str,
+) -> str:
+    started = time.monotonic()
+    segment_parts: list[str] = []
+    while True:
+        if time.monotonic() - started > timeout:
+            raise TimeoutError(f"Timed out after {timeout:g} seconds waiting for {description}.")
+        if channel.recv_ready():
+            chunk = channel.recv(4096).decode(errors="replace")
+            output_parts.append(chunk)
+            segment_parts.append(chunk)
+            log_nxp(args, chunk)
+            print(strip_terminal_cpr(chunk), end="", flush=True)
+            if re.search(pattern, clean_terminal_text("".join(segment_parts)), re.IGNORECASE | re.MULTILINE):
+                return strip_terminal_cpr("".join(segment_parts))
+        else:
+            if channel.closed:
+                raise RuntimeError(f"SSH channel closed while waiting for {description}.")
+            time.sleep(0.1)
+
+
+def send_nxp_shell_command(
+    args: argparse.Namespace,
+    channel: Any,
+    setup: dict[str, Any],
+    output_parts: list[str],
+    command: str,
+    timeout: float = 30,
+) -> str:
+    print(f"[TX] nxp shell {command}")
+    log_nxp(args, f"\n[TX] nxp shell {command}\n")
+    drain_ssh_channel(channel, args, output_parts)
+    channel.send(command + "\r")
+    output = recv_ssh_channel_until_pattern(
+        args,
+        channel,
+        output_parts,
+        nxp_shell_prompt_pattern(setup),
+        timeout,
+        "NXP shell prompt",
+    )
+    time.sleep(1)
+    return output
+
+
+def exit_python_and_shutdown_sx(
+    args: argparse.Namespace,
+    channel: Any,
+    setup: dict[str, Any],
+    output_parts: list[str],
+) -> None:
+    print("[TX] nxp python quit()")
+    log_nxp(args, "\n[TX] nxp python quit()\n")
+    drain_ssh_channel(channel, args, output_parts)
+    channel.send("quit()\r")
+    recv_ssh_channel_until_pattern(
+        args,
+        channel,
+        output_parts,
+        nxp_shell_prompt_pattern(setup),
+        30,
+        "NXP shell prompt after quit()",
+    )
+    time.sleep(1)
+    run_external_prbs_test(args, setup, output_parts)
+    run_transceiver_eeprom_check(args, setup, output_parts)
+    for command in ("cpld w 0x25 0", "cpld w 0x35 0", "cd /root"):
+        send_nxp_shell_command(args, channel, setup, output_parts, command)
+
+
+def run_switch_console_command_capture(
+    args: argparse.Namespace,
+    uart: Any,
+    command: str,
+    buffer: str,
+    timeout: float = 30,
+) -> tuple[str, str]:
+    waiting = getattr(uart, "in_waiting", 0) or 0
+    if waiting:
+        buffer += uart.read(waiting).decode(errors="replace")
+    match_start = len(buffer)
+    print(f"[TX] switch console {command}")
+    log_switch(args, f"\n[TX] switch console {command}\n")
+    uart.write((command + "\r\n").encode())
+    uart.flush()
+    matched, buffer = serial_wait(
+        uart,
+        {"console": SWITCH_CONSOLE_PROMPT_RE.pattern},
+        timeout,
+        buffer,
+        echo=True,
+        match_start=match_start,
+    )
+    if matched != "console":
+        raise RuntimeError(f"Switch console command timed out: {command}")
+    log_switch(args, buffer[match_start:])
+    return buffer, buffer[match_start:]
+
+
+def send_switch_enter(
+    args: argparse.Namespace,
+    uart: Any,
+    buffer: str,
+    count: int = 1,
+    pause: float = 0.2,
+) -> str:
+    for _ in range(count):
+        print("[TX] switch uart <ENTER>")
+        log_switch(args, "\n[TX] switch uart <ENTER>\n")
+        uart.write(b"\r\n")
+        uart.flush()
+        time.sleep(pause)
+        waiting = getattr(uart, "in_waiting", 0) or 0
+        if waiting:
+            text = uart.read(waiting).decode(errors="replace")
+            buffer += text
+            log_switch(args, text)
+            print(text, end="", flush=True)
+    return buffer
+
+
+def exit_switch_console(args: argparse.Namespace, uart: Any, setup: dict[str, Any], buffer: str) -> str:
+    settings = switch_uart_login_settings(setup)
+    prompt_line = shell_prompt_line_pattern(settings["shell_prompt"])
+    waiting = getattr(uart, "in_waiting", 0) or 0
+    if waiting:
+        buffer += uart.read(waiting).decode(errors="replace")
+    match_start = len(buffer)
+    print("[TX] switch console CLIexit")
+    log_switch(args, "\n[TX] switch console CLIexit\n")
+    uart.write(b"CLIexit\r\n")
+    uart.flush()
+    matched, buffer = serial_wait(
+        uart,
+        {"shell": prompt_line},
+        max(settings["prompt_timeout"], 30),
+        buffer,
+        echo=True,
+        match_start=match_start,
+    )
+    if matched != "shell":
+        raise RuntimeError("Switch console exit failed: Sonic prompt not detected after CLIexit.")
+    log_switch(args, buffer[match_start:])
+    return buffer
+
+
+def run_external_prbs_test(
+    args: argparse.Namespace,
+    setup: dict[str, Any],
+    output_parts: list[str],
+) -> None:
+    if serial is None:
+        raise RuntimeError("pyserial is not installed. Install it or disable the external PRBS test.")
+
+    settings = switch_uart_login_settings(setup)
+    switch_output = "\n=== External PRBS Test =================================================\n"
+    second_show_output = ""
+    log_switch(args, switch_output)
+    print("[INFO] External PRBS test starting.")
+    print(f"[TX] uart switch {settings['port']} @ {settings['baudrate']}")
+    log_switch(args, f"[TX] uart switch {settings['port']} @ {settings['baudrate']}\n")
+
+    with serial.Serial(port=settings["port"], baudrate=settings["baudrate"], timeout=0.2, write_timeout=1) as uart:
+        time.sleep(min(settings["open_timeout"], 1.0))
+        switch_output = ensure_switch_uart_shell(uart, setup, switch_output)
+        log_switch(args, switch_output)
+
+        for command in (
+            "docker exec -it syncd telnet 127.0.0.1 12345",
+            "configure",
+            "interface range ethernet 0/10,11,12,13",
+            "debug",
+            "end",
+            "dbg link prbs interface ethernet 0/10,11 polynomial 7",
+            "dbg link prbs interface ethernet 0/12,13 polynomial 31",
+        ):
+            switch_output, _ = run_switch_console_command_capture(
+                args,
+                uart,
+                command,
+                switch_output,
+                timeout=max(settings["prompt_timeout"], 30),
+            )
+            time.sleep(1)
+
+        switch_output, _ = run_switch_console_command_capture(
+            args,
+            uart,
+            "dbg link prbs show interface ethernet 0/10-13",
+            switch_output,
+            timeout=max(settings["prompt_timeout"], 30),
+        )
+        time.sleep(1)
+        switch_output, second_show_output = run_switch_console_command_capture(
+            args,
+            uart,
+            "dbg link prbs show interface ethernet 0/10-13",
+            switch_output,
+            timeout=max(settings["prompt_timeout"], 30),
+        )
+        time.sleep(1)
+
+        parsed = parse_external_prbs_output(second_show_output)
+        for interface in EXTERNAL_PRBS_SWITCH_INTERFACES:
+            eth_name = "eth" + interface.split("/", 1)[1]
+            lock_state = parsed.get(f"tests.eth.ext_prbs.{eth_name}.status")
+            err_count = parsed.get(f"tests.eth.ext_prbs.{eth_name}.err")
+            ber = parsed.get(f"tests.eth.ext_prbs.{eth_name}.ber_err")
+            if lock_state is None:
+                print(f"[INFO] External PRBS {eth_name.upper()} result not found.")
+            else:
+                print(f"[INFO] External PRBS {eth_name.upper()} {lock_state}, errors={err_count}, BER={ber}.")
+
+        switch_output, _ = run_switch_console_command_capture(
+            args,
+            uart,
+            "end",
+            switch_output,
+            timeout=max(settings["prompt_timeout"], 30),
+        )
+        time.sleep(1)
+        switch_output = exit_switch_console(args, uart, setup, switch_output)
+
+    output_parts.append(switch_output)
+    print("[INFO] External PRBS test completed.")
+
+
+def run_transceiver_eeprom_check(
+    args: argparse.Namespace,
+    setup: dict[str, Any],
+    output_parts: list[str],
+) -> None:
+    if serial is None:
+        raise RuntimeError("pyserial is not installed. Install it or disable the transceiver EEPROM check.")
+
+    settings = switch_uart_login_settings(setup)
+    switch_output = "\n=== Transceiver EEPROM Check ==========================================\n"
+    log_switch(args, switch_output)
+    print("[INFO] Transceiver EEPROM check starting.")
+    print(f"[TX] uart switch {settings['port']} @ {settings['baudrate']}")
+    log_switch(args, f"[TX] uart switch {settings['port']} @ {settings['baudrate']}\n")
+
+    with serial.Serial(port=settings["port"], baudrate=settings["baudrate"], timeout=0.2, write_timeout=1) as uart:
+        time.sleep(min(settings["open_timeout"], 1.0))
+        switch_output = ensure_switch_uart_shell(uart, setup, switch_output)
+        log_switch(args, switch_output)
+        print("[TX] switch uart show interfaces transceiver eeprom")
+        log_switch(args, "\n[TX] switch uart show interfaces transceiver eeprom\n")
+        switch_output, eeprom_output = run_switch_uart_command_capture(
+            uart,
+            setup,
+            "show interfaces transceiver eeprom",
+            switch_output,
+        )
+        log_switch(args, eeprom_output)
+        print(eeprom_output, end="" if eeprom_output.endswith("\n") else "\n")
+
+    parsed = parse_transceiver_eeprom_output(eeprom_output)
+    for interface in ("eth10", "eth11", "eth12", "eth13"):
+        pn = parsed.get(f"tests.eth.{interface}_pn")
+        sn = parsed.get(f"tests.eth.{interface}_sn")
+        if pn is None:
+            print(f"[INFO] {interface.upper()} transceiver PN not found.")
+        else:
+            print(f"[INFO] {interface.upper()} transceiver PN={pn}, SN={sn or 'not found'}.")
+
+    output_parts.append(switch_output)
+    print("[INFO] Transceiver EEPROM check completed.")
+
+
+def run_internal_prbs_test(
+    args: argparse.Namespace,
+    setup: dict[str, Any],
+    channel: Any,
+    output_parts: list[str],
+) -> None:
+    if serial is None:
+        raise RuntimeError("pyserial is not installed. Install it or disable the internal PRBS test.")
+
+    settings = switch_uart_login_settings(setup)
+    switch_output = "\n=== Internal PRBS Test =================================================\n"
+    log_switch(args, switch_output)
+    print("[INFO] Internal PRBS test starting.")
+    print(f"[TX] uart switch {settings['port']} @ {settings['baudrate']}")
+    log_switch(args, f"[TX] uart switch {settings['port']} @ {settings['baudrate']}\n")
+
+    with serial.Serial(port=settings["port"], baudrate=settings["baudrate"], timeout=0.2, write_timeout=1) as uart:
+        time.sleep(min(settings["open_timeout"], 1.0))
+        switch_output = ensure_switch_uart_shell(uart, setup, switch_output)
+        log_switch(args, switch_output)
+
+        switch_output = send_switch_enter(args, uart, switch_output, count=2)
+
+        switch_output, _ = run_switch_console_command_capture(
+            args,
+            uart,
+            "docker exec -it syncd telnet 127.0.0.1 12345",
+            switch_output,
+            timeout=max(settings["prompt_timeout"], 30),
+        )
+        for command in (
+            "configure",
+            "interface range ethernet 0/1-4",
+            "debug",
+            "end",
+            "dbg link prbs interface ethernet 0/1-4 polynomial 31",
+        ):
+            switch_output, _ = run_switch_console_command_capture(args, uart, command, switch_output)
+
+        for command in INTERNAL_PRBS_NXP_COMMANDS:
+            send_nxp_python_command(channel, args, output_parts, command)
+
+        switch_output, _ = run_switch_console_command_capture(
+            args,
+            uart,
+            "dbg link prbs show interface ethernet 0/1-4",
+            switch_output,
+            timeout=max(settings["prompt_timeout"], 30),
+        )
+        time.sleep(1)
+        switch_output, second_show_output = run_switch_console_command_capture(
+            args,
+            uart,
+            "dbg link prbs show interface ethernet 0/1-4",
+            switch_output,
+            timeout=max(settings["prompt_timeout"], 30),
+        )
+        require_internal_prbs_switch_locks(second_show_output)
+        print("[INFO] Switch PRBS locks detected on 0/1-4.")
+
+        for sx_id in ("SX1", "SX2"):
+            send_sx_prbs_read_command(channel, args, output_parts, sx_id)
+
+        exit_switch_console(args, uart, setup, switch_output)
+
+    output_parts.append(switch_output)
+    print("[INFO] Internal PRBS test completed.")
+
+
+def run_paramiko_interactive(args: argparse.Namespace, command: str, setup: dict[str, Any] | None = None) -> str:
     client = ssh_connect(args)
     output_parts: list[str] = []
     sent_system_init = False
@@ -891,6 +1545,7 @@ def run_paramiko_interactive(args: argparse.Namespace, command: str) -> str:
     try:
         channel = client.invoke_shell()
         channel.settimeout(0.0)
+        log_nxp(args, f"\n[TX] nxp shell ({command}); printf '\\n{marker}%s\\n' $?\n")
         channel.send(f"({command}); printf '\\n{marker}%s\\n' $?\n")
 
         while True:
@@ -900,6 +1555,7 @@ def run_paramiko_interactive(args: argparse.Namespace, command: str) -> str:
             if channel.recv_ready():
                 chunk = channel.recv(4096).decode(errors="replace")
                 output_parts.append(chunk)
+                log_nxp(args, chunk)
                 print(strip_terminal_cpr(chunk), end="", flush=True)
                 last_progress = time.monotonic()
 
@@ -910,11 +1566,15 @@ def run_paramiko_interactive(args: argparse.Namespace, command: str) -> str:
                     break
 
                 if full_like_mode and not sent_full_test_command and RUN_SH_DONE_RE.search(clean_output) and ">>>" in clean_output:
+                    log_nxp(args, "\n[TX] nxp python lsbb_cil_test()\n")
                     channel.send("lsbb_cil_test()\r")
                     sent_full_test_command = True
                     print("\n[INFO] Started full test: lsbb_cil_test()")
 
                 if full_like_mode and FULL_TEST_DONE_RE.search(clean_output):
+                    if args.mode == "full" and setup is not None:
+                        run_internal_prbs_test(args, setup, channel, output_parts)
+                        exit_python_and_shutdown_sx(args, channel, setup, output_parts)
                     exit_status = 0
                     break
 
@@ -930,6 +1590,7 @@ def run_paramiko_interactive(args: argparse.Namespace, command: str) -> str:
                     sent_system_init = True
                     if args.system_init_response is not None:
                         response = args.system_init_response
+                        log_nxp(args, f"\n[TX] nxp prompt response {response!r}\n")
                         channel.send(response + "\r")
                         print(f"\n[INFO] Sent system-init prompt response: {response!r}")
                     else:
@@ -967,12 +1628,12 @@ def run_paramiko_interactive(args: argparse.Namespace, command: str) -> str:
     return combined
 
 
-def run_ssh(args: argparse.Namespace) -> str:
+def run_ssh(args: argparse.Namespace, setup: dict[str, Any] | None = None) -> str:
     command = args.remote_command or f"cd {args.remote_dir} && sh ./{args.script}"
     if args.password and paramiko is not None and not args.force_openssh:
         print(f"[TX] ssh {args.user}@{args.host} {command}")
         if args.interactive:
-            return run_paramiko_interactive(args, command)
+            return run_paramiko_interactive(args, command, setup)
         return run_paramiko_exec(args, command)
 
     if args.password and paramiko is None and not args.force_openssh:
@@ -980,14 +1641,17 @@ def run_ssh(args: argparse.Namespace) -> str:
 
     ssh_cmd = build_ssh_command(args)
     print(f"[TX] {' '.join(ssh_cmd)}")
+    log_nxp(args, f"\n[TX] {' '.join(ssh_cmd)}\n")
     completed = subprocess.run(ssh_cmd, text=True, capture_output=True, timeout=args.timeout)
     output = (completed.stdout or "") + (completed.stderr or "")
+    log_nxp(args, output)
     if completed.returncode != 0:
         raise RuntimeError(f"SSH command failed with exit code {completed.returncode}.\n{output.strip()}")
     return output
 
 
 def check_nxp_login(args: argparse.Namespace) -> str:
+    print(f"[INFO] Checking NXP login from script_setup.yaml: {args.user}@{args.host}")
     remote_dir = shlex.quote(str(args.remote_dir))
     command = (
         "printf 'NXP_LOGIN_CHECK user='; whoami; "
@@ -1046,6 +1710,7 @@ def check_switch_uart_login(setup: dict[str, Any]) -> str:
     if not port:
         raise RuntimeError("Missing serial.switch.port in script_setup.yaml.")
 
+    print(f"[INFO] Checking switch login from script_setup.yaml: {settings['username']} on {port}")
     print(f"[TX] uart switch {port} @ {baudrate}")
     output = ""
     try:
@@ -1079,13 +1744,29 @@ def switch_uart_login_settings(setup: dict[str, Any]) -> dict[str, Any]:
     port = get_nested(setup, "serial.switch.port")
     if not port:
         raise RuntimeError("Missing serial.switch.port in script_setup.yaml.")
+    username = get_nested(setup, "sonic.login")
+    password = get_nested(setup, "sonic.password")
+    login_prompt = get_nested(setup, "sonic.login_prompt")
+    shell_prompt = get_nested(setup, "sonic.prompt")
+    missing = [
+        name
+        for name, value in (
+            ("sonic.login", username),
+            ("sonic.password", password),
+            ("sonic.login_prompt", login_prompt),
+            ("sonic.prompt", shell_prompt),
+        )
+        if value in (None, "")
+    ]
+    if missing:
+        raise RuntimeError(f"Missing switch login settings in script_setup.yaml: {', '.join(missing)}")
     return {
         "port": str(port),
         "baudrate": int(get_nested(setup, "serial.switch.baudrate", 115200)),
-        "username": str(get_nested(setup, "sonic.login", "admin")),
-        "password": str(get_nested(setup, "sonic.password", "admin")),
-        "login_prompt": str(get_nested(setup, "sonic.login_prompt", "sonic login:")),
-        "shell_prompt": str(get_nested(setup, "sonic.prompt", "admin@sonic:~$")),
+        "username": str(username),
+        "password": str(password),
+        "login_prompt": str(login_prompt),
+        "shell_prompt": str(shell_prompt),
         "open_timeout": float(get_nested(setup, "timeouts.serial_open_seconds", 10)),
         "prompt_timeout": float(get_nested(setup, "timeouts.prompt_wait_seconds", 15)),
     }
@@ -1196,14 +1877,14 @@ def run_switch_uart_command(uart: Any, setup: dict[str, Any], command: str, buff
         uart,
         {
             "shell": prompt_line,
-            "password": r"password\s+for\s+\S+\s*:",
+            "sudo_password": r"\[sudo\]\s+password|password\s+for\s+\S+\s*:",
         },
         max(settings["prompt_timeout"], 30),
         buffer,
         echo=False,
         match_start=match_start,
     )
-    if matched == "password":
+    if matched == "sudo_password":
         match_start = len(buffer)
         uart.write((settings["password"] + "\r\n").encode())
         uart.flush()
@@ -1218,6 +1899,8 @@ def run_switch_uart_command(uart: Any, setup: dict[str, Any], command: str, buff
         )
     if matched != "shell":
         raise RuntimeError(f"Switch UART command timed out: {command}")
+    if command.strip().startswith("sudo "):
+        time.sleep(8)
     return buffer
 
 
@@ -1227,308 +1910,8 @@ def run_switch_uart_command_capture(uart: Any, setup: dict[str, Any], command: s
     return buffer, buffer[start:]
 
 
-def append_switch_debug_log(debug_log: pathlib.Path | None, text: str) -> None:
-    if debug_log is None:
-        return
-    debug_log.parent.mkdir(parents=True, exist_ok=True)
-    with debug_log.open("a", encoding="utf-8", errors="replace") as fh:
-        fh.write(text)
-        if text and not text.endswith("\n"):
-            fh.write("\n")
-
-
-def run_switch_uart_command_logged(
-    uart: Any,
-    setup: dict[str, Any],
-    command: str,
-    buffer: str,
-    debug_log: pathlib.Path | None,
-) -> str:
-    start = len(buffer)
-    append_switch_debug_log(debug_log, f"\n[TX] {command}\n")
-    buffer = run_switch_uart_command(uart, setup, command, buffer)
-    append_switch_debug_log(debug_log, buffer[start:])
-    return buffer
-
-
-def run_switch_uart_command_capture_logged(
-    uart: Any,
-    setup: dict[str, Any],
-    command: str,
-    buffer: str,
-    debug_log: pathlib.Path | None,
-) -> tuple[str, str]:
-    start = len(buffer)
-    buffer = run_switch_uart_command_logged(uart, setup, command, buffer, debug_log)
-    return buffer, buffer[start:]
-
-
-def run_switch_console_command_capture(
-    uart: Any,
-    command: str,
-    buffer: str,
-    timeout: float = 30,
-) -> tuple[str, str]:
-    waiting = getattr(uart, "in_waiting", 0) or 0
-    if waiting:
-        buffer += uart.read(waiting).decode(errors="replace")
-    match_start = len(buffer)
-    uart.write((command + "\r\n").encode())
-    uart.flush()
-    matched, buffer = serial_wait(
-        uart,
-        {"console": SWITCH_CONSOLE_PROMPT_RE},
-        timeout,
-        buffer,
-        echo=False,
-        match_start=match_start,
-    )
-    if matched != "console":
-        raise RuntimeError(f"Switch console command timed out: {command}")
-    return buffer, buffer[match_start:]
-
-
-def exit_switch_console(uart: Any, setup: dict[str, Any], buffer: str) -> str:
-    settings = switch_uart_login_settings(setup)
-    prompt_line = shell_prompt_line_pattern(settings["shell_prompt"])
-    waiting = getattr(uart, "in_waiting", 0) or 0
-    if waiting:
-        buffer += uart.read(waiting).decode(errors="replace")
-    match_start = len(buffer)
-    uart.write(b"CLIexit\r\n")
-    uart.flush()
-    matched, buffer = serial_wait(
-        uart,
-        {"shell": prompt_line},
-        max(settings["prompt_timeout"], 30),
-        buffer,
-        echo=False,
-        match_start=match_start,
-    )
-    if matched != "shell":
-        raise RuntimeError("Switch console exit failed: admin@sonic prompt not detected after CLIexit.")
-    return buffer
-
-
-def parse_interface_status(output: str, interface: str) -> tuple[str | None, str | None]:
-    status_re = re.compile(
-        rf"^\s*{re.escape(interface)}\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+"
-        r"(?P<oper>up|down)\s+(?P<admin>up|down)\b",
-        re.IGNORECASE | re.MULTILINE,
-    )
-    match = status_re.search(strip_ansi(output))
-    if not match:
-        return None, None
-    return match.group("oper").lower(), match.group("admin").lower()
-
-
-def read_switch_interface_status(
-    uart: Any | None,
-    setup: dict[str, Any],
-    sfp_name: str,
-    interface: str,
-    buffer: str,
-    debug_log: pathlib.Path | None = None,
-) -> tuple[str | None, str | None, str]:
-    if uart is None:
-        print(f"[INFO] Skipping interface status for {sfp_name}; switch UART config is disabled.")
-        return None, None, buffer
-    print(f"[INFO] Checking {sfp_name} {interface} status.")
-    buffer, command_output = run_switch_uart_command_capture_logged(
-        uart,
-        setup,
-        f"show int sta | grep {interface}",
-        buffer,
-        debug_log,
-    )
-    oper, admin = parse_interface_status(command_output, interface)
-    if oper is None or admin is None:
-        print(f"[INFO] {sfp_name} {interface} status not found.")
-    else:
-        print(f"[INFO] {sfp_name} {interface} Oper={oper} Admin={admin}.")
-    return oper, admin, buffer
-
-
-def require_switch_interface_status(
-    uart: Any | None,
-    setup: dict[str, Any],
-    sfp_name: str,
-    interface: str,
-    buffer: str,
-    allowed_states: set[tuple[str, str]],
-    description: str,
-    debug_log: pathlib.Path | None = None,
-) -> str:
-    oper, admin, buffer = read_switch_interface_status(uart, setup, sfp_name, interface, buffer, debug_log)
-    if (oper, admin) not in allowed_states:
-        expected_text = " or ".join(f"Oper={exp_oper} Admin={exp_admin}" for exp_oper, exp_admin in sorted(allowed_states))
-        raise RuntimeError(
-            f"{sfp_name} {interface} must be {expected_text} {description}. "
-            f"Got Oper={oper} Admin={admin}."
-        )
-    return buffer
-
-
-def enabled_prbs_targets(prbs_cfg: dict[str, Any]) -> dict[str, str]:
-    enabled: dict[str, str] = {}
-    for sfp_name, interface in PRBS_INTERFACE_MAP.items():
-        if int(prbs_cfg.get(f"{sfp_name}_en", 0)) == 1:
-            enabled[sfp_name] = interface
-    return enabled
-
-
-def build_prbs_interface_range(interfaces: list[str]) -> str:
-    suffixes = [interface.split("/", 1)[1] for interface in interfaces]
-    return f"ethernet 0/{','.join(suffixes)}"
-
-
-def build_prbs_group_command(interfaces: list[str], polynomial: int) -> str:
-    suffixes = [interface.split("/", 1)[1] for interface in interfaces]
-    return f"dbg link prbs interface ethernet 0/{','.join(suffixes)} polynomial {polynomial}"
-
-
-def parse_prbs_rows(output: str) -> dict[str, str]:
-    actual: dict[str, str] = {}
-    for interface, status, lock_state in re.findall(
-        r"^\s*(0/\d+)\s*\|\s*\d+\s*\|\s*PRBS_\d+\s*\|\s*(Passed|Failed)\s*\|\s*(Locked|UnLocked)\s*\|",
-        strip_ansi(output),
-        re.IGNORECASE | re.MULTILINE,
-    ):
-        sfp_name = PRBS_INTERFACE_TO_SFP.get(interface)
-        if not sfp_name:
-            continue
-        passed = status.lower() == "passed" and lock_state.lower() == "locked"
-        actual[f"tests.eth.prbs.{sfp_name}"] = "pass" if passed else "fail"
-    return actual
-
-
-def run_switch_prbs_tests(setup: dict[str, Any], prbs_cfg: dict[str, Any]) -> tuple[dict[str, Any], str]:
-    targets = enabled_prbs_targets(prbs_cfg)
-    if not targets:
-        print("[INFO] Switch PRBS test skipped; no SFP PRBS tests enabled in test_setup.yaml.")
-        return {}, ""
-    if serial is None:
-        raise RuntimeError("pyserial is not installed. Install it or disable tests.eth.prbs entries.")
-
-    settings = switch_uart_login_settings(setup)
-    shell_output = ""
-    second_show_output = ""
-    console_output = ""
-    interface_range = build_prbs_interface_range(list(targets.values()))
-    prbs7_interfaces = [interface for sfp_name, interface in targets.items() if sfp_name in {"sfp1", "sfp2"}]
-    prbs31_interfaces = [interface for sfp_name, interface in targets.items() if sfp_name in {"sfp3", "sfp4"}]
-
-    print("[INFO] Switch PRBS test starting.")
-    print(f"[TX] uart switch {settings['port']} @ {settings['baudrate']}")
-    try:
-        with serial.Serial(port=settings["port"], baudrate=settings["baudrate"], timeout=0.2, write_timeout=1) as uart:
-            time.sleep(min(settings["open_timeout"], 1.0))
-            shell_output = ensure_switch_uart_shell(uart, setup, shell_output)
-
-            if prbs7_interfaces:
-                shell_output = run_switch_uart_command(
-                    uart,
-                    setup,
-                    "config vlan member del 100 PortChannel1",
-                    shell_output,
-                )
-                for interface in prbs7_interfaces:
-                    shell_output = run_switch_uart_command(
-                        uart,
-                        setup,
-                        f"config portchannel member del PortChannel1 Ethernet{interface.split('/', 1)[1]}",
-                        shell_output,
-                    )
-
-            console_output, _ = run_switch_console_command_capture(
-                uart,
-                "docker exec -it syncd telnet 127.0.0.1 12345",
-                shell_output,
-                timeout=max(settings["prompt_timeout"], 30),
-            )
-            console_output, _ = run_switch_console_command_capture(uart, "configure", console_output)
-            console_output, _ = run_switch_console_command_capture(uart, f"interface range {interface_range}", console_output)
-            console_output, _ = run_switch_console_command_capture(uart, "debug", console_output)
-            console_output, _ = run_switch_console_command_capture(uart, "end", console_output)
-
-            if prbs7_interfaces:
-                console_output, _ = run_switch_console_command_capture(
-                    uart,
-                    build_prbs_group_command(prbs7_interfaces, 7),
-                    console_output,
-                )
-            if prbs31_interfaces:
-                console_output, _ = run_switch_console_command_capture(
-                    uart,
-                    build_prbs_group_command(prbs31_interfaces, 31),
-                    console_output,
-                )
-
-            console_output, _ = run_switch_console_command_capture(
-                uart,
-                "dbg link prbs show interface ethernet 0/10-13",
-                console_output,
-                timeout=max(settings["prompt_timeout"], 30),
-            )
-            time.sleep(1)
-            console_output, second_show_output = run_switch_console_command_capture(
-                uart,
-                "dbg link prbs show interface ethernet 0/10-13",
-                console_output,
-                timeout=max(settings["prompt_timeout"], 30),
-            )
-            console_output, _ = run_switch_console_command_capture(
-                uart,
-                "dbg link prbs clear interface ethernet 0/10-13",
-                console_output,
-                timeout=max(settings["prompt_timeout"], 30),
-            )
-            console_output, _ = run_switch_console_command_capture(uart, "configure", console_output)
-            console_output, _ = run_switch_console_command_capture(
-                uart,
-                "interface range ethernet 0/10,11,12,13",
-                console_output,
-            )
-            console_output, _ = run_switch_console_command_capture(uart, "no debug", console_output)
-            console_output, _ = run_switch_console_command_capture(uart, "end", console_output)
-            shell_output = exit_switch_console(uart, setup, console_output)
-            shell_output = run_switch_uart_command(
-                uart,
-                setup,
-                "config portchannel member add PortChannel1 Ethernet10",
-                shell_output,
-            )
-            shell_output = run_switch_uart_command(
-                uart,
-                setup,
-                "config portchannel member add PortChannel1 Ethernet11",
-                shell_output,
-            )
-            shell_output = run_switch_uart_command(
-                uart,
-                setup,
-                "config vlan member add 100 PortChannel1",
-                shell_output,
-            )
-    except OSError as exc:
-        raise RuntimeError(f"Switch PRBS test failed on {settings['port']}: {exc}") from exc
-
-    actual = parse_prbs_rows(second_show_output)
-    for sfp_name in targets:
-        value = actual.get(f"tests.eth.prbs.{sfp_name}")
-        if value is None:
-            print(f"[INFO] PRBS {sfp_name.upper()} result not found.")
-        else:
-            print(f"[INFO] PRBS {sfp_name.upper()} {value}.")
-    print("[INFO] Switch PRBS test completed.")
-
-    log_text = "\n=== Switch PRBS Test ===================================================\n"
-    log_text += second_show_output if second_show_output.endswith("\n") else second_show_output + "\n"
-    return actual, log_text
-
-
 def output_dir(log_root: pathlib.Path, dig_sn: str, when: dt.datetime) -> pathlib.Path:
-    base_folder = when.strftime("%Y%m%d_%H%M%S")
+    base_folder = when.strftime("%Y%m%d_%H%M%S_sys_test")
     serial_dir = log_root / clean_folder_name(dig_sn.upper())
     candidate = serial_dir / base_folder
     index = 1
@@ -1559,6 +1942,13 @@ def report_text(results: list[CheckResult], actual: dict[str, Any], dig_sn: str 
     )
     for component, version in firmware_items:
         lines.append(f"{component}: {version}")
+    for interface in ("eth10", "eth11", "eth12", "eth13"):
+        pn = actual.get(f"tests.eth.{interface}_pn")
+        sn = actual.get(f"tests.eth.{interface}_sn")
+        if pn is not None:
+            lines.append(f"{interface.upper()}_PN: {pn}")
+        if sn is not None:
+            lines.append(f"{interface.upper()}_SN: {sn}")
     ordered_results = ordered_report_results(results)
     for prefix, title in SECTION_TITLES:
         section_results = [result for result in ordered_results if result.name.startswith(prefix)]
@@ -1609,6 +1999,14 @@ def csv_units(name: str) -> str:
         return "dBm"
     if name.startswith("tests.fpga.mdm") and (name.endswith("_dig_loopback") or name.endswith("_full_loopback")):
         return "dB"
+    if name.startswith("tests.eth.prbs.") and name.endswith("_ber"):
+        return "BER"
+    if name.startswith("tests.eth.prbs.") and name.endswith("_errcount"):
+        return "errors"
+    if name.startswith("tests.eth.ext_prbs.") and name.endswith(".ber_err"):
+        return "BER"
+    if name.startswith("tests.eth.ext_prbs.") and name.endswith(".err"):
+        return "errors"
     return ""
 
 
@@ -1714,7 +2112,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--dig_sn", required=True, help="DUT digital serial number used for the test log folder.")
     parser.add_argument("--config", default="test_setup.yaml", help="YAML file with expected values.")
     parser.add_argument("--setup-config", default="script_setup.yaml", help="YAML file with SSH connection information.")
-    parser.add_argument("--mode", choices=("full", "run-sh", "skip_eth"), default="full", help="full runs/checks lsbb_cil_test too; run-sh checks only run.sh output; skip_eth runs full test but skips PRBS.")
+    parser.add_argument("--mode", choices=("full", "run-sh", "skip_eth"), default="full", help="full runs/checks lsbb_cil_test too; run-sh checks only run.sh output.")
     parser.add_argument("--input-log", help="Parse an existing output file instead of running SSH.")
     parser.add_argument("--host", help="SSH host/IP address override. Defaults to script_setup.yaml dut.final_ip.")
     parser.add_argument("--user", help="SSH username override. Defaults to script_setup.yaml dut.login.")
@@ -1743,6 +2141,7 @@ def main(argv: list[str] | None = None) -> int:
     setup_path = (repo_root / args.setup_config).resolve()
     run_dir: pathlib.Path | None = None
     output = ""
+    args.run_dir = None
 
     try:
         expected = load_yaml(config_path)
@@ -1754,6 +2153,7 @@ def main(argv: list[str] | None = None) -> int:
             log_root = pathlib.Path(str(log_path)) if log_path else repo_root / "logs"
             run_dir = output_dir(log_root, args.dig_sn, dt.datetime.now())
             run_dir.mkdir(parents=True, exist_ok=False)
+            args.run_dir = run_dir
             print(f"[INFO] Test log folder: {run_dir}")
 
         if args.input_log:
@@ -1770,19 +2170,13 @@ def main(argv: list[str] | None = None) -> int:
                 check_nxp_login(args)
             if not args.skip_switch_login_check:
                 switch_uart_output = check_switch_uart_login(setup)
-            output = run_ssh(args)
+            output = run_ssh(args, setup)
             if switch_uart_output:
                 output += "\n" + switch_uart_output
             if not getattr(args, "output_streamed", False):
                 print(output, end="" if output.endswith("\n") else "\n")
 
         actual = parse_output(output)
-        if not args.input_log and args.mode == "full":
-            prbs_cfg = get_nested(expected, "tests.eth.prbs", {})
-            if isinstance(prbs_cfg, dict):
-                prbs_actual, prbs_output = run_switch_prbs_tests(setup, prbs_cfg)
-                actual.update(prbs_actual)
-                output += prbs_output
         results = compare(
             expected,
             actual,
