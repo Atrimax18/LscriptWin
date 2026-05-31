@@ -1,13 +1,13 @@
 version:
   cpld:
     ver: 1.4
-    build: 1
+    build: 0
     date: 24-04-26
   fpga:
     gp_ver: 0x20260219
     ver: 11.0
-    build: 1
-    dig_ver: 0x20260416
+    build: 6
+    dig_ver: 0x20260504
 
 power_seq:
   aux: 0x1
@@ -140,6 +140,24 @@ tests:
       sfp2_en: 1
       sfp3_en: 1
       sfp4_en: 1
+      sx1:
+        line0_ber_min: 0.0
+        line0_ber_max: 0.0
+        line0_errcount_min: 0
+        line0_errcount_max: 0
+        line1_ber_min: 0.0
+        line1_ber_max: 0.0
+        line1_errcount_min: 0
+        line1_errcount_max: 0
+      sx2:
+        line0_ber_min: 0.0
+        line0_ber_max: 0.0
+        line0_errcount_min: 0
+        line0_errcount_max: 0
+        line1_ber_min: 0.0
+        line1_ber_max: 0.0
+        line1_errcount_min: 0
+        line1_errcount_max: 0
   temp:
     limits:
       min: 20.0
@@ -162,20 +180,20 @@ tests:
         tmp_txfem: 1
   power:
     ina_nxp: 
-      min: 20.0
-      max: 50.0
+      min: 2.0
+      max: 15.0
     ina_aux:
       min: 0.5
-      max: 6.0
+      max: 15.0
     ina_eth:
       min: 0.5
-      max: 4.0
+      max: 10.0
     ina_fpga:
       min: 10.0
       max: 50.0
     ina_clk:
       min: 0.5
-      max: 7.0
+      max: 10.0
     ina_sx1:
       min: 20.0
       max: 50.0
@@ -191,7 +209,9 @@ tests:
     ina_main:
       min: 120.0
       max: 170.0         
-  
 logs:
   path: C:\Logs\Tests 
+
+test_file:
+  ver: 1.0  
 
