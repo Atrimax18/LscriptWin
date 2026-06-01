@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import argparse
+import configparser
 import csv
 import datetime as dt
 import io
+import os
 import pathlib
 import re
 import shlex
@@ -37,6 +39,7 @@ RUN_SH_DONE_RE = re.compile(r"Modem\s+Link\s+-\s+All\s+Disabled.*?Data\s+Path\s+
 FULL_TEST_DONE_RE = re.compile(r"INA_MAIN\s*:\s*[-0-9.]+\s+[-0-9.]+\s+[-0-9.]+.*?>>>", re.IGNORECASE | re.DOTALL)
 SWITCH_CONSOLE_PROMPT_RE = re.compile(r"Console(?:\([^)]+\))?#\s*$", re.MULTILINE)
 NXP_PYTHON_PROMPT_RE = re.compile(r">>>\s*$")
+SQL_IDENTIFIER_PATTERN = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 
 INTERNAL_PRBS_SWITCH_INTERFACES = ("0/1", "0/2", "0/3", "0/4")
 EXTERNAL_PRBS_SWITCH_INTERFACES = ("0/10", "0/11", "0/12", "0/13")
@@ -44,6 +47,14 @@ INTERNAL_PRBS_NXP_COMMANDS = (
     'sx4000_ctrl.sds_prbs_en(sx_id="SX1", sds_type="ETH", near_end_lb=False, far_end_lb=False, prbs_type=31)',
     'sx4000_ctrl.sds_prbs_en(sx_id="SX2", sds_type="ETH", near_end_lb=False, far_end_lb=False, prbs_type=31)',
 )
+SFP_PORTS = ("eth10", "eth11", "eth12", "eth13")
+SFP_FIELD_MAP = {
+    "eth10": "mng_sfp1",
+    "eth11": "mng_sfp2",
+    "eth12": "data_sfp1",
+    "eth13": "data_sfp2",
+}
+SFP_PAIRING_TABLE = "LSBB_pairing"
 
 @dataclass
 class CheckResult:
@@ -51,6 +62,28 @@ class CheckResult:
     expected: Any
     actual: Any
     passed: bool
+
+
+@dataclass(frozen=True)
+class SfpRecord:
+    pn: str
+    sn: str
+
+
+@dataclass(frozen=True)
+class SqlConfig:
+    server: str
+    database: str
+    username: str
+    password: str
+    schema: str
+    driver_candidates: tuple[str, ...]
+    connection_string: str
+    timeout_seconds: int
+
+    @property
+    def pairing_qualified_name(self) -> str:
+        return f"[{self.schema}].[{SFP_PAIRING_TABLE}]"
 
 
 SECTION_TITLES = (
@@ -575,7 +608,63 @@ def parse_transceiver_eeprom_output(text: str) -> dict[str, Any]:
             data[f"tests.eth.{eth_name}_pn"] = pn_match.group(1)
         if sn_match:
             data[f"tests.eth.{eth_name}_sn"] = sn_match.group(1)
+
+    info_re = re.compile(
+        r"^\s*\[INFO\]\s+ETH(1[0-3])\s+transceiver\s+PN=([^,\s]+),\s+SN=([^. \r\n]+)\.",
+        re.IGNORECASE | re.MULTILINE,
+    )
+    for eth_number, pn, sn in info_re.findall(clean_text):
+        eth_name = f"eth{eth_number.lower()}"
+        data[f"tests.eth.{eth_name}_pn"] = pn.strip()
+        data[f"tests.eth.{eth_name}_sn"] = sn.strip()
     return data
+
+
+def parse_latest_sfp_records(text: str) -> dict[str, SfpRecord]:
+    clean_text = strip_ansi(text)
+    info_re = re.compile(
+        r"^\s*\[INFO\]\s+ETH(1[0-3])\s+transceiver\s+PN=([^,\s]+),\s+SN=([^. \r\n]+)\.",
+        re.IGNORECASE | re.MULTILINE,
+    )
+    latest: dict[str, SfpRecord] = {}
+    current: dict[str, SfpRecord] = {}
+    for match in info_re.finditer(clean_text):
+        eth_name = f"eth{match.group(1).lower()}"
+        if eth_name == "eth10":
+            current = {}
+        current[eth_name] = SfpRecord(pn=match.group(2).strip(), sn=match.group(3).strip())
+        if all(port in current for port in SFP_PORTS):
+            latest = dict(current)
+    if latest:
+        return latest
+
+    parsed = parse_transceiver_eeprom_output(clean_text)
+    for port in SFP_PORTS:
+        pn = parsed.get(f"tests.eth.{port}_pn")
+        sn = parsed.get(f"tests.eth.{port}_sn")
+        if pn is not None and sn is not None:
+            latest[port] = SfpRecord(pn=str(pn).strip(), sn=str(sn).strip())
+    return latest
+
+
+def validate_sfp_records(records: dict[str, SfpRecord], expected: dict[str, Any]) -> None:
+    missing = [port.upper() for port in SFP_PORTS if port not in records]
+    if missing:
+        raise RuntimeError("Missing SFP data for: " + ", ".join(missing))
+
+    errors: list[str] = []
+    for port in SFP_PORTS:
+        record = records[port]
+        expected_pn = get_nested(expected, f"tests.eth.{port}_pn")
+        if expected_pn in (None, ""):
+            errors.append(f"{port.upper()}: missing expected PN in test_setup.yaml")
+            continue
+        if str(record.pn).strip().upper() != str(expected_pn).strip().upper():
+            errors.append(f"{port.upper()}: expected PN {expected_pn}, read PN {record.pn}")
+        if not record.sn:
+            errors.append(f"{port.upper()}: missing SN")
+    if errors:
+        raise RuntimeError("SFP validation failed; not saving to SQL DB:\n" + "\n".join(errors))
 
 
 def require_internal_prbs_switch_locks(show_output: str) -> None:
@@ -2101,6 +2190,142 @@ def legacy_save_output(repo_root: pathlib.Path, output: str) -> pathlib.Path:
     return path
 
 
+def validate_sql_identifier(name: str, label: str) -> str:
+    if not SQL_IDENTIFIER_PATTERN.fullmatch(name):
+        raise RuntimeError(f"Invalid SQL identifier for {label}: {name}")
+    return name
+
+
+def load_sql_config(repo_root: pathlib.Path) -> SqlConfig:
+    path = repo_root / "db_config.ini"
+    if not path.is_file():
+        raise RuntimeError(f"Missing SQL config file: {path}")
+    parser = configparser.ConfigParser()
+    parser.read(path, encoding="utf-8")
+    if "sql_server" not in parser:
+        raise RuntimeError(f"Missing [sql_server] section in {path}")
+
+    section = parser["sql_server"]
+    server = os.environ.get("SERVER_NAME", section.get("server", "")).strip()
+    database = os.environ.get("DB_NAME", section.get("database", "")).strip()
+    username = os.environ.get("DB_LOGIN", section.get("username", "")).strip()
+    password = os.environ.get("DB_PASSWORD", section.get("password", "")).strip()
+    schema = validate_sql_identifier(section.get("schema", "dbo").strip(), "schema")
+    driver_candidates = tuple(
+        driver.strip()
+        for driver in section.get("driver_candidates", "").split(",")
+        if driver.strip()
+    ) or ("ODBC Driver 18 for SQL Server", "ODBC Driver 17 for SQL Server", "SQL Server Native Client 11.0", "SQL Server")
+    connection_string = section.get(
+        "connection_string",
+        "DRIVER={{{driver}}};SERVER={server};DATABASE={database};UID={username};PWD={password};Encrypt=no;TrustServerCertificate=yes;",
+    ).strip()
+    timeout_seconds = section.getint("timeout_seconds", fallback=5)
+    missing = [
+        name
+        for name, value in {
+            "server": server,
+            "database": database,
+            "username": username,
+            "password": password,
+        }.items()
+        if not value
+    ]
+    if missing:
+        raise RuntimeError(f"Missing SQL config values in {path}: {', '.join(missing)}")
+    return SqlConfig(
+        server=server,
+        database=database,
+        username=username,
+        password=password,
+        schema=schema,
+        driver_candidates=driver_candidates,
+        connection_string=connection_string,
+        timeout_seconds=timeout_seconds,
+    )
+
+
+def open_sql_connection(config: SqlConfig):
+    try:
+        import pyodbc  # type: ignore[import-not-found]
+    except ImportError as exc:
+        raise RuntimeError("pyodbc is required for --save-sfp SQL Server access.") from exc
+
+    installed = set(pyodbc.drivers())
+    drivers = [driver for driver in config.driver_candidates if driver in installed]
+    if not drivers:
+        drivers = list(config.driver_candidates)
+
+    last_error: Exception | None = None
+    for driver in drivers:
+        connection_string = config.connection_string.format(
+            driver=driver,
+            server=config.server,
+            database=config.database,
+            username=config.username,
+            password=config.password,
+        )
+        try:
+            return pyodbc.connect(connection_string, timeout=config.timeout_seconds)
+        except pyodbc.Error as exc:
+            last_error = exc
+    raise RuntimeError(f"Could not connect to SQL Server {config.server}/{config.database}: {last_error}")
+
+
+def save_sfp_records_to_sql(repo_root: pathlib.Path, dig_sn: str, records: dict[str, SfpRecord]) -> str:
+    config = load_sql_config(repo_root)
+    values: dict[str, str] = {"dig_board_sn": dig_sn}
+    for port, column_prefix in SFP_FIELD_MAP.items():
+        values[f"{column_prefix}_sn"] = records[port].sn
+        values[f"{column_prefix}_pn"] = records[port].pn
+
+    sfp_columns = [column for column in values if column != "dig_board_sn"]
+    with open_sql_connection(config) as connection:
+        cursor = connection.cursor()
+        try:
+            cursor.execute(
+                f"SELECT 1 FROM {config.pairing_qualified_name} WHERE dig_board_sn = ?",
+                dig_sn,
+            )
+            exists = cursor.fetchone() is not None
+            if exists:
+                assignments = ", ".join(f"{column} = ?" for column in sfp_columns)
+                params = [values[column] for column in sfp_columns]
+                params.append(dig_sn)
+                cursor.execute(
+                    f"UPDATE {config.pairing_qualified_name} SET {assignments} WHERE dig_board_sn = ?",
+                    *params,
+                )
+                action = "updated"
+            else:
+                columns = ["dig_board_sn", *sfp_columns]
+                placeholders = ", ".join("?" for _column in columns)
+                params = [values[column] for column in columns]
+                cursor.execute(
+                    f"INSERT INTO {config.pairing_qualified_name} ({', '.join(columns)}) VALUES ({placeholders})",
+                    *params,
+                )
+                action = "inserted"
+            connection.commit()
+            return action
+        except Exception:
+            connection.rollback()
+            raise
+
+
+def save_sfp_if_requested(args: argparse.Namespace, repo_root: pathlib.Path, output: str, expected: dict[str, Any]) -> None:
+    if not args.save_sfp:
+        return
+
+    records = parse_latest_sfp_records(output)
+    validate_sfp_records(records, expected)
+    try:
+        action = save_sfp_records_to_sql(repo_root, args.dig_sn, records)
+    except Exception as exc:
+        raise RuntimeError(f"SFP SQL save failed; not saved: {exc}") from exc
+    print(f"[INFO] SFP data {action} in SQL DB for dig_board_sn {args.dig_sn}.")
+
+
 def print_report(results: list[CheckResult], actual: dict[str, Any], dig_sn: str = "XXXXXXX") -> int:
     report, exit_code = report_text(results, actual, dig_sn)
     print("\n" + report, end="")
@@ -2131,6 +2356,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--skip-login-check", action="store_true", help="Skip the NXP SSH login precheck.")
     parser.add_argument("--skip-switch-login-check", action="store_true", help="Skip the switch UART login precheck.")
     parser.add_argument("--no-save", action="store_true", help="Do not save test artifacts.")
+    parser.add_argument("--save-sfp", action="store_true", help="Validate and save ETH10-ETH13 SFP PN/SN data to SQL Server.")
     return parser
 
 
@@ -2141,6 +2367,9 @@ def main(argv: list[str] | None = None) -> int:
     setup_path = (repo_root / args.setup_config).resolve()
     run_dir: pathlib.Path | None = None
     output = ""
+    report = ""
+    csv_report = ""
+    exit_code = 1
     args.run_dir = None
 
     try:
@@ -2195,6 +2424,8 @@ def main(argv: list[str] | None = None) -> int:
         if run_dir is not None:
             save_run_artifacts(run_dir, output, report, csv_report, args, exit_code)
             print(f"[INFO] Saved test artifacts to {run_dir}")
+
+        save_sfp_if_requested(args, repo_root, output, expected)
 
         return exit_code
     except (OSError, RuntimeError, subprocess.SubprocessError, TimeoutError) as exc:

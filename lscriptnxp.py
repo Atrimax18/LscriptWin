@@ -1365,6 +1365,20 @@ def save_ip_over_uart(session: SerialSession, config: AppConfig) -> None:
         max(config.timeouts.prompt_wait_seconds, 60),
         "Enable DUT IP autoconnect with nmcli",
     )
+    run_command(
+        session,
+        'nmcli con mod "Wired connection 2" ipv4.method manual ipv4.addresses "10.2.4.2/24"',
+        shell_prompt,
+        max(config.timeouts.prompt_wait_seconds, 60),
+        "Configure Wired connection 2 static IP with nmcli",
+    )
+    run_command(
+        session,
+        'nmcli con up "Wired connection 2"',
+        shell_prompt,
+        max(config.timeouts.prompt_wait_seconds, 60),
+        "Bring up Wired connection 2 with nmcli",
+    )
     session.clear_buffer()
 
 
@@ -1432,6 +1446,11 @@ def save_ip_over_ssh(config: AppConfig, ssh_log_path: pathlib.Path) -> None:
         )
         ssh_exec_checked(client, "nmcli con up fm1-mac5-static")
         ssh_exec_checked(client, "nmcli con mod fm1-mac5-static connection.autoconnect yes")
+        ssh_exec_checked(
+            client,
+            'nmcli con mod "Wired connection 2" ipv4.method manual ipv4.addresses "10.2.4.2/24"',
+        )
+        ssh_exec_checked(client, 'nmcli con up "Wired connection 2"')
         ssh_log_path.write_text(
             ssh_exec_checked(client, "hostname ; ip addr show dev eth0"),
             encoding="utf-8",
