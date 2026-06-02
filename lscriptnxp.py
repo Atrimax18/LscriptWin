@@ -526,7 +526,15 @@ class SerialSession:
         label: str,
         start_pos: Optional[int] = None,
     ) -> re.Match[str]:
+        return self._wait_for_pattern_once(pattern, timeout, label, start_pos)
 
+    def _wait_for_pattern_once(
+        self,
+        pattern: re.Pattern[str],
+        timeout: float,
+        label: str,
+        start_pos: Optional[int] = None,
+    ) -> re.Match[str]:
         deadline = time.monotonic() + timeout
         scan_from = 0 if start_pos is None else start_pos
         last_buffer_len = 0
@@ -560,6 +568,36 @@ class SerialSession:
 
             # Small sleep reduces CPU usage
             time.sleep(0.01)
+
+    def wait_for_prompt(
+        self,
+        pattern: re.Pattern[str],
+        timeout: float,
+        label: str,
+        start_pos: Optional[int] = None,
+        retry_timeout: Optional[float] = None,
+    ) -> re.Match[str]:
+        try:
+            return self._wait_for_pattern_once(pattern, timeout, label, start_pos)
+        except TimeoutError as first_error:
+            retry_window = timeout if retry_timeout is None else retry_timeout
+            self.log_event(
+                "WARN",
+                f"{label} timed out after {timeout:.1f}s; sending Enter and retrying once for {retry_window:.1f}s.",
+            )
+            retry_start_pos = len(self.buffer)
+            self.send_line("")
+            try:
+                return self._wait_for_pattern_once(
+                    pattern,
+                    retry_window,
+                    f"{label} after Enter retry",
+                    retry_start_pos,
+                )
+            except TimeoutError as retry_error:
+                raise TimeoutError(
+                    f"{first_error}. Prompt recovery via Enter also timed out after {retry_window:.1f}s."
+                ) from retry_error
 
     def wait_for_any_pattern(
         self,
@@ -603,7 +641,7 @@ def run_command(
         info(f"{session.name}: {description}")
     start_pos = len(session.buffer)
     session.send_line(command)
-    session.wait_for_pattern(prompt_pattern, timeout=timeout, label=f"command completion for: {command}", start_pos=start_pos)
+    session.wait_for_prompt(prompt_pattern, timeout=timeout, label=f"command completion for: {command}", start_pos=start_pos)
 
 
 def run_command_capture(
@@ -629,7 +667,7 @@ def run_command_capture(
         prompt_start_pos = start_pos + echo_match.end()
     except TimeoutError:
         prompt_start_pos = start_pos
-    session.wait_for_pattern(
+    session.wait_for_prompt(
         prompt_pattern,
         timeout=timeout,
         label=f"command completion for: {command}",
@@ -676,7 +714,7 @@ def run_command_with_optional_password(
         start_pos = len(session.buffer)
         session.log_event("INFO", "Password prompt detected; sending configured password.")
         session.send_line(password)
-        session.wait_for_pattern(shell_prompt, timeout=timeout, label=f"shell after password for: {command}", start_pos=start_pos)
+        session.wait_for_prompt(shell_prompt, timeout=timeout, label=f"shell after password for: {command}", start_pos=start_pos)
 
 
 def run_scp_download(
@@ -779,7 +817,7 @@ def wait_for_linux_shell(
 
 def ensure_emergency_access(session: SerialSession, prompt_pattern: re.Pattern[str], boot_timeout: int, fresh: bool = False) -> None:
     start_pos = len(session.buffer) if fresh else None
-    session.wait_for_pattern(
+    session.wait_for_prompt(
         prompt_pattern,
         timeout=boot_timeout,
         label="emergency shell prompt",
@@ -804,7 +842,7 @@ def detect_nxp_uboot(session: SerialSession, autoboot_wait_timeout: int, prompt_
 
 def detect_switch_prompt(session: SerialSession, prompt_text: str, timeout: int, fresh: bool = False) -> re.Pattern[str]:
     pattern = compile_switch_prompt_pattern(prompt_text)
-    session.wait_for_pattern(pattern, timeout=timeout, label="switch prompt", start_pos=len(session.buffer) if fresh else None)
+    session.wait_for_prompt(pattern, timeout=timeout, label="switch prompt", start_pos=len(session.buffer) if fresh else None)
     return pattern
 
 
@@ -1426,16 +1464,6 @@ def transfer_lsbb_utils_after_login(session: SerialSession, config: AppConfig) -
     )
 
 
-def ssh_exec_checked(client: paramiko.SSHClient, command: str, timeout: int = 60) -> str:
-    stdin, stdout, stderr = client.exec_command(command, timeout=timeout)
-    exit_code = stdout.channel.recv_exit_status()
-    output = stdout.read().decode("utf-8", errors="replace")
-    error = stderr.read().decode("utf-8", errors="replace")
-    if exit_code != 0:
-        raise RuntimeError(f"SSH command failed ({exit_code}): {command}\n{error or output}")
-    return output
-
-
 def connect_over_ssh_password(config: AppConfig) -> paramiko.SSHClient:
     if paramiko is None:
         raise RuntimeError("paramiko is required for the SSH stages.")
@@ -1453,33 +1481,6 @@ def connect_over_ssh_password(config: AppConfig) -> paramiko.SSHClient:
         banner_timeout=30,
     )
     return client
-
-
-def save_ip_over_ssh(config: AppConfig, ssh_log_path: pathlib.Path) -> None:
-    if paramiko is None:
-        raise RuntimeError("paramiko is required for the SSH stages.")
-    client = connect_over_ssh_password(config)
-    try:
-        ssh_exec_checked(
-            client,
-            "nmcli con add type ethernet ifname fm1-mac5 con-name fm1-mac5-static "
-            f"ipv4.addresses {config.dut.final_ip}/24 ipv4.method manual",
-        )
-        ssh_exec_checked(client, "nmcli con up fm1-mac5-static")
-        ssh_exec_checked(client, "nmcli con mod fm1-mac5-static connection.autoconnect yes")
-        ssh_exec_checked(
-            client,
-            "nmcli con add type ethernet ifname fm1-mac9 con-name fm1-mac9-static "
-            "ipv4.addresses 10.2.4.2/24 ipv4.method manual",
-        )
-        ssh_exec_checked(client, "nmcli con up fm1-mac9-static")
-        ssh_exec_checked(client, "nmcli con mod fm1-mac9-static connection.autoconnect yes")
-        ssh_log_path.write_text(
-            ssh_exec_checked(client, "hostname ; ip addr show dev eth0"),
-            encoding="utf-8",
-        )
-    finally:
-        client.close()
 
 
 def wait_for_ssh(host: str, port: int, timeout: int) -> None:
