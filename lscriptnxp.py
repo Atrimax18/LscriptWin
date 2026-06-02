@@ -1338,15 +1338,17 @@ def run_deploy_script(session: SerialSession, config: AppConfig, provision: Prov
 
 def save_ip_over_uart(session: SerialSession, config: AppConfig) -> None:
     shell_prompt = ROOT_SHELL_PATTERN
-    nmcli_add_or_mod = (
+    fm1_mac5_add = (
         "nmcli con add type ethernet ifname fm1-mac5 con-name fm1-mac5-static "
-        f"ipv4.addresses {config.dut.final_ip}/24 ipv4.method manual || "
-        "nmcli con mod fm1-mac5-static "
         f"ipv4.addresses {config.dut.final_ip}/24 ipv4.method manual"
+    )
+    fm1_mac9_add = (
+        "nmcli con add type ethernet ifname fm1-mac9 con-name fm1-mac9-static "
+        "ipv4.addresses 10.2.4.2/24 ipv4.method manual"
     )
     run_command(
         session,
-        nmcli_add_or_mod,
+        fm1_mac5_add,
         shell_prompt,
         max(config.timeouts.prompt_wait_seconds, 60),
         "Configure persistent DUT IP with nmcli",
@@ -1365,19 +1367,40 @@ def save_ip_over_uart(session: SerialSession, config: AppConfig) -> None:
         max(config.timeouts.prompt_wait_seconds, 60),
         "Enable DUT IP autoconnect with nmcli",
     )
-    run_command(
-        session,
-        'nmcli con mod "Wired connection 2" ipv4.method manual ipv4.addresses "10.2.4.2/24"',
+    session.send_line("")
+    session.wait_for_pattern(
         shell_prompt,
-        max(config.timeouts.prompt_wait_seconds, 60),
-        "Configure Wired connection 2 static IP with nmcli",
+        timeout=max(config.timeouts.prompt_wait_seconds, 60),
+        label="shell prompt after fm1-mac5 blank enter",
+        start_pos=len(session.buffer),
     )
     run_command(
         session,
-        'nmcli con up "Wired connection 2"',
+        fm1_mac9_add,
         shell_prompt,
         max(config.timeouts.prompt_wait_seconds, 60),
-        "Bring up Wired connection 2 with nmcli",
+        "Configure fm1-mac9 static IP with nmcli",
+    )
+    run_command(
+        session,
+        "nmcli con up fm1-mac9-static",
+        shell_prompt,
+        max(config.timeouts.prompt_wait_seconds, 60),
+        "Bring up fm1-mac9 static IP with nmcli",
+    )
+    run_command(
+        session,
+        "nmcli con mod fm1-mac9-static connection.autoconnect yes",
+        shell_prompt,
+        max(config.timeouts.prompt_wait_seconds, 60),
+        "Enable fm1-mac9 autoconnect with nmcli",
+    )
+    session.send_line("")
+    session.wait_for_pattern(
+        shell_prompt,
+        timeout=max(config.timeouts.prompt_wait_seconds, 60),
+        label="shell prompt after fm1-mac9 blank enter",
+        start_pos=len(session.buffer),
     )
     session.clear_buffer()
 
@@ -1440,17 +1463,17 @@ def save_ip_over_ssh(config: AppConfig, ssh_log_path: pathlib.Path) -> None:
         ssh_exec_checked(
             client,
             "nmcli con add type ethernet ifname fm1-mac5 con-name fm1-mac5-static "
-            f"ipv4.addresses {config.dut.final_ip}/24 ipv4.method manual || "
-            "nmcli con mod fm1-mac5-static "
             f"ipv4.addresses {config.dut.final_ip}/24 ipv4.method manual",
         )
         ssh_exec_checked(client, "nmcli con up fm1-mac5-static")
         ssh_exec_checked(client, "nmcli con mod fm1-mac5-static connection.autoconnect yes")
         ssh_exec_checked(
             client,
-            'nmcli con mod "Wired connection 2" ipv4.method manual ipv4.addresses "10.2.4.2/24"',
+            "nmcli con add type ethernet ifname fm1-mac9 con-name fm1-mac9-static "
+            "ipv4.addresses 10.2.4.2/24 ipv4.method manual",
         )
-        ssh_exec_checked(client, 'nmcli con up "Wired connection 2"')
+        ssh_exec_checked(client, "nmcli con up fm1-mac9-static")
+        ssh_exec_checked(client, "nmcli con mod fm1-mac9-static connection.autoconnect yes")
         ssh_log_path.write_text(
             ssh_exec_checked(client, "hostname ; ip addr show dev eth0"),
             encoding="utf-8",
