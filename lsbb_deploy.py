@@ -34,7 +34,7 @@ DEPLOYMENT_STAGE = {
 SCRIPT_STAGE = {
     "lscriptnxp.py": "nxp",
     "eth_deploy.py": "switch",
-    "sx_deploy.py": "sx",
+    "sx_deploy2.py": "sx",
 }
 
 STAGE_ORDER = ("nxp", "switch", "sx")
