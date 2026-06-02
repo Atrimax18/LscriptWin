@@ -474,24 +474,25 @@ class DeployGui(tk.Tk):
                 if stage is not None:
                     set_stage_status(serial, stage, RUNNING_STATUS)
                 self.output_queue.put(f"\nStarting {' '.join(command[1:])}\n")
-                self.current_process = subprocess.Popen(
-                    command,
-                    cwd=REPO_ROOT,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.STDOUT,
-                    stdin=subprocess.DEVNULL,
-                    text=True,
-                    bufsize=1,
-                    encoding="utf-8",
-                    errors="replace",
-                )
+                #self.current_process = subprocess.Popen(
+                #    command,
+                #    cwd=REPO_ROOT,
+                #    stdout=subprocess.PIPE,
+                #    stderr=subprocess.STDOUT,
+                #    stdin=subprocess.DEVNULL,
+                #    text=True,
+                #    bufsize=1,
+                #    encoding="utf-8",
+                #    errors="replace",
+                #)
 
-                assert self.current_process.stdout is not None
-                for line in self.current_process.stdout:
-                    self.output_queue.put(line)
+                self.current_process = subprocess.Popen(command, cwd=REPO_ROOT, stdin=subprocess.DEVNULL,)
 
-                #self.current_process = subprocess.Popen(command, cwd=REPO_ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL,
-                #   text=True, bufsize=1, encoding="utf-8", errors="replace",)
+                #assert self.current_process.stdout is not None
+                #for line in self.current_process.stdout:
+                #    self.output_queue.put(line)
+
+                
 
                 return_code = self.current_process.wait()
                 if return_code != 0:
