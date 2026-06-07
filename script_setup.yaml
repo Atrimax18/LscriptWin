@@ -1,21 +1,21 @@
 serial:
   nxp:
-    port: COM20
+    port: COM11
     baudrate: 115200
   switch:
-    port: COM21
+    port: COM12
     baudrate: 115200
   sx1: 
-    port: COM22
+    port: COM13
     baudrate: 115200
   sx2: 
-    port: COM24
+    port: COM14
     baudrate: 115200
 
 server:
   ip: 10.10.10.3
-  login: al098597
-  password: Bukintrop1978@!
+  login: testone
+  password: Bastion12!
   image_path: C:\Images
   key_pub_path: C:\Images\id_ed25519_lsbb.pub
 
