@@ -23,8 +23,8 @@ DEPLOYMENTS = {
     "NXP DEPLOYMENT": [["lscriptnxp2.py"]],
     "SWITCH DEPLOYMENT": [["eth_deploy.py"]],
     "SX DEPLOYMENT": [["sx_deploy3.py"]],
-    "Test JIG": [["test_jig3.py"]],
-    "Test SYS": [["test_sys3.py"]],
+    "Test PCBA": [["test_jig3.py"]],
+    "Test SYSTEM": [["test_sys3.py"]],
 }
 
 DEPLOYMENT_STAGE = {
@@ -39,7 +39,7 @@ SCRIPT_STAGE = {
     "sx_deploy3.py": "sx",
 }
 
-TEST_DEPLOYMENTS = {"Test JIG", "Test SYS"}
+TEST_DEPLOYMENTS = {"Test PCBA", "Test SYSTEM"}
 STAGE_ORDER = ("nxp", "switch", "sx")
 SUCCESS_STATUS = "success"
 FAILED_STATUS = "failed"
@@ -464,7 +464,7 @@ class DeployGui(tk.Tk):
             [sys.executable, *script_args, "--dig_sn", serial]
             for script_args in DEPLOYMENTS[deployment_name]
         ]
-        if deployment_name == "Test SYS" and self.save_sfp_var.get():
+        if deployment_name == "Test SYSTEM" and self.save_sfp_var.get():
             for command in commands:
                 if pathlib.Path(command[1]).name == "test_sys3.py":
                     command.append("--save-sfp")
@@ -590,7 +590,7 @@ class DeployGui(tk.Tk):
         for label, button in self.buttons.items():
             button.configure(state="normal" if label in allowed else "disabled")
         if self.save_sfp_var.get():
-            for label in ("FULL DEPLOYMENT", "NXP DEPLOYMENT", "Test JIG"):
+            for label in ("FULL DEPLOYMENT", "NXP DEPLOYMENT", "Test PCBA"):
                 if label in self.buttons:
                     self.buttons[label].configure(state="disabled")
 
