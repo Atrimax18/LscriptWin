@@ -23,7 +23,7 @@ DEPLOYMENTS = {
     "NXP DEPLOYMENT": [["lscriptnxp2.py"]],
     "SWITCH DEPLOYMENT": [["eth_deploy.py"]],
     "SX DEPLOYMENT": [["sx_deploy3.py"]],
-    "Test PCBA": [["test_jig3.py"]],
+    "Test PCBA": [["test_sys3.py"]],
     "Test SYSTEM": [["test_sys3.py"]],
 }
 
