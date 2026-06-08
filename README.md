@@ -1,256 +1,253 @@
-# Lscript
+# LscriptWin
 
-Windows-driven serial automation for the LSBB lab flow.
+Windows tooling for LSBB board deployment, switch provisioning, SX4000 setup, and production test.
 
-The script now supports four modes:
-
-- `detect`: stop NXP autoboot on `COM20` and confirm the switch `Telesat>>` prompt on `COM21`
-- `mac-only`: stop both sides in U-Boot, program NXP and switch MACs, and stop there
-- `provision`: run the documented flow from MAC programming through Linux install, switch image install, SONiC setup, and `LSBB_Utils` copy
-- `gen_mac`: read and update the MAC database from the YAML `db` section using a DIG board serial number
-
-Serial logs are saved under `C:\Logs\Deployment\<DIG_SN>\<timestamp>\`, and both `COM20` and `COM21` are opened and logged from the start of the run. If no `--dig_sn` is provided, logs are saved under `C:\Logs\Deployment\NO_DIG_SN\<timestamp>\`.
-
-If `tqdm` is installed, long operator-visible waits such as the SONiC first-boot timer are shown with a progress bar. Without `tqdm`, the script falls back to the built-in text countdown.
-
-## YAML Configuration
-
-The script reads its runtime settings from [script_setup.yaml](C:/Users/alexeyt/source/repos/LscriptWin/script_setup.yaml).
-
-- `serial`
-  Defines the serial ports and baud rates. `nxp` is the NXP terminal, `switch` is the switch terminal, and `sx1` / `sx2` are extra ports kept in the config.
-- `server`
-  Defines the Windows host IP and local image folder. When `server.image_path` is a Windows path such as `C:\Images`, the DUT pulls those files from the Windows machine over SCP after Ethernet is configured. Linux-style paths keep the same DUT-side SCP pull flow.
-- `dut`
-  Defines NXP-side Linux settings such as final management IP, login, password, temporary folder, deploy script filename, emergency shell prompt, and the local Windows `LSBB_Utils` folder.
-- `switch`
-  Defines switch-side U-Boot settings such as switch management IP, U-Boot prompt text, and default ITB filename.
-- `sonic`
-  Defines SONiC login settings: login user, password, login prompt, shell prompt, and default SONiC image filename.
-- `prompts`
-  Defines generic prompt text used for U-Boot and switch prompt detection.
-- `timeouts`
-  Controls all wait timers:
-  `serial_open_seconds`, `prompt_wait_seconds`, `boot_interrupt_seconds`, `uboot_boot_seconds`, `emergency_boot_seconds`, `first_boot_seconds`, and `sonic_boot_seconds`.
-- `db`
-  Defines the SQLite MAC database used by `--dig_sn`, including DB path, table, serial column, MAC column naming pattern, and MAC count.
-
-## Detect Mode
+The current entry point is the Tkinter launcher:
 
 ```powershell
-python .\lscriptwin.py --mode detect
+.\run_cmd.bat
 ```
 
-If the target expects a different autoboot interrupt key:
+`run_cmd.bat` starts:
 
 ```powershell
-python .\lscriptwin.py --mode detect --boot-stop-key space
-python .\lscriptwin.py --mode detect --boot-stop-key ctrl-c
+python .\lsbb_deploy3.py
 ```
 
-To validate only the NXP side:
+The launcher asks for a DIG serial number, validates the supported serial format, checks SQL Server deployment progress, and enables only the deployment actions that are valid for that board.
 
-```powershell
-python .\lscriptwin.py --mode detect --skip-switch
-```
-
-## DB MAC Generation Mode
-
-Use the DB-backed allocator when you want the script to manage a row of 16 MAC addresses for a DIG board serial number:
-
-```powershell
-python .\lscriptwin.py --mode gen_mac --dig_sn CLSDM-09-0926-260528-002
-```
-
-Supported DIG SN formats currently include:
+Supported serial examples:
 
 - `CLSDM-09-0926-260528-002`
 - `MLSDM-08-0726-B1-00010`
 
-What `gen_mac` does:
+## Current Flow
 
-- validates the DIG SN format
-- connects to the database defined under `db:` in [script_setup.yaml](C:/Users/alexeyt/source/repos/LscriptWin/script_setup.yaml)
-- checks whether the serial number already exists
-- if the serial exists and all 16 MAC fields are already filled, prints the existing block and does not modify the DB
-- if the serial exists but the MAC block is incomplete, prints a message and rewrites all 16 MAC addresses as a sequential `+1` range
-- if the serial does not exist, finds the latest saved MAC address in the DB, creates the next sequential block of 16 MAC addresses, inserts the DIG SN, and prints the assigned range
+The GUI exposes these actions:
 
-Current DB config keys:
+- `FULL DEPLOYMENT`
+  Runs NXP deployment, switch deployment, and SX deployment in order.
+- `NXP DEPLOYMENT`
+  Runs only the NXP stage.
+- `SWITCH DEPLOYMENT`
+  Runs only the switch and SONiC stage. This is enabled after NXP passes.
+- `SX DEPLOYMENT`
+  Runs only the SX4000 stage. This is enabled after switch deployment passes.
+- `Test PCBA`
+  Runs the current system test script.
+- `Test SYSTEM`
+  Runs the current system test script. If `Save SFP` is selected, it also validates and saves ETH10-ETH13 SFP data to SQL Server.
 
-- `db.type`
-  Right now only `sqlite` is supported
-- `db.path`
-  Relative paths are resolved next to the YAML file
-- `db.table`
-- `db.serial_column`
-- `db.mac_column_format`
-  Example: `mac{index}` gives `mac1` through `mac16`
-- `db.mac_count`
-- `db.seed_mac`
-  Used as the first MAC only when the database has no saved MACs yet
-- `db.auto_create`
-  When `true`, the SQLite table is created automatically if it does not exist
+The GUI records stage state in SQL Server:
 
-## Provision Mode
+- `nxp`
+- `switch`
+- `sx`
 
-The concrete command sequence was mapped from the manual starting at `BURN MAC ADDRESSES in NXP`.
+Each stage is marked `pending`, `running`, `success`, or `failed`. After a successful NXP stage, the 16 MAC addresses allocated in the SQLite MAC database are copied into SQL Server for the same serial number.
 
-Required runtime MAC argument:
+## Main Scripts
 
-- `--base-mac`
-  Written only to NXP `mac 0`
+| Script | Purpose |
+| --- | --- |
+| `lsbb_deploy3.py` | GUI launcher and SQL progress coordinator |
+| `lscriptnxp2.py` | NXP staged provisioning flow |
+| `eth_deploy.py` | Switch U-Boot, ONIE, SONiC, and management setup |
+| `sx_deploy3.py` | SX4000 file validation, boot/configure flow, transfer, and shutdown |
+| `test_sys3.py` | LSBB system/PCBA test runner and result parser |
+| `script_setup.yaml` | Serial, server, DUT, switch, SONiC, SX4000, timeout, and SQLite MAC settings |
+| `test_setup.yaml` | Expected values and limits used by the test runner |
+| `db_config.ini` | SQL Server connection and table settings |
 
-NXP `mac 1`, `mac 2`, and `mac 3` are always written with these fixed values:
+## Configuration
 
-- `mac 1 00:04:9F:08:44:A2`
-- `mac 2 00:04:9F:08:44:A3`
-- `mac 3 00:04:9F:08:44:A4`
+Runtime deployment settings are in [`script_setup.yaml`](script_setup.yaml).
 
-Optional derived MAC arguments:
+Important sections:
 
-- `--switch-uboot-mac`
-  Default is `base-mac + 1`
-- `--switch-onie-mac`
-  Default is `base-mac + 1`
+- `serial`
+  Defines NXP, switch, SX1, and SX2 COM ports and baud rates.
+- `server`
+  Defines the Windows host IP, login, image folder, and public key path used during transfers.
+- `dut`
+  Defines NXP Linux login, final IP, deploy script filename, prompt text, and `LSBB_Utils` path.
+- `switch`
+  Defines switch management IP, U-Boot prompt, and ITB image filename.
+- `sonic`
+  Defines SONiC login, prompt, and image filename.
+- `timeouts`
+  Defines serial open, prompt wait, U-Boot, emergency boot, first boot, and SONiC boot timers.
+- `sx4000`
+  Defines SX1/SX2 source folders, startup file, remote flash paths, and modem prompt.
+- `sx4000_ip`
+  Defines SX modem IPs and login credentials.
+- `db`
+  Defines the SQLite MAC database used by the NXP stage.
 
-Example:
+SQL Server settings are in [`db_config.ini`](db_config.ini). The GUI uses this file to create/read/update the deployment progress table and MAC table.
 
-```powershell
-python .\lscriptwin.py --mode provision `
-  --base-mac 70:B3:D5:97:07:C0
-```
+Test expectations are in [`test_setup.yaml`](test_setup.yaml). The test runner compares measured output against this file and saves text/CSV summaries.
 
-Optional image overrides:
+## Logs And Artifacts
 
-```powershell
-python .\lscriptwin.py --mode provision `
-  --base-mac 70:B3:D5:97:07:C0 `
-  --deploy-script deploy-lsbb-1.1.1-20260324.sh `
-  --switch-image sonic-marvell-arm64.bin `
-  --switch-itb telesat_lsbb-r0.itb
-```
-
-If these fields are present in [script_setup.yaml](C:/Users/alexeyt/source/repos/LscriptWin/script_setup.yaml), the filenames are read from YAML by default:
-
-- `dut.image_file` for the deploy script
-- `switch.image_file` for the switch ITB
-- `sonic.image_file` for the SONiC image
-
-Timeouts are now separated in YAML:
-
-- `timeouts.uboot_boot_seconds` for the U-Boot capture phase
-- `timeouts.emergency_boot_seconds` for the reboot into emergency Linux
-
-`timeouts.first_boot_seconds` is kept as a legacy timeout value.
-
-`timeouts.sonic_boot_seconds` controls the operator-visible SONiC first-boot wait after the NXP reset pulse.
-
-To skip the final `LSBB_Utils` copy:
-
-```powershell
-python .\lscriptwin.py --mode provision `
-  --base-mac 70:B3:D5:97:07:C0 `
-  --skip-utils
-```
-
-## What Provision Mode Does
-
-- Stops autoboot on the NXP console and enters U-Boot
-- Monitors NXP and switch boot in parallel from the start of the run
-- Verifies on NXP boot that both CLUs are locked and that `Switch ready` and `FPGA ready` appear before continuing
-- Waits for the switch `Telesat>>` U-Boot prompt
-- Writes NXP `mac 0` from the runtime argument
-- Writes fixed NXP values to `mac 1`, `mac 2`, and `mac 3`
-- Burns the switch U-Boot MAC with `setenv ethaddr` using `base-mac + 1`
-- After MAC programming, waits 1 second and sends `boot` on the NXP side to continue automatically into emergency Linux
-- Shows/logs that the DUT is resetting instead of asking the operator to press the reset button
-- Waits for the maintenance message, and then waits for the `sh-5.2#` prompt on the NXP terminal
-- Configures DUT IP and verifies Windows host reachability with one combined emergency command:
-  `ifconfig eth0 10.10.10.2 netmask 255.255.255.0 up ; ping 10.10.10.1 -c1`
-- Continues only after detecting:
-  `1 packets transmitted, 1 packets received, 0% packet loss`
-- Sends Enter twice after successful emergency ping, then starts file transfer
-- When `server.image_path` is a Windows folder, the DUT pulls the deploy script from the Windows SSH server, for example:
-  `scp deploy@10.10.10.1:"C:/Images/deploy-lsbb-1.1.1-20260324.sh" /tmp/`
-- This Windows-only transfer path requires an SSH server running on the Windows PC
-- Before provisioning starts, the script prints the local Windows `sshd` service status and stops early unless it is `RUNNING`
-- With Linux-style server paths, keeps the older SCP behavior and uses `server.login` / `server.password`
-- Verifies the deploy script appears in `/tmp`, and only then runs it
-- After the deploy script completes, logs in on NXP if needed with `root` / `toor` and sends `reboot`
-- Configures persistent DUT networking with `nmcli`
-- After `nmcli con mod fm1-mac5-static connection.autoconnect yes`, waits 2 seconds, sends Enter twice, and only then shows the next reset-button action
-- After the persistent NXP IP configuration is saved, waits 1 second and sends `reboot` automatically instead of asking the operator to press reset
-- Pulls switch image files from the Windows image folder to `/tmp` with `scp`
-- Configures `fm1-mac10` as `192.168.2.1/24`
-- After `nmcli con show` on the NXP terminal, switches to COM21 and sends `ping $serverip` from the switch U-Boot prompt
-- Starts the local TFTP and HTTP services on the DUT
-- Waits 2 seconds after `httpserv -p 80 &`
-- Programs the switch install URL and boots the switch image
-- After `bootm $onie_loadaddr`, waits on COM21 for the reboot-request message
-- Waits 5 seconds, then sends the NXP reset pulse:
-  `cd /root`
-  `cpld w 0x45 0`
-  `cpld w 0x45 3`
-- Runs the operator-visible SONiC first-boot timer from `timeouts.sonic_boot_seconds`
-- After the timer completes, sends Enter twice on COM21, waits for `sonic login:`, and logs in with `sonic.login` and `sonic.password` from YAML
-- Logs into SONiC and runs the documented config commands:
-  `sudo sonic-cfggen -w -j /usr/share/sonic/device/arm64-telesat_lsbb-r0/telesat-lsbb/default_config.json`
-  `sudo config qos reload`
-  `sudo config interface ip add eth0 192.168.2.2/24`
-- Waits 8 seconds after each SONiC config command
-- Pulls the Windows `LSBB_Utils` folder directly to `/root/` with `scp -r` unless `--skip-utils` is used
-- After the copy, waits for switch `System is ready`, then runs the switch management ping:
-  `sudo ip vrf exec mgmt ping 192.168.2.1 -c1`
-- After the switch ping, runs the NXP ping:
-  `ping 192.168.2.2 -c1`
-- Stops immediately if the switch log shows bootm failures such as:
-  `Wrong Image Format for bootm command`
-  `ERROR: can't get kernel image!`
-
-## Manual Intervention Points
-
-The NXP reset-button steps are now automated by the script:
-
-- after MAC programming, the script sends `boot`
-- after the deploy script completes, the script sends `reboot`
-- after the persistent NXP IP configuration is saved, the script sends `reboot`
-
-The remaining operator-visible waits are mainly informational, such as the SONiC first-boot timer and progress bars.
-
-## Known Manual Gaps
-
-The Word manual includes some unclear or placeholder text that was not converted into executable commands:
-
-- `First command`, `Second command`, `Third command`, `Fourth command`
-- The garbled lines around the second transfer block
-- The upgrade section with `swupdate-client`, which appears to be a separate flow
-
-Those steps will need the exact intended commands before they can be automated safely.
-
-## MAC-Only Mode
-
-To stop both chips in U-Boot, write the NXP MAC set, write the switch `ethaddr`, and stop there:
-
-```powershell
-python .\lscriptwin.py --mode mac-only --base-mac 70:B3:D5:97:07:D8
-```
-
-This mode does only:
-
-- stop NXP in U-Boot
-- stop switch in U-Boot
-- write NXP `mac 0` from `--base-mac`
-- write fixed NXP values to `mac 1`, `mac 2`, `mac 3`
-- write switch `ethaddr` as `base-mac + 1`
-- save both sides and exit
-
-## Final Status
-
-On successful completion, the script ends with:
+Deployment UART logs are saved under:
 
 ```text
-[OK] Full installation and board configuration completed successfully
+C:\Logs\Deployment\<DIG_SN>\
 ```
 
-If something fails, the script ends with an `[ERROR] ...` message that describes the failure point.
+NXP deployment creates a timestamped run folder for each serial:
+
+```text
+C:\Logs\Deployment\<DIG_SN>\<timestamp>\
+```
+
+Switch and SX deployment scripts also write timestamped logs under the same deployment log root.
+
+Test artifacts are saved under the log root configured by `test_setup.yaml` when saving is enabled. Typical artifacts include:
+
+- `output.txt`
+- `report_pass.txt` or `report_fail.txt`
+- `report_pass.csv` or `report_fail.csv`
+- `summary.txt`
+- `error.txt` on failures
+
+## Stage Details
+
+### NXP Deployment
+
+Run directly when debugging:
+
+```powershell
+python .\lscriptnxp2.py --dig_sn CLSDM-09-0926-260528-002
+```
+
+The NXP flow:
+
+- opens the NXP UART
+- stops autoboot
+- reads or allocates MAC addresses from the SQLite DB
+- burns NXP MAC values in U-Boot
+- resets into emergency mode
+- configures temporary network access
+- starts dropbear
+- pushes the configured deploy script from Windows to the DUT
+- runs the deploy script
+- reboots into Linux
+- saves the final DUT IP
+- copies `LSBB_Utils` to the DUT
+
+Useful options:
+
+```powershell
+python .\lscriptnxp2.py --dig_sn CLSDM-09-0926-260528-002 --boot-stop-key space
+python .\lscriptnxp2.py --dig_sn CLSDM-09-0926-260528-002 --show-uart
+python .\lscriptnxp2.py --dig_sn CLSDM-09-0926-260528-002 --deploy-script deploy-lsbb-1.1.1-20260324.sh
+```
+
+### Switch Deployment
+
+Run directly when debugging:
+
+```powershell
+python .\eth_deploy.py --dig_sn CLSDM-09-0926-260528-002
+```
+
+The switch flow:
+
+- reads MAC values for the DIG serial
+- verifies the switch MAC is base MAC + 1
+- opens switch and NXP UART sessions
+- stops switch U-Boot
+- writes `ethaddr` and saves the environment
+- configures NXP `fm1-mac10`
+- copies switch image files
+- starts local TFTP/HTTP services on the DUT
+- configures ONIE install variables
+- boots the switch image
+- resets the switch through NXP
+- waits for SONiC boot
+- logs into SONiC
+- configures management networking
+- verifies management ping
+
+### SX Deployment
+
+Run directly when debugging:
+
+```powershell
+python .\sx_deploy3.py --dig_sn CLSDM-09-0926-260528-002
+```
+
+Check only:
+
+```powershell
+python .\sx_deploy3.py --dig_sn CLSDM-09-0926-260528-002 --mode check
+```
+
+Skip transfers during debug:
+
+```powershell
+python .\sx_deploy3.py --dig_sn CLSDM-09-0926-260528-002 --skip-transfer
+```
+
+The SX flow validates configured folders/files, logs into the NXP shell, boots/configures SX1 and SX2 paths, copies configured files to modem flash, and shuts the modems down at the end of the stage.
+
+### Tests
+
+Run directly:
+
+```powershell
+python .\test_sys3.py --dig_sn CLSDM-09-0926-260528-002
+```
+
+Run only `run.sh` checks:
+
+```powershell
+python .\test_sys3.py --dig_sn CLSDM-09-0926-260528-002 --mode run-sh
+```
+
+Parse an existing log instead of running SSH:
+
+```powershell
+python .\test_sys3.py --dig_sn CLSDM-09-0926-260528-002 --input-log logs\output.txt
+```
+
+Validate and save SFP data:
+
+```powershell
+python .\test_sys3.py --dig_sn CLSDM-09-0926-260528-002 --save-sfp
+```
+
+The test runner uses SSH connection defaults from `script_setup.yaml`, expected values from `test_setup.yaml`, and optional switch UART login checks before comparing results.
+
+## Requirements
+
+This project is intended to run on Windows with:
+
+- Python 3
+- access to the configured COM ports
+- Windows SSH/SCP support where required by the deployment flow
+- SQL Server ODBC driver for GUI progress tracking
+- Python packages used by the scripts, including `pyserial` and `pyodbc`
+- `paramiko` is optional for tests; the test runner can fall back to system `ssh`
+
+The configured image and utility folders must exist before deployment:
+
+- `server.image_path`
+- `dut.utils_path`
+- `sx4000.SX1_path`
+- `sx4000.SX2_path`
+- `sx4000.startup_file`
+
+## Recommended Operator Workflow
+
+1. Confirm `script_setup.yaml`, `test_setup.yaml`, and `db_config.ini` match the station.
+2. Confirm Windows can access the configured serial ports.
+3. Confirm the image folders contain the configured deploy, ITB, SONiC, SX1, and SX2 files.
+4. Start the launcher with `.\run_cmd.bat`.
+5. Enter the DIG serial number.
+6. Run `FULL DEPLOYMENT` for a new board, or the enabled next stage for a resumed board.
+7. Run `Test PCBA` or `Test SYSTEM` after deployment.
+
+If a stage fails, the GUI records the failure in SQL Server and leaves the valid recovery action enabled after the issue is fixed.

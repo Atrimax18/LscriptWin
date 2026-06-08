@@ -1,26 +1,0 @@
-argument list ['TARGET']
-LSBB_CTRL_MODE set to TARGET
-=== TARGET mode: libbsp/spidev transport ===
-===============================================================================
-CPLD Ver: 1.4, Build: 0x0, Compiled Date: 24-04-26
-===============================================================================
-Power Seq Domain: Aux     , Result = 1 , Expected = 1  - Pass
-Power Seq Domain: NXP     , Result = 1F, Expected = 1F - Pass
-Power Seq Domain: ETH     , Result = 1F, Expected = 1F - Pass
-Power Seq Domain: SX1     , Result = 3F, Expected = 3F - Pass
-Power Seq Domain: SX2     , Result = 3F, Expected = 3F - Pass
-Power Seq Domain: FPGA    , Result = 7F, Expected = 7F - Pass
-Power Seq Domain: RXFEM   , Result = 1 , Expected = 1  - Pass
-Power Seq Domain: TXFEM   , Result = 1 , Expected = 1  - Pass
-Power Seq Domain: CLK     , Result = 3 , Expected = 3  - Pass
-Using HTML dig Cont: coin_digital_container_sw_13042026.html
-Press any key to skip System Init (Skyworks PLLs + TXFEM + RXFEM + FPGA...)
->>>
-
-
-
-
-
- 
- [F4] Emacs  1/1 [F3] History [F6] Paste mode        [F2] Menu - CPython 3.12.6                                                                                    >>>
-Warning: Input is not a terminal (fd=0).
