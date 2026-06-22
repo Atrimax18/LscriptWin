@@ -1,8 +1,8 @@
 version:
   cpld:
-    ver: 1.4
-    build: 0
-    date: 24-04-26
+    ver: 1.5
+    build: 4
+    date: 08-06-26
   fpga:
     gp_ver: 0x20260219
     ver: 11.0

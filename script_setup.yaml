@@ -17,7 +17,6 @@ server:
   login: al098597
   password: Bukintrop1978@!
   image_path: C:\Images
-  key_pub_path: C:\Images\id_ed25519_lsbb.pub
 
 dut:
   final_ip: 10.10.10.2
@@ -34,6 +33,7 @@ switch:
   ip: 192.168.2.2
   prompt: "Telesat>>"
   image_file: telesat_lsbb-r0.itb
+  deploy_path: C:\Images\SWITCH
 
 sonic:
   login: admin
