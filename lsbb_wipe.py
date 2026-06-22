@@ -185,7 +185,9 @@ def main(argv: list[str] | None = None) -> int:
             )
             ok("Both U-Boot prompts detected; starting wipe commands")
             send_wipe_commands(nxp, switch, switch_prompt, args.erase_timeout)
-            wait_seconds(20, "Post-wipe completion delay")
+            wait_seconds(15, "Post-wipe completion delay")
+            ok("NXP wipe passed")
+            ok("Switch wipe passed")
 
         ok("Turn off the unit, wipe completed.")
         return 0
@@ -196,6 +198,7 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
 
 
 
