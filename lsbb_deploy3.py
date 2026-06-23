@@ -369,7 +369,7 @@ def allowed_deployments_for_row(row: dict[str, str] | None) -> set[str]:
 class DeployGui(tk.Tk):
     def __init__(self) -> None:
         super().__init__()
-        self.title("LSBB Deployment")
+        self.title("LSBB Deployment ver3.0")
         self.geometry("760x520")
         self.minsize(620, 420)
 
