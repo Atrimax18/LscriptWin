@@ -1,6 +1,6 @@
 # LscriptWin
 
-Windows tooling for LSBB board deployment, switch provisioning, SX4000 setup, and production test.
+Windows tooling for LSBB board deployment, switch provisioning, SX4000 setup, wipe/redeploy recovery, and production test.
 
 The current entry point is the Tkinter launcher:
 
@@ -11,10 +11,10 @@ The current entry point is the Tkinter launcher:
 `run_cmd.bat` starts:
 
 ```powershell
-python .\lsbb_deploy3.py
+python .\lsbb_deploy4.py
 ```
 
-The launcher asks for a DIG serial number, validates the supported serial format, checks SQL Server deployment progress, and enables only the deployment actions that are valid for that board.
+The current GUI title is `LSBB Deployment ver4.0`. The launcher asks for a DIG serial number, validates the supported serial format, checks SQL Server deployment progress, and enables only the deployment actions that are valid for that board.
 
 Supported serial examples:
 
@@ -37,6 +37,10 @@ The GUI exposes these actions:
   Runs the current system test script.
 - `Test SYSTEM`
   Runs the current system test script. If `Save SFP` is selected, it also validates and saves ETH10-ETH13 SFP data to SQL Server.
+- `Wipe`
+  Runs the NXP and switch eMMC wipe flow from U-Boot. When the wipe succeeds, the GUI resets the deployment stage statuses for the entered serial back to `pending` while keeping the SQL serial and MAC rows.
+
+When `Save SFP` is selected, the GUI disables `FULL DEPLOYMENT`, `NXP DEPLOYMENT`, and `Test PCBA`; `Test SYSTEM` runs `test_sys3.py --save-sfp`.
 
 The GUI records stage state in SQL Server:
 
@@ -50,11 +54,12 @@ Each stage is marked `pending`, `running`, `success`, or `failed`. After a succe
 
 | Script | Purpose |
 | --- | --- |
-| `lsbb_deploy3.py` | GUI launcher and SQL progress coordinator |
-| `lscriptnxp2.py` | NXP staged provisioning flow |
-| `eth_deploy.py` | Switch U-Boot, ONIE, SONiC, and management setup |
+| `lsbb_deploy4.py` | GUI launcher, SQL progress coordinator, test launcher, and wipe launcher |
+| `lscriptnxp3.py` | NXP staged provisioning flow |
+| `eth_deploy2.py` | Switch U-Boot, ONIE, SONiC, and management setup |
 | `sx_deploy3.py` | SX4000 file validation, boot/configure flow, transfer, and shutdown |
 | `test_sys3.py` | LSBB system/PCBA test runner and result parser |
+| `lsbb_wipe.py` | NXP and switch eMMC wipe flow from U-Boot |
 | `script_setup.yaml` | Serial, server, DUT, switch, SONiC, SX4000, timeout, and SQLite MAC settings |
 | `test_setup.yaml` | Expected values and limits used by the test runner |
 | `db_config.ini` | SQL Server connection and table settings |
@@ -104,6 +109,12 @@ C:\Logs\Deployment\<DIG_SN>\<timestamp>\
 
 Switch and SX deployment scripts also write timestamped logs under the same deployment log root.
 
+The wipe flow writes UART logs under:
+
+```text
+C:\Logs\Deployment\LSBB_WIPE\
+```
+
 Test artifacts are saved under the log root configured by `test_setup.yaml` when saving is enabled. Typical artifacts include:
 
 - `output.txt`
@@ -119,7 +130,7 @@ Test artifacts are saved under the log root configured by `test_setup.yaml` when
 Run directly when debugging:
 
 ```powershell
-python .\lscriptnxp2.py --dig_sn CLSDM-09-0926-260528-002
+python .\lscriptnxp3.py --dig_sn CLSDM-09-0926-260528-002
 ```
 
 The NXP flow:
@@ -140,9 +151,9 @@ The NXP flow:
 Useful options:
 
 ```powershell
-python .\lscriptnxp2.py --dig_sn CLSDM-09-0926-260528-002 --boot-stop-key space
-python .\lscriptnxp2.py --dig_sn CLSDM-09-0926-260528-002 --show-uart
-python .\lscriptnxp2.py --dig_sn CLSDM-09-0926-260528-002 --deploy-script deploy-lsbb-1.1.1-20260324.sh
+python .\lscriptnxp3.py --dig_sn CLSDM-09-0926-260528-002 --boot-stop-key space
+python .\lscriptnxp3.py --dig_sn CLSDM-09-0926-260528-002 --show-uart
+python .\lscriptnxp3.py --dig_sn CLSDM-09-0926-260528-002 --deploy-script deploy-lsbb-1.1.1-20260324.sh
 ```
 
 ### Switch Deployment
@@ -150,7 +161,7 @@ python .\lscriptnxp2.py --dig_sn CLSDM-09-0926-260528-002 --deploy-script deploy
 Run directly when debugging:
 
 ```powershell
-python .\eth_deploy.py --dig_sn CLSDM-09-0926-260528-002
+python .\eth_deploy2.py --dig_sn CLSDM-09-0926-260528-002
 ```
 
 The switch flow:
@@ -221,6 +232,23 @@ python .\test_sys3.py --dig_sn CLSDM-09-0926-260528-002 --save-sfp
 
 The test runner uses SSH connection defaults from `script_setup.yaml`, expected values from `test_setup.yaml`, and optional switch UART login checks before comparing results.
 
+### Wipe
+
+Run directly when debugging:
+
+```powershell
+python .\lsbb_wipe.py
+```
+
+Useful options:
+
+```powershell
+python .\lsbb_wipe.py --boot-stop-key space
+python .\lsbb_wipe.py --detect-timeout 300 --erase-timeout 900
+```
+
+The wipe flow opens the NXP and switch UARTs, waits for both U-Boot prompts, erases the configured NXP and switch eMMC devices, waits briefly after completion, and exits with a non-zero code if either prompt or erase step fails. From the GUI, a successful wipe also resets SQL deployment statuses to `pending` for the entered serial.
+
 ## Requirements
 
 This project is intended to run on Windows with:
@@ -249,5 +277,6 @@ The configured image and utility folders must exist before deployment:
 5. Enter the DIG serial number.
 6. Run `FULL DEPLOYMENT` for a new board, or the enabled next stage for a resumed board.
 7. Run `Test PCBA` or `Test SYSTEM` after deployment.
+8. Use `Wipe` only when the board needs NXP and switch eMMC erased before redeployment.
 
 If a stage fails, the GUI records the failure in SQL Server and leaves the valid recovery action enabled after the issue is fixed.
