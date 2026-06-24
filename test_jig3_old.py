@@ -1,11 +1,9 @@
 from __future__ import annotations
 
 import argparse
-import configparser
 import csv
 import datetime as dt
 import io
-import os
 import pathlib
 import re
 import shlex
@@ -39,22 +37,12 @@ RUN_SH_DONE_RE = re.compile(r"Modem\s+Link\s+-\s+All\s+Disabled.*?Data\s+Path\s+
 FULL_TEST_DONE_RE = re.compile(r"INA_MAIN\s*:\s*[-0-9.]+\s+[-0-9.]+\s+[-0-9.]+.*?>>>", re.IGNORECASE | re.DOTALL)
 SWITCH_CONSOLE_PROMPT_RE = re.compile(r"Console(?:\([^)]+\))?#\s*$", re.MULTILINE)
 NXP_PYTHON_PROMPT_RE = re.compile(r">>>\s*$")
-SQL_IDENTIFIER_PATTERN = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 
 INTERNAL_PRBS_SWITCH_INTERFACES = ("0/1", "0/2", "0/3", "0/4")
-EXTERNAL_PRBS_SWITCH_INTERFACES = ("0/10", "0/11", "0/12", "0/13")
 INTERNAL_PRBS_NXP_COMMANDS = (
     'sx4000_ctrl.sds_prbs_en(sx_id="SX1", sds_type="ETH", near_end_lb=False, far_end_lb=False, prbs_type=31)',
     'sx4000_ctrl.sds_prbs_en(sx_id="SX2", sds_type="ETH", near_end_lb=False, far_end_lb=False, prbs_type=31)',
 )
-SFP_PORTS = ("eth10", "eth11", "eth12", "eth13")
-SFP_FIELD_MAP = {
-    "eth10": "mng_sfp1",
-    "eth11": "mng_sfp2",
-    "eth12": "data_sfp1",
-    "eth13": "data_sfp2",
-}
-SFP_PAIRING_TABLE = "LSBB_pairing"
 
 @dataclass
 class CheckResult:
@@ -62,28 +50,6 @@ class CheckResult:
     expected: Any
     actual: Any
     passed: bool
-
-
-@dataclass(frozen=True)
-class SfpRecord:
-    pn: str
-    sn: str
-
-
-@dataclass(frozen=True)
-class SqlConfig:
-    server: str
-    database: str
-    username: str
-    password: str
-    schema: str
-    driver_candidates: tuple[str, ...]
-    connection_string: str
-    timeout_seconds: int
-
-    @property
-    def pairing_qualified_name(self) -> str:
-        return f"[{self.schema}].[{SFP_PAIRING_TABLE}]"
 
 
 SECTION_TITLES = (
@@ -97,9 +63,7 @@ SECTION_TITLES = (
     ("tests.domain.", "Domain Lock Status"),
     ("tests.fpga.", "FPGA Tests"),
     ("tests.eth.login", "Switch Login"),
-    ("tests.eth.eth", "ETH Transceivers"),
     ("tests.eth.prbs.", "Internal PRBS"),
-    ("tests.eth.ext_prbs.", "External PRBS"),
     ("tests.temp.", "Temperature"),
     ("tests.power.", "Power"),
 )
@@ -165,22 +129,6 @@ REPORT_ORDER = {
     "tests.eth.prbs.sx2_line0_errcount": 9,
     "tests.eth.prbs.sx2_line1_ber": 10,
     "tests.eth.prbs.sx2_line1_errcount": 11,
-    "tests.eth.ext_prbs.eth10.status": 0,
-    "tests.eth.ext_prbs.eth10.err": 1,
-    "tests.eth.ext_prbs.eth10.ber_err": 2,
-    "tests.eth.ext_prbs.eth11.status": 3,
-    "tests.eth.ext_prbs.eth11.err": 4,
-    "tests.eth.ext_prbs.eth11.ber_err": 5,
-    "tests.eth.ext_prbs.eth12.status": 6,
-    "tests.eth.ext_prbs.eth12.err": 7,
-    "tests.eth.ext_prbs.eth12.ber_err": 8,
-    "tests.eth.ext_prbs.eth13.status": 9,
-    "tests.eth.ext_prbs.eth13.err": 10,
-    "tests.eth.ext_prbs.eth13.ber_err": 11,
-    "tests.eth.eth10_pn": 0,
-    "tests.eth.eth11_pn": 1,
-    "tests.eth.eth12_pn": 2,
-    "tests.eth.eth13_pn": 3,
 }
 
 HEX_REPORT_FIELDS = {
@@ -416,20 +364,11 @@ def report_label(name: str) -> str:
         return name.removeprefix("tests.fpga.").removesuffix("_full_loopback").upper() + "_FULL_LOOPBACK"
     if name == "tests.eth.login":
         return "SWITCH_LOGIN"
-    eth_pn = re.fullmatch(r"tests\.eth\.(eth1[0-3])_pn", name)
-    if eth_pn:
-        return f"{eth_pn.group(1).upper()}_PN"
-    eth_sn = re.fullmatch(r"tests\.eth\.(eth1[0-3])_sn", name)
-    if eth_sn:
-        return f"{eth_sn.group(1).upper()}_SN"
     if name.startswith("tests.eth.prbs.switch_") and name.endswith("_lock"):
         return "PRBS_" + name.removeprefix("tests.eth.prbs.switch_").removesuffix("_lock").upper() + "_LOCK"
     sx_prbs = re.fullmatch(r"tests\.eth\.prbs\.(sx[12])_line([01])_(ber|errcount)", name)
     if sx_prbs:
         return f"PRBS_{sx_prbs.group(1).upper()}_LINE{sx_prbs.group(2)}_{sx_prbs.group(3).upper()}"
-    ext_prbs = re.fullmatch(r"tests\.eth\.ext_prbs\.(eth\d+)\.(status|err|ber_err)", name)
-    if ext_prbs:
-        return f"EXT_PRBS_{ext_prbs.group(1).upper()}_{ext_prbs.group(2).upper()}"
     if ".jesd." in name:
         return name.removeprefix("txfem_init.jesd.").upper()
     return name
@@ -443,11 +382,6 @@ def report_value(value: Any, name: str | None = None) -> str:
     if name and name.startswith("tests.temp."):
         try:
             return f"{float(value):.1f}"
-        except (TypeError, ValueError):
-            return str(value)
-    if name and (name.endswith("_ber") or name.endswith(".ber_err")):
-        try:
-            return f"{float(value):.6e}"
         except (TypeError, ValueError):
             return str(value)
     if isinstance(value, float):
@@ -574,99 +508,6 @@ def parse_internal_prbs_output(text: str) -> dict[str, Any]:
     return data
 
 
-def parse_external_prbs_output(text: str) -> dict[str, Any]:
-    data: dict[str, Any] = {}
-    clean_text = strip_ansi(text)
-    show_matches = list(re.finditer(r"dbg link prbs show interface ethernet 0/10-13", clean_text, re.IGNORECASE))
-    if show_matches:
-        clean_text = clean_text[show_matches[-1].start():]
-    for interface, _polynomial, _status, lock_state, errors, ber in re.findall(
-        r"^\s*(0/1[0-3])\s*\|\s*\d+\s*\|\s*(PRBS_7|PRBS_31)\s*\|\s*(Passed|Failed)\s*\|\s*(Locked|UnLocked)\s*\|\s*(0x[0-9a-fA-F]+|\d+)\s*\|\s*([0-9.eE+-]+)\s*\|?",
-        clean_text,
-        re.IGNORECASE | re.MULTILINE,
-    ):
-        eth_name = "eth" + interface.split("/", 1)[1]
-        data[f"tests.eth.ext_prbs.{eth_name}.status"] = lock_state
-        data[f"tests.eth.ext_prbs.{eth_name}.err"] = int(errors, 16) if errors.lower().startswith("0x") else int(errors)
-        data[f"tests.eth.ext_prbs.{eth_name}.ber_err"] = float(ber)
-    return data
-
-
-def parse_transceiver_eeprom_output(text: str) -> dict[str, Any]:
-    data: dict[str, Any] = {}
-    clean_text = strip_ansi(text)
-    block_re = re.compile(
-        r"^Ethernet(1[0-3]):\s*SFP EEPROM detected(?P<body>.*?)(?=^Ethernet\d+:|\Z)",
-        re.IGNORECASE | re.MULTILINE | re.DOTALL,
-    )
-    for match in block_re.finditer(clean_text):
-        eth_name = f"eth{match.group(1)}"
-        body = match.group("body")
-        pn_match = re.search(r"^\s*Vendor PN:\s*(\S+)\s*$", body, re.IGNORECASE | re.MULTILINE)
-        sn_match = re.search(r"^\s*Vendor SN:\s*(\S+)\s*$", body, re.IGNORECASE | re.MULTILINE)
-        if pn_match:
-            data[f"tests.eth.{eth_name}_pn"] = pn_match.group(1)
-        if sn_match:
-            data[f"tests.eth.{eth_name}_sn"] = sn_match.group(1)
-
-    info_re = re.compile(
-        r"^\s*\[INFO\]\s+ETH(1[0-3])\s+transceiver\s+PN=([^,\s]+),\s+SN=([^. \r\n]+)\.",
-        re.IGNORECASE | re.MULTILINE,
-    )
-    for eth_number, pn, sn in info_re.findall(clean_text):
-        eth_name = f"eth{eth_number.lower()}"
-        data[f"tests.eth.{eth_name}_pn"] = pn.strip()
-        data[f"tests.eth.{eth_name}_sn"] = sn.strip()
-    return data
-
-
-def parse_latest_sfp_records(text: str) -> dict[str, SfpRecord]:
-    clean_text = strip_ansi(text)
-    info_re = re.compile(
-        r"^\s*\[INFO\]\s+ETH(1[0-3])\s+transceiver\s+PN=([^,\s]+),\s+SN=([^. \r\n]+)\.",
-        re.IGNORECASE | re.MULTILINE,
-    )
-    latest: dict[str, SfpRecord] = {}
-    current: dict[str, SfpRecord] = {}
-    for match in info_re.finditer(clean_text):
-        eth_name = f"eth{match.group(1).lower()}"
-        if eth_name == "eth10":
-            current = {}
-        current[eth_name] = SfpRecord(pn=match.group(2).strip(), sn=match.group(3).strip())
-        if all(port in current for port in SFP_PORTS):
-            latest = dict(current)
-    if latest:
-        return latest
-
-    parsed = parse_transceiver_eeprom_output(clean_text)
-    for port in SFP_PORTS:
-        pn = parsed.get(f"tests.eth.{port}_pn")
-        sn = parsed.get(f"tests.eth.{port}_sn")
-        if pn is not None and sn is not None:
-            latest[port] = SfpRecord(pn=str(pn).strip(), sn=str(sn).strip())
-    return latest
-
-
-def validate_sfp_records(records: dict[str, SfpRecord], expected: dict[str, Any]) -> None:
-    missing = [port.upper() for port in SFP_PORTS if port not in records]
-    if missing:
-        raise RuntimeError("Missing SFP data for: " + ", ".join(missing))
-
-    errors: list[str] = []
-    for port in SFP_PORTS:
-        record = records[port]
-        expected_pn = get_nested(expected, f"tests.eth.{port}_pn")
-        if expected_pn in (None, ""):
-            errors.append(f"{port.upper()}: missing expected PN in test_setup.yaml")
-            continue
-        if str(record.pn).strip().upper() != str(expected_pn).strip().upper():
-            errors.append(f"{port.upper()}: expected PN {expected_pn}, read PN {record.pn}")
-        if not record.sn:
-            errors.append(f"{port.upper()}: missing SN")
-    if errors:
-        raise RuntimeError("SFP validation failed; not saving to SQL DB:\n" + "\n".join(errors))
-
-
 def require_internal_prbs_switch_locks(show_output: str) -> None:
     data = parse_internal_prbs_output(show_output)
     missing_or_unlocked = []
@@ -683,8 +524,6 @@ def parse_output(output: str) -> dict[str, Any]:
     text = strip_ansi(output)
     data: dict[str, Any] = {}
     data.update(parse_internal_prbs_output(text))
-    data.update(parse_external_prbs_output(text))
-    data.update(parse_transceiver_eeprom_output(text))
 
     sonic_sv = first_match(
         r"SONiC\s+Software\s+Version:\s*SONiC\.SONiC-LSBB-Ver\.([^\s]+)",
@@ -1017,11 +856,6 @@ def compare(
         eth_cfg = tests_cfg.get("eth", {})
         if isinstance(eth_cfg, dict) and "login" in eth_cfg:
             add_check(results, "tests.eth.login", eth_cfg["login"], actual.get("tests.eth.login"))
-        if isinstance(eth_cfg, dict):
-            for interface in ("eth10", "eth11", "eth12", "eth13"):
-                pn_key = f"{interface}_pn"
-                if pn_key in eth_cfg:
-                    add_check(results, f"tests.eth.{pn_key}", eth_cfg[pn_key], actual.get(f"tests.eth.{pn_key}"))
         prbs_cfg = eth_cfg.get("prbs", {}) if isinstance(eth_cfg, dict) else {}
         if include_prbs_tests and isinstance(prbs_cfg, dict):
             for interface in INTERNAL_PRBS_SWITCH_INTERFACES:
@@ -1041,32 +875,6 @@ def compare(
                                 }
                                 name = f"tests.eth.prbs.{sx_name}_line{lane}_{metric}"
                                 add_range_check(results, name, limits, actual.get(name))
-
-        ext_prbs_cfg = eth_cfg.get("ext_prbs", {}) if isinstance(eth_cfg, dict) else {}
-        if include_prbs_tests and isinstance(ext_prbs_cfg, dict):
-            for eth_name, eth_expected in ext_prbs_cfg.items():
-                if not isinstance(eth_expected, dict):
-                    continue
-                if "status" in eth_expected:
-                    add_check(
-                        results,
-                        f"tests.eth.ext_prbs.{eth_name}.status",
-                        eth_expected["status"],
-                        actual.get(f"tests.eth.ext_prbs.{eth_name}.status"),
-                    )
-                if "err" in eth_expected:
-                    add_check(
-                        results,
-                        f"tests.eth.ext_prbs.{eth_name}.err",
-                        eth_expected["err"],
-                        actual.get(f"tests.eth.ext_prbs.{eth_name}.err"),
-                    )
-                if "ber_err_min" in eth_expected or "ber_err_max" in eth_expected:
-                    limits = {
-                        "min": eth_expected.get("ber_err_min"),
-                        "max": eth_expected.get("ber_err_max"),
-                    }
-                    add_range_check(results, f"tests.eth.ext_prbs.{eth_name}.ber_err", limits, actual.get(f"tests.eth.ext_prbs.{eth_name}.ber_err"))
 
         temp_cfg = tests_cfg.get("temp", {})
         if isinstance(temp_cfg, dict):
@@ -1343,8 +1151,6 @@ def exit_python_and_shutdown_sx(
         "NXP shell prompt after quit()",
     )
     time.sleep(1)
-    run_external_prbs_test(args, setup, output_parts)
-    run_transceiver_eeprom_check(args, setup, output_parts)
     for command in ("cpld w 0x25 0", "cpld w 0x35 0", "cd /root"):
         send_nxp_shell_command(args, channel, setup, output_parts, command)
 
@@ -1423,130 +1229,6 @@ def exit_switch_console(args: argparse.Namespace, uart: Any, setup: dict[str, An
         raise RuntimeError("Switch console exit failed: Sonic prompt not detected after CLIexit.")
     log_switch(args, buffer[match_start:])
     return buffer
-
-
-def run_external_prbs_test(
-    args: argparse.Namespace,
-    setup: dict[str, Any],
-    output_parts: list[str],
-) -> None:
-    if serial is None:
-        raise RuntimeError("pyserial is not installed. Install it or disable the external PRBS test.")
-
-    settings = switch_uart_login_settings(setup)
-    switch_output = "\n=== External PRBS Test =================================================\n"
-    second_show_output = ""
-    log_switch(args, switch_output)
-    print("[INFO] External PRBS test starting.")
-    print(f"[TX] uart switch {settings['port']} @ {settings['baudrate']}")
-    log_switch(args, f"[TX] uart switch {settings['port']} @ {settings['baudrate']}\n")
-
-    with serial.Serial(port=settings["port"], baudrate=settings["baudrate"], timeout=0.2, write_timeout=1) as uart:
-        time.sleep(min(settings["open_timeout"], 1.0))
-        switch_output = ensure_switch_uart_shell(uart, setup, switch_output)
-        log_switch(args, switch_output)
-
-        for command in (
-            "docker exec -it syncd telnet 127.0.0.1 12345",
-            "configure",
-            "interface range ethernet 0/10,11,12,13",
-            "debug",
-            "end",
-            "dbg link prbs interface ethernet 0/10,11 polynomial 7",
-            "dbg link prbs interface ethernet 0/12,13 polynomial 31",
-        ):
-            switch_output, _ = run_switch_console_command_capture(
-                args,
-                uart,
-                command,
-                switch_output,
-                timeout=max(settings["prompt_timeout"], 30),
-            )
-            time.sleep(1)
-
-        switch_output, _ = run_switch_console_command_capture(
-            args,
-            uart,
-            "dbg link prbs show interface ethernet 0/10-13",
-            switch_output,
-            timeout=max(settings["prompt_timeout"], 30),
-        )
-        time.sleep(1)
-        switch_output, second_show_output = run_switch_console_command_capture(
-            args,
-            uart,
-            "dbg link prbs show interface ethernet 0/10-13",
-            switch_output,
-            timeout=max(settings["prompt_timeout"], 30),
-        )
-        time.sleep(1)
-
-        parsed = parse_external_prbs_output(second_show_output)
-        for interface in EXTERNAL_PRBS_SWITCH_INTERFACES:
-            eth_name = "eth" + interface.split("/", 1)[1]
-            lock_state = parsed.get(f"tests.eth.ext_prbs.{eth_name}.status")
-            err_count = parsed.get(f"tests.eth.ext_prbs.{eth_name}.err")
-            ber = parsed.get(f"tests.eth.ext_prbs.{eth_name}.ber_err")
-            if lock_state is None:
-                print(f"[INFO] External PRBS {eth_name.upper()} result not found.")
-            else:
-                print(f"[INFO] External PRBS {eth_name.upper()} {lock_state}, errors={err_count}, BER={ber}.")
-
-        switch_output, _ = run_switch_console_command_capture(
-            args,
-            uart,
-            "end",
-            switch_output,
-            timeout=max(settings["prompt_timeout"], 30),
-        )
-        time.sleep(1)
-        switch_output = exit_switch_console(args, uart, setup, switch_output)
-
-    output_parts.append(switch_output)
-    print("[INFO] External PRBS test completed.")
-
-
-def run_transceiver_eeprom_check(
-    args: argparse.Namespace,
-    setup: dict[str, Any],
-    output_parts: list[str],
-) -> None:
-    if serial is None:
-        raise RuntimeError("pyserial is not installed. Install it or disable the transceiver EEPROM check.")
-
-    settings = switch_uart_login_settings(setup)
-    switch_output = "\n=== Transceiver EEPROM Check ==========================================\n"
-    log_switch(args, switch_output)
-    print("[INFO] Transceiver EEPROM check starting.")
-    print(f"[TX] uart switch {settings['port']} @ {settings['baudrate']}")
-    log_switch(args, f"[TX] uart switch {settings['port']} @ {settings['baudrate']}\n")
-
-    with serial.Serial(port=settings["port"], baudrate=settings["baudrate"], timeout=0.2, write_timeout=1) as uart:
-        time.sleep(min(settings["open_timeout"], 1.0))
-        switch_output = ensure_switch_uart_shell(uart, setup, switch_output)
-        log_switch(args, switch_output)
-        print("[TX] switch uart show interfaces transceiver eeprom")
-        log_switch(args, "\n[TX] switch uart show interfaces transceiver eeprom\n")
-        switch_output, eeprom_output = run_switch_uart_command_capture(
-            uart,
-            setup,
-            "show interfaces transceiver eeprom",
-            switch_output,
-        )
-        log_switch(args, eeprom_output)
-        print(eeprom_output, end="" if eeprom_output.endswith("\n") else "\n")
-
-    parsed = parse_transceiver_eeprom_output(eeprom_output)
-    for interface in ("eth10", "eth11", "eth12", "eth13"):
-        pn = parsed.get(f"tests.eth.{interface}_pn")
-        sn = parsed.get(f"tests.eth.{interface}_sn")
-        if pn is None:
-            print(f"[INFO] {interface.upper()} transceiver PN not found.")
-        else:
-            print(f"[INFO] {interface.upper()} transceiver PN={pn}, SN={sn or 'not found'}.")
-
-    output_parts.append(switch_output)
-    print("[INFO] Transceiver EEPROM check completed.")
 
 
 def run_internal_prbs_test(
@@ -2031,13 +1713,6 @@ def report_text(results: list[CheckResult], actual: dict[str, Any], dig_sn: str 
     )
     for component, version in firmware_items:
         lines.append(f"{component}: {version}")
-    for interface in ("eth10", "eth11", "eth12", "eth13"):
-        pn = actual.get(f"tests.eth.{interface}_pn")
-        sn = actual.get(f"tests.eth.{interface}_sn")
-        if pn is not None:
-            lines.append(f"{interface.upper()}_PN: {pn}")
-        if sn is not None:
-            lines.append(f"{interface.upper()}_SN: {sn}")
     ordered_results = ordered_report_results(results)
     for prefix, title in SECTION_TITLES:
         section_results = [result for result in ordered_results if result.name.startswith(prefix)]
@@ -2091,10 +1766,6 @@ def csv_units(name: str) -> str:
     if name.startswith("tests.eth.prbs.") and name.endswith("_ber"):
         return "BER"
     if name.startswith("tests.eth.prbs.") and name.endswith("_errcount"):
-        return "errors"
-    if name.startswith("tests.eth.ext_prbs.") and name.endswith(".ber_err"):
-        return "BER"
-    if name.startswith("tests.eth.ext_prbs.") and name.endswith(".err"):
         return "errors"
     return ""
 
@@ -2190,142 +1861,6 @@ def legacy_save_output(repo_root: pathlib.Path, output: str) -> pathlib.Path:
     return path
 
 
-def validate_sql_identifier(name: str, label: str) -> str:
-    if not SQL_IDENTIFIER_PATTERN.fullmatch(name):
-        raise RuntimeError(f"Invalid SQL identifier for {label}: {name}")
-    return name
-
-
-def load_sql_config(repo_root: pathlib.Path) -> SqlConfig:
-    path = repo_root / "db_config.ini"
-    if not path.is_file():
-        raise RuntimeError(f"Missing SQL config file: {path}")
-    parser = configparser.ConfigParser()
-    parser.read(path, encoding="utf-8")
-    if "sql_server" not in parser:
-        raise RuntimeError(f"Missing [sql_server] section in {path}")
-
-    section = parser["sql_server"]
-    server = os.environ.get("SERVER_NAME", section.get("server", "")).strip()
-    database = os.environ.get("DB_NAME", section.get("database", "")).strip()
-    username = os.environ.get("DB_LOGIN", section.get("username", "")).strip()
-    password = os.environ.get("DB_PASSWORD", section.get("password", "")).strip()
-    schema = validate_sql_identifier(section.get("schema", "dbo").strip(), "schema")
-    driver_candidates = tuple(
-        driver.strip()
-        for driver in section.get("driver_candidates", "").split(",")
-        if driver.strip()
-    ) or ("ODBC Driver 18 for SQL Server", "ODBC Driver 17 for SQL Server", "SQL Server Native Client 11.0", "SQL Server")
-    connection_string = section.get(
-        "connection_string",
-        "DRIVER={{{driver}}};SERVER={server};DATABASE={database};UID={username};PWD={password};Encrypt=no;TrustServerCertificate=yes;",
-    ).strip()
-    timeout_seconds = section.getint("timeout_seconds", fallback=5)
-    missing = [
-        name
-        for name, value in {
-            "server": server,
-            "database": database,
-            "username": username,
-            "password": password,
-        }.items()
-        if not value
-    ]
-    if missing:
-        raise RuntimeError(f"Missing SQL config values in {path}: {', '.join(missing)}")
-    return SqlConfig(
-        server=server,
-        database=database,
-        username=username,
-        password=password,
-        schema=schema,
-        driver_candidates=driver_candidates,
-        connection_string=connection_string,
-        timeout_seconds=timeout_seconds,
-    )
-
-
-def open_sql_connection(config: SqlConfig):
-    try:
-        import pyodbc  # type: ignore[import-not-found]
-    except ImportError as exc:
-        raise RuntimeError("pyodbc is required for --save-sfp SQL Server access.") from exc
-
-    installed = set(pyodbc.drivers())
-    drivers = [driver for driver in config.driver_candidates if driver in installed]
-    if not drivers:
-        drivers = list(config.driver_candidates)
-
-    last_error: Exception | None = None
-    for driver in drivers:
-        connection_string = config.connection_string.format(
-            driver=driver,
-            server=config.server,
-            database=config.database,
-            username=config.username,
-            password=config.password,
-        )
-        try:
-            return pyodbc.connect(connection_string, timeout=config.timeout_seconds)
-        except pyodbc.Error as exc:
-            last_error = exc
-    raise RuntimeError(f"Could not connect to SQL Server {config.server}/{config.database}: {last_error}")
-
-
-def save_sfp_records_to_sql(repo_root: pathlib.Path, dig_sn: str, records: dict[str, SfpRecord]) -> str:
-    config = load_sql_config(repo_root)
-    values: dict[str, str] = {"dig_board_sn": dig_sn}
-    for port, column_prefix in SFP_FIELD_MAP.items():
-        values[f"{column_prefix}_sn"] = records[port].sn
-        values[f"{column_prefix}_pn"] = records[port].pn
-
-    sfp_columns = [column for column in values if column != "dig_board_sn"]
-    with open_sql_connection(config) as connection:
-        cursor = connection.cursor()
-        try:
-            cursor.execute(
-                f"SELECT 1 FROM {config.pairing_qualified_name} WHERE dig_board_sn = ?",
-                dig_sn,
-            )
-            exists = cursor.fetchone() is not None
-            if exists:
-                assignments = ", ".join(f"{column} = ?" for column in sfp_columns)
-                params = [values[column] for column in sfp_columns]
-                params.append(dig_sn)
-                cursor.execute(
-                    f"UPDATE {config.pairing_qualified_name} SET {assignments} WHERE dig_board_sn = ?",
-                    *params,
-                )
-                action = "updated"
-            else:
-                columns = ["dig_board_sn", *sfp_columns]
-                placeholders = ", ".join("?" for _column in columns)
-                params = [values[column] for column in columns]
-                cursor.execute(
-                    f"INSERT INTO {config.pairing_qualified_name} ({', '.join(columns)}) VALUES ({placeholders})",
-                    *params,
-                )
-                action = "inserted"
-            connection.commit()
-            return action
-        except Exception:
-            connection.rollback()
-            raise
-
-
-def save_sfp_if_requested(args: argparse.Namespace, repo_root: pathlib.Path, output: str, expected: dict[str, Any]) -> None:
-    if not args.save_sfp:
-        return
-
-    records = parse_latest_sfp_records(output)
-    validate_sfp_records(records, expected)
-    try:
-        action = save_sfp_records_to_sql(repo_root, args.dig_sn, records)
-    except Exception as exc:
-        raise RuntimeError(f"SFP SQL save failed; not saved: {exc}") from exc
-    print(f"[INFO] SFP data {action} in SQL DB for dig_board_sn {args.dig_sn}.")
-
-
 def print_report(results: list[CheckResult], actual: dict[str, Any], dig_sn: str = "XXXXXXX") -> int:
     report, exit_code = report_text(results, actual, dig_sn)
     print("\n" + report, end="")
@@ -2356,7 +1891,6 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--skip-login-check", action="store_true", help="Skip the NXP SSH login precheck.")
     parser.add_argument("--skip-switch-login-check", action="store_true", help="Skip the switch UART login precheck.")
     parser.add_argument("--no-save", action="store_true", help="Do not save test artifacts.")
-    parser.add_argument("--save-sfp", action="store_true", help="Validate and save ETH10-ETH13 SFP PN/SN data to SQL Server.")
     return parser
 
 
@@ -2367,9 +1901,6 @@ def main(argv: list[str] | None = None) -> int:
     setup_path = (repo_root / args.setup_config).resolve()
     run_dir: pathlib.Path | None = None
     output = ""
-    report = ""
-    csv_report = ""
-    exit_code = 1
     args.run_dir = None
 
     try:
@@ -2424,8 +1955,6 @@ def main(argv: list[str] | None = None) -> int:
         if run_dir is not None:
             save_run_artifacts(run_dir, output, report, csv_report, args, exit_code)
             print(f"[INFO] Saved test artifacts to {run_dir}")
-
-        save_sfp_if_requested(args, repo_root, output, expected)
 
         return exit_code
     except (OSError, RuntimeError, subprocess.SubprocessError, TimeoutError) as exc:
