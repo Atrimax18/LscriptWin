@@ -241,6 +241,6 @@ test_file:
   ver: 1.0  
 
 spectrum:
-  ip: 192.168.102.89
+  ip: 10.10.10.4
   socket: 5025
 

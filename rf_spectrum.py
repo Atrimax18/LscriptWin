@@ -87,10 +87,15 @@ class KeysightN9010B:
             self._socket = None
 
     def write(self, command: str) -> None:
+
+        #print(f"Sending: {command!r}")
         sock = self._require_socket()
         payload = self._encode_command(command)
 
         try:
+
+            #print(repr(command))
+            #print(repr(payload))
             sock.sendall(payload)
         except OSError as exc:
             raise ScpiError(f"Failed to send SCPI command {command!r}: {exc}") from exc
@@ -237,6 +242,10 @@ def parse_args() -> argparse.Namespace:
         help=f"Spectrum setup YAML file. Default: {DEFAULT_CONFIG_PATH}",
     )
     parser.add_argument(
+        "--dig_sn",
+        help="Optional DUT digital serial number for caller/artifact metadata.",
+    )
+    parser.add_argument(
         "--ip",
         dest="ip_address",
         help="Override spectrum.ip from the setup YAML file.",
@@ -273,7 +282,10 @@ def main() -> int:
             port=port,
             timeout_seconds=timeout,
         ) as spectrum:
-            print(spectrum.query(args.command))
+            if args.command.rstrip().endswith("?"):
+                print(spectrum.query(args.command))
+            else:
+                spectrum.write(args.command)
     except (ConfigError, ScpiError) as exc:
         print(f"ERROR: {exc}")
         return 1
