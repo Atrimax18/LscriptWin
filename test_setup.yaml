@@ -240,3 +240,7 @@ logs:
 test_file:
   ver: 1.0  
 
+spectrum:
+  ip: 10.10.10.200
+  socket: 5025
+
