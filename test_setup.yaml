@@ -243,4 +243,4 @@ test_file:
 spectrum:
   ip: 10.10.10.200
   socket: 5025
-
+  state_path: C:\pr_1u\State_channel_power.state
