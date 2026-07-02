@@ -1192,6 +1192,7 @@ def ssh_connect(args: argparse.Namespace) -> Any:
 
 def run_paramiko_exec(args: argparse.Namespace, command: str) -> str:
     client = ssh_connect(args)
+    rf_analyzer = None
     try:
         stdin, stdout, stderr = client.exec_command(command, timeout=args.timeout)
         stdin.close()
