@@ -234,6 +234,94 @@ tests:
     ina_main:
       min: 120.0
       max: 170.0         
+  asc_voltage:
+    1V8_NXP:
+      min: 1.70
+      max: 1.90        
+    1V35_NXP:
+      min: 1.28
+      max: 1.42        
+    0V6_VTT_DDR_NXP:
+      min: 0.54
+      max: 0.68
+    1V0_NXP:
+      min: 0.90
+      max: 1.10
+    1V8_ETH:
+      min: 1.70
+      max: 1.90
+    1V2_ETH:
+      min: 1.00
+      max: 1.40
+    0V6_VTT_DDR_ETH:
+      min: 0.54
+      max: 0.68
+    0V8_ETH:
+      min: 0.76
+      max: 0.84
+    3V3_AUX:
+      min: 3.15
+      max: 3.50
+    5V4_CLK:
+      min: 5.10
+      max: 5.50
+    1V8_SX1:
+      min: 1.70
+      max: 1.90  
+    0V6_VTT_DDR_SX1:
+      min: 0.56
+      max: 0.68
+    0V9_SX1:
+      min: 0.85
+      max: 0.95
+    0V8_PLL_SX1:
+      min: 0.75
+      max: 0.85
+    1V8_SX2:
+      min: 1.70
+      max: 1.90
+    0V6_VTT_DDR_SX2:
+      min: 0.56
+      max: 0.68
+    0V9_SX2:
+      min: 0.85
+      max: 0.95
+    0V8_PLL_SX2:
+      min: 0.75
+      max: 0.85
+    5Vx_RXFEM:
+      min: 5.10
+      max: 5.60
+    1V8_IO_FPGA:
+      min: 1.70
+      max: 1.90
+    1V8A_FPGA:
+      min: 1.70
+      max: 1.90
+    1V2_FPGA:
+      min: 1.10
+      max: 1.30
+    0V9_FPGA:
+      min: 0.85
+      max: 0.95
+    0V85_FPGA:
+      min: 0.82
+      max: 0.88
+    3V3_CLK:
+      min: 3.15
+      max: 3.5
+    1V8_CLK:
+      min: 1.70
+      max: 1.90
+    1Vx_RXFEM:
+      min: 1.10
+      max: 1.35
+    1Vx_TXFEM:
+      min: 1.10
+      max: 1.35
+    6Vx_TXFEM:
+      min: 6.20
+      max: 6.60 
 logs:
   path: C:\Logs\Tests 
 
@@ -243,4 +331,93 @@ test_file:
 spectrum:
   ip: 10.10.10.4
   socket: 5025
+
+asc_voltage_test:
+  1V8_NXP:
+    min: 1.70
+    max: 1.90        
+  1V35_NXP:
+    min: 1.28
+    max: 1.42        
+  0V6_VTT_DDR_NXP:
+    min: 0.54
+    max: 0.68
+  1V0_NXP:
+    min: 0.90
+    max: 1.10
+  1V8_ETH:
+    min: 1.70
+    max: 1.90
+  1V2_ETH:
+    min: 1.00
+    max: 1.40
+  0V6_VTT_DDR_ETH:
+    min: 0.54
+    max: 0.68
+  0V8_ETH:
+    min: 0.76
+    max: 0.84
+  3V3_AUX:
+    min: 3.15
+    max: 3.50
+  5V4_CLK:
+    min: 5.10
+    max: 5.50
+  1V8_SX1:
+    min: 1.70
+    max: 1.90  
+  0V6_VTT_DDR_SX1:
+    min: 0.56
+    max: 0.68
+  0V9_SX1:
+    min: 0.85
+    max: 0.95
+  0V8_PLL_SX1:
+    min: 0.75
+    max: 0.85
+  1V8_SX2:
+    min: 1.70
+    max: 1.90
+  0V6_VTT_DDR_SX2:
+    min: 0.56
+    max: 0.68
+  0V9_SX2:
+    min: 0.85
+    max: 0.95
+  0V8_PLL_SX2:
+    min: 0.75
+    max: 0.85
+  5Vx_RXFEM:
+    min: 5.10
+    max: 5.60
+  1V8_IO_FPGA:
+    min: 1.70
+    max: 1.90
+  1V8A_FPGA:
+    min: 1.70
+    max: 1.90
+  1V2_FPGA:
+    min: 1.10
+    max: 1.30
+  0V9_FPGA:
+    min: 0.85
+    max: 0.95
+  0V85_FPGA:
+    min: 0.82
+    max: 0.88
+  3V3_CLK:
+    min: 3.15
+    max: 3.5
+  1V8_CLK:
+    min: 1.70
+    max: 1.90
+  1Vx_RXFEM:
+    min: 1.10
+    max: 1.35
+  1Vx_TXFEM:
+    min: 1.10
+    max: 1.35
+  6Vx_TXFEM:
+    min: 6.20
+    max: 6.60
 
