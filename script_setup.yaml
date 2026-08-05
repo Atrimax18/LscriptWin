@@ -1,15 +1,15 @@
 serial:
   nxp:
-    port: COM20
+    port: COM15
     baudrate: 115200
   switch:
-    port: COM21
+    port: COM16
     baudrate: 115200
   sx1: 
-    port: COM22
+    port: COM17
     baudrate: 115200
   sx2: 
-    port: COM24
+    port: COM18
     baudrate: 115200
 
 server:

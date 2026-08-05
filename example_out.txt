@@ -1,4 +1,139 @@
+root@ls1046afrwy:~/LSBB_Utils# ./run.sh
+argument list ['TARGET']
+LSBB_CTRL_MODE set to TARGET
+=== TARGET mode: libbsp/spidev transport ===
+===============================================================================
+CPLD Ver: 1.5, Build: 16, Compiled Date: 02-07-26
+===============================================================================
+Power Seq Domain: Aux     , Result = 0x1 , Expected = 0x1  - Pass
+Power Seq Domain: NXP     , Result = 0x1F, Expected = 0x1F - Pass
+Power Seq Domain: ETH     , Result = 0x1F, Expected = 0x1F - Pass
+Power Seq Domain: SX1     , Result = 0x3F, Expected = 0x3F - Pass
+Power Seq Domain: SX2     , Result = 0x3F, Expected = 0x3F - Pass
+Power Seq Domain: FPGA    , Result = 0x7F, Expected = 0x7F - Pass
+Power Seq Domain: RXFEM   , Result = 0x1 , Expected = 0x1  - Pass
+Power Seq Domain: TXFEM   , Result = 0x1 , Expected = 0x1  - Pass
+Power Seq Domain: CLK     , Result = 0x1 , Expected = 0x3  - Fail
+Using HTML dig Cont: coin_digital_container_sw_V11_B11.html
+Press any key to skip System Init (Skyworks PLLs + TXFEM + RXFEM + FPGA...)
+=== SKYWORKS PLL Init ==================================================
+Dev ID = 1, LOLn = 1
+Dev ID = 2, LOLn = 1
+TARGET mode: Si5395 init skipped (driver-managed)
+CLU[1] design_id=DV1_V3.3 pll=LOCKED
+CLU[2] design_id=DV2_V3.3 pll=LOCKED
+========================================================================
 
+=== FPGA Init ==========================================================
+FPGA is already Configured !
+FPGA GP Container Info:
+ GP Cont Ver: 0x20260219
+ Time&Date  : 2026-07-01  13:07:26
+ Version    : 11.0
+ Build      : 17
+FPGA Dig Container Info:
+ Dig Cont Ver: 0x20260611
+FPGA Debugger DB:
+ uplink_modem   : Num Of CHs=4, Samples Per CH=8 , Mem Depth=2048, Total Mem:16[KB]
+ uplink_DAC     : Num Of CHs=2, Samples Per CH=8 , Mem Depth=2048, Total Mem:16[KB]
+ downlink_modem : Num Of CHs=4, Samples Per CH=8 , Mem Depth=2048, Total Mem:16[KB]
+ downlink_ADC   : Num Of CHs=1, Samples Per CH=20, Mem Depth=2048, Total Mem:40[KB]
+========================================================================
+
+=== TXFEM Init =========================================================
+FPGA JESD Config - DAC:
+ FPGA DAC        PHY  @ 0x44000, IP Ver = 4.1
+ FPGA DAC        JESD @ 0x42000, IP Ver = 4.3
+ FPGA DAC        JESD @ 0x43000, IP Ver = 4.3
+ADF4368: ChipType = 0x06, ProductID = 0x0007, VendorID = 0x0456
+PLL Charge Pump Current set to 9.51[mA]
+PLL Set in Fractional Mode
+PFD=200.00[MHz], R_div=1, RFdiv=1
+N=58.500000 => 58 + (16777216 + 0/1000)/33554432
+fDIV_RCLK=50.00
+RESYNC_WAIT=2000000
+SYNTH_LOCK_TIMEOUT=10000
+VCO_ALC_TIMEOUT=2500
+VCO_BAND_DIV=50
+ADC_CLK_DIV=31
+LD_COUNT=11
+BLEED_I=2093, BLEED_POL=0
+LDWIN_PW=4
+DCLK_DIV1=1
+TXFEM ADF4368 Initilization (Fout = 11700[MHz]) finished successfully (Lock = 1)
+AD9175: ChipType = 0x04, ChipGrade = 0x07, ProductID = 0x9175
+DAC AD9175 - Configuration Starts...
+DAC AD9175 - Configuration Done !
+
+DAC JESD Status Check:
+-----------------------------------------------------
+DAC0, LANE_DESKEW          = 0xF  - OK
+DAC0, BAD_DISPARITY        = 0x0  - OK
+DAC0, NOT_IN_TABLE         = 0x0  - OK
+DAC0, UNEXPECTED_KCHAR     = 0x0  - OK
+DAC0, CODE_GRP_SYNC        = 0xF  - OK
+DAC0, FRAME_SYNC           = 0xF  - OK
+DAC0, GOOD_CHECKSUM        = 0xF  - OK
+DAC0, INIT_LANE_SYNC       = 0xF  - OK
+DAC1, LANE_DESKEW          = 0xF  - OK
+DAC1, BAD_DISPARITY        = 0x0  - OK
+DAC1, NOT_IN_TABLE         = 0x0  - OK
+DAC1, UNEXPECTED_KCHAR     = 0x0  - OK
+DAC1, CODE_GRP_SYNC        = 0xF  - OK
+DAC1, FRAME_SYNC           = 0xF  - OK
+DAC1, GOOD_CHECKSUM        = 0xF  - OK
+DAC1, INIT_LANE_SYNC       = 0xF  - OK
+========================================================================
+
+=== RXFEM Init =========================================================
+ADF4368: ChipType = 0x06, ProductID = 0x0007, VendorID = 0x0456
+PLL Charge Pump Current set to 9.51[mA]
+PLL Set in Fractional Mode
+PFD=200.00[MHz], R_div=1, RFdiv=1
+N=48.750000 => 48 + (25165824 + 0/1000)/33554432
+fDIV_RCLK=50.00
+RESYNC_WAIT=2000000
+SYNTH_LOCK_TIMEOUT=10000
+VCO_ALC_TIMEOUT=2500
+VCO_BAND_DIV=50
+ADC_CLK_DIV=31
+LD_COUNT=11
+BLEED_I=2093, BLEED_POL=0
+LDWIN_PW=4
+DCLK_DIV1=1
+RXFEM ADF4368 Initilization (Fout = 9750[MHz]) finished successfully (Lock = 1)
+AD9213: ChipType = 0x03, Chip ID = 0x00E5, Vendor ID = 0x0456
+ADC AD9213 - Configuration Starts...
+ADC AD9213 - Configuration Done !
+FPGA JESD Config - ADC:
+ FPGA ADC        PHY  @ 0x44000, IP Ver = 4.1
+ FPGA ADC        PHY  @ 0x45000, IP Ver = 4.1
+ FPGA ADC        JESD @ 0x40000, IP Ver = 4.3
+ FPGA ADC        JESD @ 0x41000, IP Ver = 4.3
+FPGA JESD ADC - STAT_RX_ERR  = 0x00000000 - OK
+FPGA JESD ADC - STAT_RX_DEBUG = 0xEEEEEEEE - OK
+FPGA JESD ADC - STAT_STATUS   = 0x00007000 - OK
+========================================================================
+
+Data Path - Disabled
+dsp_cfg_ul_i0_nco_delta_phase: 0x6F96F970 (-250.0 MHz)
+dsp_cfg_ul_i0_gain: 0x100 (0.500)
+dsp_cfg_dl_i0_nco_delta_phase: 0x13B13B13 (750.0 MHz)
+dsp_cfg_dl_i0_gain: 0x100 (0.500)
+dsp_cfg_ul_i1_nco_delta_phase: 0x10690690 (250.0 MHz)
+dsp_cfg_ul_i1_gain: 0x100 (0.500)
+dsp_cfg_dl_i1_nco_delta_phase: 0x6906906 (250.0 MHz)
+dsp_cfg_dl_i1_gain: 0x100 (0.500)
+dsp_cfg_ul_i2_nco_delta_phase: 0x6F96F970 (-250.0 MHz)
+dsp_cfg_ul_i2_gain: 0x100 (0.500)
+dsp_cfg_dl_i2_nco_delta_phase: 0x796F96FA (-250.0 MHz)
+dsp_cfg_dl_i2_gain: 0x100 (0.500)
+dsp_cfg_ul_i3_nco_delta_phase: 0x10690690 (250.0 MHz)
+dsp_cfg_ul_i3_gain: 0x100 (0.500)
+dsp_cfg_dl_i3_nco_delta_phase: 0x6C4EC4ED (-750.0 MHz)
+dsp_cfg_dl_i3_gain: 0x100 (0.500)
+Modem Link - All Enabled
+Data Path - Enabled
 >>> asc_ctrl.asc_vmon_cfg()
 1V8_NXP             : ASC @ I2C ADDR 0x60, VMON 01, Vmin=1.700V (Actual=1.694V), Vmax=1.900V (Actual=1.898V)
 1V35_NXP            : ASC @ I2C ADDR 0x60, VMON 02, Vmin=1.280V (Actual=1.277V), Vmax=1.420V (Actual=1.412V)
@@ -29,23 +164,21 @@
 1Vx_RXFEM           : ASC @ I2C ADDR 0x62, VMON 08, Vmin=1.200V (Actual=1.197V), Vmax=1.350V (Actual=1.342V)
 1Vx_TXFEM           : ASC @ I2C ADDR 0x62, VMON 09, Vmin=1.200V (Actual=1.197V), Vmax=1.350V (Actual=1.342V)
 6Vx_TXFEM           : ASC @ I2C ADDR 0x62, VMON 10, Vmin=6.200V (Actual=6.169V), Vmax=6.600V (Actual=6.588V)
-
-
 >>> asc_ctrl.asc_read_volt_all()
 1V8_NXP         (I2C ADDR 0x60, VMON ID=01) => 1.794 (UnderVolt=1.700, OverVolt=1.900, MON_Window = 1)
 1V35_NXP        (I2C ADDR 0x60, VMON ID=02) => 1.350 (UnderVolt=1.280, OverVolt=1.420, MON_Window = 1)
 0V6_VTT_DDR_NXP (I2C ADDR 0x60, VMON ID=03) => 0.606 (UnderVolt=0.545, OverVolt=0.680, MON_Window = 1)
 1V0_NXP         (I2C ADDR 0x60, VMON ID=04) => 1.002 (UnderVolt=0.900, OverVolt=1.100, MON_Window = 1)
 1V8_ETH         (I2C ADDR 0x60, VMON ID=05) => 1.794 (UnderVolt=1.700, OverVolt=1.900, MON_Window = 1)
-1V2_ETH         (I2C ADDR 0x60, VMON ID=06) => 1.200 (UnderVolt=1.100, OverVolt=1.300, MON_Window = 1)
+1V2_ETH         (I2C ADDR 0x60, VMON ID=06) => 1.206 (UnderVolt=1.100, OverVolt=1.300, MON_Window = 1)
 0V6_VTT_DDR_ETH (I2C ADDR 0x60, VMON ID=07) => 0.606 (UnderVolt=0.565, OverVolt=0.680, MON_Window = 1)
 0V8_ETH         (I2C ADDR 0x60, VMON ID=08) => 0.792 (UnderVolt=0.760, OverVolt=0.860, MON_Window = 1)
 3V3_AUX         (I2C ADDR 0x60, VMON ID=09) => 3.294 (UnderVolt=3.150, OverVolt=3.500, MON_Window = 1)
-5V4_CLK         (I2C ADDR 0x60, VMON ID=10) => 5.376 (UnderVolt=5.100, OverVolt=5.500, MON_Window = 1)
+5V4_CLK         (I2C ADDR 0x60, VMON ID=10) => 5.360 (UnderVolt=5.100, OverVolt=5.500, MON_Window = 1)
 1V8_SX1         (I2C ADDR 0x61, VMON ID=01) => 1.794 (UnderVolt=1.700, OverVolt=1.897, MON_Window = 1)
 0V6_VTT_DDR_SX1 (I2C ADDR 0x61, VMON ID=02) => 0.606 (UnderVolt=0.545, OverVolt=0.680, MON_Window = 1)
 0V9_SX1         (I2C ADDR 0x61, VMON ID=03) => 0.894 (UnderVolt=0.850, OverVolt=0.950, MON_Window = 1)
-0V8_PLL_SX1     (I2C ADDR 0x61, VMON ID=04) => 0.804 (UnderVolt=0.750, OverVolt=0.850, MON_Window = 1)
+0V8_PLL_SX1     (I2C ADDR 0x61, VMON ID=04) => 0.798 (UnderVolt=0.750, OverVolt=0.850, MON_Window = 1)
 1V8_SX2         (I2C ADDR 0x61, VMON ID=05) => 1.800 (UnderVolt=1.700, OverVolt=1.900, MON_Window = 1)
 0V6_VTT_DDR_SX2 (I2C ADDR 0x61, VMON ID=06) => 0.600 (UnderVolt=0.565, OverVolt=0.680, MON_Window = 1)
 0V9_SX2         (I2C ADDR 0x61, VMON ID=07) => 0.894 (UnderVolt=0.850, OverVolt=0.950, MON_Window = 1)
@@ -58,6 +191,105 @@
 0V85_FPGA       (I2C ADDR 0x62, VMON ID=05) => 0.858 (UnderVolt=0.820, OverVolt=0.880, MON_Window = 1)
 3V3_CLK         (I2C ADDR 0x62, VMON ID=06) => 3.300 (UnderVolt=3.150, OverVolt=3.500, MON_Window = 1)
 1V8_CLK         (I2C ADDR 0x62, VMON ID=07) => 1.806 (UnderVolt=1.700, OverVolt=1.900, MON_Window = 1)
-1Vx_RXFEM       (I2C ADDR 0x62, VMON ID=08) => 1.230 (UnderVolt=1.200, OverVolt=1.350, MON_Window = 1)
+1Vx_RXFEM       (I2C ADDR 0x62, VMON ID=08) => 1.224 (UnderVolt=1.200, OverVolt=1.350, MON_Window = 1)
 1Vx_TXFEM       (I2C ADDR 0x62, VMON ID=09) => 1.260 (UnderVolt=1.200, OverVolt=1.350, MON_Window = 1)
 6Vx_TXFEM       (I2C ADDR 0x62, VMON ID=10) => 6.480 (UnderVolt=6.200, OverVolt=6.600, MON_Window = 1)
+>>> lsbb_cil_test()
+Openning Comm Port: /dev/ttyS2, Baud Rate = 115200
+Openning Comm Port: /dev/ttyS3, Baud Rate = 115200
+
+Modems Link En[0:3]=[0, 0, 0, 0]
+SX1 - Reset Done, Reset State=RST_CE
+SX2 - Reset Done, Reset State=RST_CE
+Wait 20 Sec for SX4000 Boot
+SX4000 Boot Time: 100%|███████████████████████████████████████████████████████████████████████████| 20/20 [00:20<00:00,  1.00s/ Time]
+SX4000 JESD Config: SX1, MDM0, TX
+SX4000 JESD Config: SX1, MDM0, RX
+FPGA JESD Config - MDM0:
+ FPGA MDM0       PHY  @ 0x20000, IP Ver = 4.1
+ FPGA MDM0       JESD @ 0x21000, IP Ver = 4.3
+ FPGA MDM0       JESD @ 0x22000, IP Ver = 4.3
+  FPGA_MB_LOCK_status = 0xF, FPGA_SH_LOCK_status=0xF, SX_EMB_LOCK_status=0xF, SX_SH_LOCK_status=0xF
+SX4000 JESD Config: SX1, MDM1, TX
+SX4000 JESD Config: SX1, MDM1, RX
+FPGA JESD Config - MDM1:
+ FPGA MDM1       PHY  @ 0x24000, IP Ver = 4.1
+ FPGA MDM1       JESD @ 0x25000, IP Ver = 4.3
+ FPGA MDM1       JESD @ 0x26000, IP Ver = 4.3
+  FPGA_MB_LOCK_status = 0xF, FPGA_SH_LOCK_status=0xF, SX_EMB_LOCK_status=0xF, SX_SH_LOCK_status=0xF
+SX4000 JESD Config: SX2, MDM0, TX
+SX4000 JESD Config: SX2, MDM0, RX
+FPGA JESD Config - MDM2:
+ FPGA MDM2       PHY  @ 0x28000, IP Ver = 4.1
+ FPGA MDM2       JESD @ 0x29000, IP Ver = 4.3
+ FPGA MDM2       JESD @ 0x2A000, IP Ver = 4.3
+  FPGA_MB_LOCK_status = 0xF, FPGA_SH_LOCK_status=0xF, SX_EMB_LOCK_status=0xF, SX_SH_LOCK_status=0xF
+SX4000 JESD Config: SX2, MDM1, TX
+SX4000 JESD Config: SX2, MDM1, RX
+FPGA JESD Config - MDM3:
+ FPGA MDM3       PHY  @ 0x2C000, IP Ver = 4.1
+ FPGA MDM3       JESD @ 0x2D000, IP Ver = 4.3
+ FPGA MDM3       JESD @ 0x2E000, IP Ver = 4.3
+  FPGA_MB_LOCK_status = 0xF, FPGA_SH_LOCK_status=0xF, SX_EMB_LOCK_status=0xF, SX_SH_LOCK_status=0xF
+
+=== MDM <-> FPGA Int Loopback Check (and Fix) ==============================
+activate_loopback = 1
+Modems Link En[0:3]=[1, 0, 0, 0]
+Modems Link En[0:3]=[0, 1, 0, 0]
+Modems Link En[0:3]=[0, 0, 1, 0]
+Modems Link En[0:3]=[0, 0, 0, 1]
+Int Loopback Test (SNRs = 39.7, 44.1, 39.5, 50.3) - Pass
+activate_loopback = 0
+============================================================================
+
+Modems Link En[0:3]=[1, 1, 1, 1]
+LSBB FPGA - All Links Adjust Correctly !
+Openning Comm Port: /dev/ttyS1, Baud Rate = 115200
+Openning Comm Port: /dev/ttyS2, Baud Rate = 115200
+Openning Comm Port: /dev/ttyS3, Baud Rate = 115200
+
+=== Full Loopback Test (MDM -> FPGA -> DAC -> ADC -> FPGA -> MDM) ==========
+Full Loopback Test (SNRs = 33.4, 43.1, 40.3, 39.8) - Pass
+============================================================================
+
+=== ETH SW - Sonic Check ===================================================
+
+Found ETH 'sonic login:'
+Entering SONIC - Pass
+============================================================================
+
+=== Temperature Measurments ================================================
+Domain         : Temperature [Deg]
+-------------------------------------------------------------------------------
+CPU_CORE       : 36.0
+ETH_SFP1       : 29.0
+ETH_SFP2       : 29.0
+ETH_SFP3       : 35.0
+ETH_SFP4       : 35.0
+ETH_SW         : 39.0
+SX1_CORE       : 50.1
+SX1_DCDC       : 55.2
+SX2_CORE       : 50.3
+SX2_DCDC       : 54.2
+TMP_RXFEM      : 40.2
+TMP_SX1        : 41.9
+TMP_SX2        : 40.6
+TMP_TXFEM      : 42.5
+============================================================================
+
+=== Power Measurments ======================================================
+Domain         : Volt [V]     Current [mA]   Power [W]
+-------------------------------------------------------------------------------
+INA_NXP        : 11.920       470            5.60
+INA_AUX        : 11.916       480            5.60
+INA_ETH        : 11.928       510            6.20
+INA_FPGA       : 11.920       3350           38.40
+INA_CLK        : 11.932       470            5.60
+INA_SX1        : 11.920       3000           35.80
+INA_SX2        : 11.940       2930           35.80
+INA_TXFEM      : 11.936       1030           11.80
+INA_RXFEM      : 11.924       1060           12.80
+INA_MAIN       : 11.948       11960          142.80
+============================================================================
+>>>
+root@ls1046afrwy:~/LSBB_Utils#

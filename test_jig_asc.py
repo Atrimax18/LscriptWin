@@ -189,7 +189,7 @@ def save_run_artifacts(
     (run_dir / f"acs_report_{status}.txt").write_text(report, encoding="utf-8")
     (run_dir / f"acs_report_{status}.csv").write_text(csv_report, encoding="utf-8", newline="")
     summary = (
-        f"dig_sn: {args.sn}\n"
+        f"dig_sn: {args.dig_sn}\n"
         f"host: {args.host}\n"
         f"user: {args.user}\n"
         f"remote_dir: {args.remote_dir}\n"
@@ -207,7 +207,7 @@ def save_error_artifacts(run_dir: pathlib.Path, output: str, args: argparse.Name
         (run_dir / "output.txt").write_text(output, encoding="utf-8")
     (run_dir / "error.txt").write_text(f"{type(exc).__name__}: {exc}\n", encoding="utf-8")
     summary = (
-        f"dig_sn: {args.sn}\n"
+        f"dig_sn: {args.dig_sn}\n"
         f"host: {getattr(args, 'host', '')}\n"
         f"user: {getattr(args, 'user', '')}\n"
         f"remote_dir: {getattr(args, 'remote_dir', '')}\n"
@@ -340,7 +340,7 @@ def main(argv: list[str] | None = None) -> int:
         if not args.no_save:
             log_path = get_nested(expected, "logs.path")
             log_root = pathlib.Path(str(log_path)) if log_path else repo_root / "logs"
-            run_dir = output_dir(log_root, args.sn, dt.datetime.now())
+            run_dir = output_dir(log_root, args.dig_sn, dt.datetime.now())
             run_dir.mkdir(parents=True, exist_ok=False)
             args.run_dir = run_dir
             print(f"[INFO] ACS log folder: {run_dir}")
@@ -364,10 +364,10 @@ def main(argv: list[str] | None = None) -> int:
         if not measurements:
             raise RuntimeError("No ASC voltage measurements were found after asc_read_volt_all().")
         results = compare_voltages(voltage_limits(expected), measurements)
-        report, exit_code = report_text(results, args.sn)
+        report, exit_code = report_text(results, args.dig_sn)
         csv_report = csv_report_text(results)
         print("\n" + report, end="")
-        print(f"[{'PASS' if exit_code == 0 else 'FAIL'}] Unit {args.sn} ASC voltage test {'passed' if exit_code == 0 else 'failed'}.")
+        print(f"[{'PASS' if exit_code == 0 else 'FAIL'}] Unit {args.dig_sn} ASC voltage test {'passed' if exit_code == 0 else 'failed'}.")
 
         if run_dir is not None:
             save_run_artifacts(run_dir, output, report, csv_report, args, exit_code)

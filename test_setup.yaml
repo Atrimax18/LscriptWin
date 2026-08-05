@@ -1,13 +1,13 @@
 version:
   cpld:
     ver: 1.5
-    build: 4
-    date: 08-06-26
+    build: 20
+    date: 15-07-26
   fpga:
     gp_ver: 0x20260219
     ver: 11.0
-    build: 6
-    dig_ver: 0x20260504
+    build: 17
+    dig_ver: 0x20260611
 
 power_seq:
   aux: 0x1
@@ -76,44 +76,44 @@ rxfem_init:
 tests:
   sx4000:
     sx1:
-      reset: done
-      state: rst_ce
+      reset: Reset Done
+      state: RST_DONE
     sx2:
-      reset: done
-      state: rst_ce      
+      reset: Reset Done
+      state: RST_DONE      
   domain:
-    sx1_antd0:
+    mdm0:
       fpga_mb_lock_status: 0xF
       fpga_mb_sh_lock_status: 0xF
       sx_emb_lock_status: 0xF
       sx_sh_lock_status: 0xF
-    sx1_antd1:
+    mdm1:
       fpga_mb_lock_status: 0xF
       fpga_mb_sh_lock_status: 0xF
       sx_emb_lock_status: 0xF
       sx_sh_lock_status: 0xF
-    sx2_antd0:
+    mdm2:
       fpga_mb_lock_status: 0xF
       fpga_mb_sh_lock_status: 0xF
       sx_emb_lock_status: 0xF
       sx_sh_lock_status: 0xF
-    sx2_antd1:
+    mdm3:
       fpga_mb_lock_status: 0xF
       fpga_mb_sh_lock_status: 0xF
       sx_emb_lock_status: 0xF
       sx_sh_lock_status: 0xF 
   fpga:
     dac_jesd_link: Pass
-    mdm0_dig_loopback:
+    mdm0_int_loopback:
       min: 20
       max: 60
-    mdm1_dig_loopback:
+    mdm1_int_loopback:
       min: 20
       max: 60
-    mdm2_dig_loopback:
+    mdm2_int_loopback:
       min: 20
       max: 60
-    mdm3_dig_loopback:
+    mdm3_int_loopback:
       min: 20
       max: 60      
     mdm0_full_loopback:  
@@ -326,98 +326,9 @@ logs:
   path: C:\Logs\Tests 
 
 test_file:
-  ver: 1.0  
+  ver: 1.1  
 
 spectrum:
   ip: 10.10.10.4
   socket: 5025
-
-asc_voltage_test:
-  1V8_NXP:
-    min: 1.70
-    max: 1.90        
-  1V35_NXP:
-    min: 1.28
-    max: 1.42        
-  0V6_VTT_DDR_NXP:
-    min: 0.54
-    max: 0.68
-  1V0_NXP:
-    min: 0.90
-    max: 1.10
-  1V8_ETH:
-    min: 1.70
-    max: 1.90
-  1V2_ETH:
-    min: 1.00
-    max: 1.40
-  0V6_VTT_DDR_ETH:
-    min: 0.54
-    max: 0.68
-  0V8_ETH:
-    min: 0.76
-    max: 0.84
-  3V3_AUX:
-    min: 3.15
-    max: 3.50
-  5V4_CLK:
-    min: 5.10
-    max: 5.50
-  1V8_SX1:
-    min: 1.70
-    max: 1.90  
-  0V6_VTT_DDR_SX1:
-    min: 0.56
-    max: 0.68
-  0V9_SX1:
-    min: 0.85
-    max: 0.95
-  0V8_PLL_SX1:
-    min: 0.75
-    max: 0.85
-  1V8_SX2:
-    min: 1.70
-    max: 1.90
-  0V6_VTT_DDR_SX2:
-    min: 0.56
-    max: 0.68
-  0V9_SX2:
-    min: 0.85
-    max: 0.95
-  0V8_PLL_SX2:
-    min: 0.75
-    max: 0.85
-  5Vx_RXFEM:
-    min: 5.10
-    max: 5.60
-  1V8_IO_FPGA:
-    min: 1.70
-    max: 1.90
-  1V8A_FPGA:
-    min: 1.70
-    max: 1.90
-  1V2_FPGA:
-    min: 1.10
-    max: 1.30
-  0V9_FPGA:
-    min: 0.85
-    max: 0.95
-  0V85_FPGA:
-    min: 0.82
-    max: 0.88
-  3V3_CLK:
-    min: 3.15
-    max: 3.5
-  1V8_CLK:
-    min: 1.70
-    max: 1.90
-  1Vx_RXFEM:
-    min: 1.10
-    max: 1.35
-  1Vx_TXFEM:
-    min: 1.10
-    max: 1.35
-  6Vx_TXFEM:
-    min: 6.20
-    max: 6.60
 
